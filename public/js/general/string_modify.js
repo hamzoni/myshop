@@ -7,3 +7,10 @@ function addComma(a) {
 	}
 	return n;
 }
+function addComma2(a) {
+	var n = "";
+	for (var i = Math.floor(Math.sqrt(a.length,2)) - 1; i >= 0; i++) {
+		n += n[i*3 + 3] + ",";
+	}
+	return n;
+}

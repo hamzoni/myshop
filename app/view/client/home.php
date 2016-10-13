@@ -555,12 +555,15 @@
 	</div>
 	</form>
 </div>
-<div id="ppu_ntf">
+<!-- end of pop-up cluster -->
+<!-- start of ctner_ppuntf -->
+<div id="ppu_ntf" class="clrD_whiteB">
 	Đã thêm
 	<span id="fd_ntf">sample product name</span>
 	vào giỏ hàng
 </div>
-<!-- end of pop-up cluster -->
+<!-- end of ctner_ppuntf -->
+
 <script type="text/javascript" src="js/general/string_modify.js"></script>
 <script type="text/javascript" src="js/client/home_data.js"></script>
 <script type="text/javascript" src="js/client/home.js"></script>

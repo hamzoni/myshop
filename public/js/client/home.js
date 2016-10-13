@@ -122,6 +122,7 @@ function insert_itemCart(data_form,i_qty = 1){
 	// vibrate cart button & display notification
 	vibration(cart_btn);
 	redcart(1);
+	dp_ppuNtf(item_info.name);
 }
 // reset cart inner function
 function setEvt_rmvF(elm) {
@@ -246,14 +247,13 @@ document.getElementById("aCfd_IF").onclick = function() {
 	var crr_qty = document.getElementById("qty_ifcIf").value;
 	insert_itemCart(crr_slcItem,crr_qty);
 }
-// // food notifcation
-// function dp_ppuNtf(pd_n) {
-// 	var ctner = document.getElementById("ppu_ntf");
-// 	var prdctn = document.getElementById("fd_ntf");
-// 	ctner.style.display = "block";
-// 	ctner.style.opacity = "1";
-// 	var sto_ct = setTimeout(function(){
-// 		ctner.style.display = "block";
-// 		ctner.style.opacity = "1";
-// 	},1000);
-// }
+// food notifcation
+function dp_ppuNtf(pd_n) {
+	var ctner = document.getElementById("ppu_ntf");
+	var prdctn = document.getElementById("fd_ntf");
+	prdctn.innerHTML = pd_n;
+	ctner.style.display = "block";
+	var sto_ct = setTimeout(function(){
+		$("#ppu_ntf").fadeOut(1000);
+	},3000);
+}

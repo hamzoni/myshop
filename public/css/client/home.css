@@ -740,13 +740,13 @@ td[qty] {
 #ppu_ntf {
 	position: fixed;
 	z-index: 55;
+	top: 20px;
+	left: 50%;
+	float: left;
+	transform: translateX(-50%);
+	overflow: hidden;
 	padding: 10px;
 	font-size: 12px;
-	border: 1px solid #fff;
-	background-color: #000;
-	color:#fff;
-	top: 20px;
-	right: 50%;
-	transform: translateX(50%);
 	border-radius: 5px;
+	display: none;
 }

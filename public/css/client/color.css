@@ -4,6 +4,11 @@
 .clr_dark {
 	background-color: #000;
 }
+.clrD_whiteB {
+	border: 1px solid #fff;
+	background-color: #000;
+	color:#fff;
+}
 .shd_white {
 	box-shadow: 0px 0px 5px 2px;
 }
