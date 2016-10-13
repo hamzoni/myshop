@@ -352,6 +352,32 @@ body {
 	border-top-left-radius: 5px;
 	border-bottom-left-radius: 5px;
 	border-right-width: 0px;
+	z-index: 2;
+}
+#nbr_itemsIC {
+	width: 16px;
+	height: 24px;
+	left: 8px;
+	padding-left: 1px;
+	padding-top: 3px;
+	position: relative;
+	background: red;
+	color: white;
+	font-size: 11px;
+	letter-spacing: 0.2em;
+	text-align: center;
+	text-transform: uppercase;
+}
+#nbr_itemsIC:after {
+	  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-bottom: 4px solid #000;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
 }
 .general_popUp {
 	position: absolute;

@@ -1,15 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>FUD - FPT University Dining</title>
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	
-	<!-- library -->
-	<link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="lib/font-awesome/css/font-awesome.min.css">
-	<script type="text/javascript" src="lib/jquery-3.1.1.min.js"></script>
-	<script type="text/javascript" src="lib/bootstrap/js/bootstrap.min.js"></script>
+	<title>FUD - FPT University Dining</title>	
+	<?php include_once "_header.php"; ?>
 	<!-- source -->
 	<link rel="stylesheet" type="text/css" href="css/client/main.css">
 	<link rel="stylesheet" type="text/css" href="css/client/home.css">
@@ -40,7 +33,7 @@
 	 	</div>
 	 	<nav class="slide_container">
 			<!-- start of carousel slide -->
-			<div id="myCarousel" class="carousel slide carousel_size" data-ride="carousel" data-interval="false">
+			<div id="myCarousel" class="carousel slide carousel_size" data-ride="carousel" data-interval="8000">
 
 				<ol class="carousel-indicators">
 					<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -409,6 +402,9 @@
  	<button class="_myCart" id="client_cart">
  		<i class="fa fa-shopping-basket" aria-hidden="true"></i>
  	</button>
+ 	<div id="nbr_itemsIC">
+ 		0
+ 	</div>
  </nav>
 <!-- start of pop-up cluster -->
 <div class="general_popUp cart_detail clr_dark shd_white" style="display:none;">

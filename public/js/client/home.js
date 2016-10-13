@@ -184,6 +184,7 @@ function update_cart() {
 	}
 	var sum_bill = document.getElementById("sum_billC");
 	sum_bill.innerHTML = addComma(cart.total_bill);
+	document.getElementById("nbr_itemsIC").innerHTML = total_items;
 }
 // clear order
 document.getElementById("clear_cart").onclick = clear_allItem;

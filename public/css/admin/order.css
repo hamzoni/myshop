@@ -1,0 +1,131 @@
+.orderList_wrapper ,
+.orderDetail_wrapper ,
+.tbl_orderList_wrapper , 
+.tbl_orderDetail_wrapper ,
+.rmv_order ,
+.edit_order ,
+.atv_ship ,
+.sumPrc_bxCtner ,
+.sumPrc_board
+{
+	overflow: hidden;
+	float: left;
+}
+.orderList_wrapper,
+.orderDetail_wrapper 
+{
+	margin-bottom: 30px;
+}
+.rmv_order ,
+.edit_order ,
+.atv_ship 
+{
+	display: block;
+	width: 30px;
+	height: 31px;
+	text-align: center;
+	padding-top: 4px;
+	cursor: pointer;
+}
+.rmv_order:hover ,
+.edit_order:hover {
+	background-color: #000;
+}
+.atv_ship:hover {
+	color: #fff;
+}
+.atv_ship {
+	color: #696969;
+}
+.tbl_orderList_wrapper td:nth-child(7),
+.tbl_orderList_wrapper td:nth-child(8),
+.tbl_orderList_wrapper td:nth-child(9) 
+{
+	padding: 0 !important;
+}
+.tbl_orderDetail_wrapper table {
+	width: auto !important;
+}
+.sumPrc_bxCtner {
+	border: 1px solid #fff;
+	width: 468px;
+	height: 200px;
+}
+.clt_ifDscr , 
+.clt_ifCtt ,
+.mnTpco ,
+.shrtDscr ,
+.fill_ctnSh
+{
+	width: 100%;
+}
+.sumPrc_board , 
+.clt_ifCtt , 
+.pieceInfo ,
+.clt_ifDscr ,
+.shrtDscr ,
+.fill_ctnSh ,
+.mnTpco 
+{
+	overflow: hidden;
+	float: left;
+}
+.sumPrc_board {
+	height: 100px;
+}
+.pieceInfo {
+	height: 40px;
+	display: block;
+	border-right: 1px dashed #fff;
+	overflow: hidden;
+}
+.clt_ifDscr {
+	height: 20px;
+	padding-left: 5px;
+	text-transform: uppercase;
+	line-height: 20px;
+	background-color: #1F1F1F;
+}
+.mnTpco {
+	padding-left: 5px;
+	line-height: 20px;
+	border-bottom: 1px solid;
+}
+.shrtDscr {
+	height: 15px;
+	padding-left: 5px;
+	line-height: 15px;
+	font-size: 11px;
+	border-bottom: 1px dashed #fff;
+}
+.fill_ctnSh {
+	height: 25px;
+	padding: 5px;
+}
+.pieceInfo:nth-child(1) {
+	width: 180px;
+}
+.pieceInfo:nth-child(2) {
+	width: 120px;
+}
+.pieceInfo:nth-child(3) {
+	width: 80px;
+}
+.pieceInfo:nth-child(4) {
+	width: 86px;
+	border: none;
+}
+.clt_ifCtt {
+	border: 1px solid #fff;
+	border-width: 1px 0;
+}
+.return_ppage {
+	display: block;
+	float: left;
+	width: 30px;
+	height: 30px;
+	border: none;
+	color: #fff;
+	background-color: transparent;
+	border: 1px solid #fff;
+}

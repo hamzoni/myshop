@@ -1,13 +1,23 @@
 <?php
 class app { // MAIN FUNCTION: ROUTING
-	protected $component = 'client';
-	protected $controller = 'home';
-	protected $method = 'index';
+	protected $component = '';
+	protected $controller = '';
+	protected $method = '';
 	protected $params = [];
 	public function __construct() {
 		$url = $this->parseUrl();
+		// set default component/controller/method
+		if ($url[0] == 'admin') {
+			$this->component = 'admin';
+			$this->controller = 'order';
+			$this->method = 'index';
+		} else {
+			$this->component = 'client';
+			$this->controller = 'home';
+			$this->method = 'index';
+		}
 		// check existed component & controller
-		if (file_exists('../app/controller/'.$url[0].'/'.$url[1].'.php')) {
+		if (@file_exists('../app/controller/'.$url[0].'/'.$url[1].'.php')) {
 			$this->component = $url[0];
 			$this->controller = $url[1];
 			unset($url[0]); unset($url[1]);
