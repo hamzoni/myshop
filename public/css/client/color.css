@@ -1,0 +1,12 @@
+.clr_dark2 {
+	background-color: #303030;
+}
+.clr_dark {
+	background-color: #000;
+}
+.shd_white {
+	box-shadow: 0px 0px 5px 2px;
+}
+.shd_white_inset {
+	box-shadow: inset -3px 0px 5px 1px #fff;
+}
