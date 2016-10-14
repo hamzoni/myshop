@@ -4,7 +4,9 @@ class app { // MAIN FUNCTION: ROUTING
 	protected $controller = '';
 	protected $method = '';
 	protected $params = [];
+	public $base_url = ''; 
 	public function __construct() {
+		$this->base_url = str_replace(basename($_SERVER['PHP_SELF']), '', $_SERVER['PHP_SELF']);
 		$url = $this->parseUrl();
 		// set default component/controller/method
 		if ($url[0] == 'admin') {
@@ -22,6 +24,8 @@ class app { // MAIN FUNCTION: ROUTING
 			$this->controller = $url[1];
 			unset($url[0]); unset($url[1]);
 		}
+		$this->base_url .= $this->component;
+		$this->base_url .= "/".$this->controller;
 		require_once '../app/controller/'.$this->component.'/'.$this->controller.'.php';
 		$this->controller = new $this->controller;
 		// check existed method 
@@ -31,7 +35,9 @@ class app { // MAIN FUNCTION: ROUTING
 				unset($url[2]);
 			}
 		}
+		// $this->base_url .= "/".$this->method;
 		$this->params = $url ? array_values($url) : [];
+		$this->params[] = $this->base_url;
 		call_user_func_array([$this->controller,$this->method], $this->params);
 	}
 	public function parseUrl() {

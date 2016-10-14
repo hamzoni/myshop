@@ -3,8 +3,6 @@
 <head>
 	<title>FUD - Administrator</title>
 	<?php include_once "_header.php"; ?>
-	<link rel="stylesheet" type="text/css" href="css/admin/main.css">
-	<link rel="stylesheet" type="text/css" href="css/admin/order.css">
 </head>
 <body>
 <section class="wrapper">
@@ -25,13 +23,13 @@
 	<!-- end of header_bar -->
 	<div class="main_pg_container">
 		<nav class="sideMenu_bar">
-			<a>orders</a>
-			<a>products</a>
-			<a>clients</a>
+			<a href="admin/order">orders</a>
+			<a href="admin/product">products</a>
+			<a href="admin/client-info">clients</a>
 		</nav>
 		<div class="main_pg_content">
 		<div class="preface_pgc">
-			<h1 class="fxRtlc"><a>Order list</a></h1>
+			<h1 class="fxRtlc"><a id="ol_bt">Order list</a></h1>
 			<form class="spc_searchEg">
 				<input type="text" name="_typeVal" placeholder="sample..">
 				<button type="submit">
@@ -43,6 +41,7 @@
 		</div>
 	</div>
 	<!-- end of main_pg_container -->
+	<script type="text/javascript" src="js/general/assets.js"></script>
 </section>
 </body>
 </html>

@@ -6,7 +6,8 @@
 .edit_order ,
 .atv_ship ,
 .sumPrc_bxCtner ,
-.sumPrc_board
+.sumPrc_board,
+.lw_tPrc 
 {
 	overflow: hidden;
 	float: left;
@@ -43,13 +44,41 @@
 {
 	padding: 0 !important;
 }
+.tbl_orderList_wrapper {
+	width: 740px;
+	padding: 10px;
+	height: 400px;
+	overflow-y: scroll;
+	border: 1px solid #696969;
+}
+.tbl_orderDetail_wrapper {
+	width: 636px;
+	height: 400px;
+	padding: 10px;
+	border: 1px solid #696969;
+	margin-bottom: 10px;
+	overflow-y: scroll;
+}
 .tbl_orderDetail_wrapper table {
 	width: auto !important;
 }
 .sumPrc_bxCtner {
 	border: 1px solid #fff;
 	width: 468px;
-	height: 200px;
+}
+.tbl_orderList_wrapper tr
+{
+	cursor: pointer;
+}
+.tbl_orderList_wrapper tr:hover , 
+.tbl_orderDetail_wrapper tr:hover 
+{
+	background-color: #363636;
+}
+.tbl_orderList_wrapper tr:first-child:hover , 
+.tbl_orderDetail_wrapper tr:first-child:hover 
+{
+	background-color: none !important;
 }
 .clt_ifDscr , 
 .clt_ifCtt ,
@@ -71,10 +100,10 @@
 	float: left;
 }
 .sumPrc_board {
-	height: 100px;
+	height: 80px;
 }
 .pieceInfo {
-	height: 40px;
+	height: 100%;
 	display: block;
 	border-right: 1px dashed #fff;
 	overflow: hidden;
@@ -89,6 +118,7 @@
 .mnTpco {
 	padding-left: 5px;
 	line-height: 20px;
+	height: 20px;
 	border-bottom: 1px solid;
 }
 .shrtDscr {
@@ -118,6 +148,7 @@
 .clt_ifCtt {
 	border: 1px solid #fff;
 	border-width: 1px 0;
+	height: 40px;
 }
 .return_ppage {
 	display: block;
@@ -128,4 +159,32 @@
 	color: #fff;
 	background-color: transparent;
 	border: 1px solid #fff;
+	margin-left: 10px;
+}
+.return_ppage:hover {
+	background-color: #242424;
+}
+.lw_tPrc {
+	width: 100%;
+	height: 71px;
+	padding: 10px;
+}
+.sumPrc_ctner {
+	font-size: 36px;
+}
+.wrapBoth_ordL {
+	width: 100%;
+	height: auto;
+	overflow: hidden;
+	float: left;
+}
+.orderDetail_wrapper {
+	display: none;
+}
+a {
+	cursor: pointer;
+}
+a:hover {
+	text-decoration: none;
+	color: inherit;
 }

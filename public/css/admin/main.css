@@ -89,6 +89,14 @@ html[xmlns] .clearfix { display: block; }
 .logo_ctner , .mid_hb_ctn , .log_outMn , .wrapper_rghtB {
   height: 100%;
 }
+.logo_ctner , 
+.sideMenu_bar {
+  position: fixed;
+}
+.logo_ctner {
+  height: 29px;
+  background-color: #000;
+}
 .header_bar {
   height: 30px;
   width: 100%;
@@ -180,7 +188,8 @@ html[xmlns] .clearfix { display: block; }
   color: #fff;
   display: block;
   float: left;
-  font-size: 32px;
+  font-size: 25px;
+  line-height: 30px;
   margin-bottom: 30px;
 }
 .spc_searchEg {

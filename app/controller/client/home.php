@@ -12,8 +12,11 @@ class home extends controller {
 		$this->view('client/home',['name' => $data->name]);
 		**echo data: <?=$data['name'] ? >
 		*/
-
-		$this->view('client/home',"");
+		$this->page_data["header"]["user"] = "client"; 
+		$this->page_data["header"]["css"][0] = "main";
+		$this->page_data["header"]["css"][1] = "home";
+		$this->page_data["header"]["css"][2] = "color";
+		$this->view('client/home',$this->page_data);
 	}
 }
 

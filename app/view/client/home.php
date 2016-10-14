@@ -3,10 +3,6 @@
 <head>
 	<title>FUD - FPT University Dining</title>	
 	<?php include_once "_header.php"; ?>
-	<!-- source -->
-	<link rel="stylesheet" type="text/css" href="css/client/main.css">
-	<link rel="stylesheet" type="text/css" href="css/client/home.css">
-	<link rel="stylesheet" type="text/css" href="css/client/color.css">
 </head>
 <body>
 
@@ -559,8 +555,7 @@
 	vào giỏ hàng
 </div>
 <!-- end of ctner_ppuntf -->
-
-<script type="text/javascript" src="js/general/string_modify.js"></script>
+<script type="text/javascript" src="js/general/assets.js"></script>
 <script type="text/javascript" src="js/client/home_data.js"></script>
 <script type="text/javascript" src="js/client/home.js"></script>
 </body>
