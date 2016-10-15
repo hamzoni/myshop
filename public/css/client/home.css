@@ -444,9 +444,6 @@ a {
 	width: 70%;
 	padding: 5px;
 }
-.right_cfter {
-	width: 30%;
-}
 .upper_lcfter , .lower_lcfter {
 	width: 100%;
 	display: block;
@@ -775,4 +772,8 @@ td[qty] {
 	font-size: 12px;
 	border-radius: 5px;
 	display: none;
+}
+.cart_detail .right_cfter {
+	width: 30%;
+
 }

@@ -42,6 +42,9 @@
 	</div>
 	<!-- end of main_pg_container -->
 	<script type="text/javascript" src="js/general/assets.js"></script>
+	<?php for ($i = 0; $i < count($data["header"]["js"]); $i++) { ?>
+	<script type="text/javascript" src="js/<?php echo $data["header"]["user"]; ?>/<?php echo $data["header"]["js"][$i]; ?>.js"></script>
+	<?php };?>
 </section>
 </body>
 </html>

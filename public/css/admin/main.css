@@ -19,7 +19,12 @@ button {
   outline: none;
 }
 html { height: 101%; }
-body { font-size: 62.5%; line-height: 1; font-family: Arial, Tahoma, sans-serif; }
+body { 
+  font-size: 62.5%; 
+  line-height: 1; 
+  font-family: Arial, Tahoma, sans-serif; 
+  background-color: #454545;
+}
  
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
 ol, ul { list-style: none; }
