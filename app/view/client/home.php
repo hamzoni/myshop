@@ -512,7 +512,7 @@
 		</div>
 	</div>
 </div>
-<div class="general_popUp ship_info clr_dark shd_white" style="display:none;">
+<div class="general_popUp ship_info clr_dark shd_white" style="display:block;">
 	<form action="" method="GET" class="shipIF_stl">
 	<div class="dragger_ttl">
 		<h2 class="hd_ttl VAAlign">SHIPPING INFO</h2>

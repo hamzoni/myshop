@@ -1,6 +1,7 @@
 <?php
 class order extends controller {
 	public $page; // set default page
+	public $page_data = array();
 	public function __construct() {
 		$this->page = "order";
 	}

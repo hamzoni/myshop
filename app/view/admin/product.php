@@ -167,3 +167,8 @@
 		<textarea name="f_dscrp" id="food_description" placeholder="Food description..."></textarea>
 	</form>
 </div>
+<script type="text/javascript">
+	<?php if (@isset($this->page_data["ntf"])) { ?>
+	alert("<?=$this->page_data["ntf"];?>");
+	<?php };?>
+</script>

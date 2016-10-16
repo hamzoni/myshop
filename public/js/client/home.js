@@ -40,6 +40,9 @@ $(".dragger_ttl").mousedown(function(e){
 	omc.x = e.screenX;
 	omc.y = e.screenY;
 	host_element = this.parentNode;
+	if (host_element.nodeName == "FORM") {
+		host_element = this.parentNode.parentNode;
+	}
 	var obj_top = window.getComputedStyle(host_element).top;
 	obj_top = parseInt(obj_top);
 	var obj_left = host_element.getBoundingClientRect().left;

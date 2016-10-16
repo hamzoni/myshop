@@ -10,6 +10,8 @@
 <script type="text/javascript" src="lib/jquery-3.1.1.min.js"></script>
 <script type="text/javascript" src="lib/bootstrap/js/bootstrap.min.js"></script>
 <!-- assets -->
+<?php if (@isset($data["header"])) { ?>
 <?php for ($i = 0; $i < count($data["header"]["css"]); $i++) { ?>
 <link rel="stylesheet" type="text/css" href="css/<?php echo $data["header"]["user"]; ?>/<?php echo $data["header"]["css"][$i]; ?>.css">
+<?php };?>
 <?php };?>

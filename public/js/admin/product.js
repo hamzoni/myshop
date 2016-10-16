@@ -1,8 +1,20 @@
 var newPrd_form = window.upload_newProduct;
 var p_dp_f = newPrd_form.p_display;
 var p_sale = newPrd_form.p_sale;
+var p_price = newPrd_form.p_price;
 var p_type = newPrd_form.p_type;
 
+p_price.onkeypress = function(e) {
+	return event.charCode >= 48 && event.charCode <= 57;
+}
+p_sale.onkeypress = function(e) {
+	return event.charCode >= 48 && event.charCode <= 57;
+}
+p_sale.onkeyup = function() {
+	if (this.value > 0) {
+		p_type[0].checked = true;
+	}
+}
 var p_display = false;
 $("#dplbtn_c").click(function(e){
 	e.preventDefault();
