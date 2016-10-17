@@ -2,10 +2,14 @@
 class product extends controller {
 	public $page; // set default page
 	public $crr_folder;
+	public $upl_f_fail;
 	public $page_data = array();
 	public function __construct() {
 		$this->page = "product";
-		$this->crr_folder = str_replace(basename($_SERVER['PHP_SELF']), '', $_SERVER['PHP_SELF']); 
+		// CURRENT DIRECTORY
+		$this->crr_folder = str_replace(basename($_SERVER['PHP_SELF']), '', $_SERVER['PHP_SELF']);
+		// ERROR PAGE
+		$this->upl_f_fail = 'http://'.$_SERVER['HTTP_HOST'].$this->crr_folder.'error/admin_product';
 	}
 	public function index() {
 		$args = func_get_args();
@@ -42,30 +46,38 @@ class product extends controller {
 			$f_dt["p_dp"] = $_POST["p_display"];
 			$f_dt["p_dscr"] = $_POST["f_dscrp"];
 		} catch (Exception $e) {};
+
+		// CHECK IF NUMBERIC INPUT IS IN VALID DATA
+		if ($f_dt["p_price"] <= 0 
+			|| $f_dt["p_sale"] < 0 
+			|| $f_dt["p_sale"] >= 1
+			|| !is_int($f_dt["p_price"]) 
+			|| !is_double($f_dt["p_sale"])) {
+			$_SESSION["ntf"] = "Invalid numberic input";
+			header("Location: $upl_f");
+			return;
+		}
 		// CHECK IF INPUT IS EMPTY
 		if($this->blank_inputChecker($f_dt)) {
 			$_SESSION["ntf"] = "Inadequate necessary information";
 			header("Location: $upl_f");
 			return;
 		}
-		// CHECK IF INPUT IS VALID 
-		if ($f_dt["p_price"] <= 0 || ($f_dt["p_sale"] < 0 || $f_dt["p_sale"] >= 1)) {
-			$_SESSION["ntf"] = "Invalid numberic input";
-			header("Location: $upl_f");
-			return;
-		}
-		$rt_dt = $this->upload_image();
 		
-		$insert_result = $mdl_obj->insert_record($f_dt["p_name"],$f_dt["p_price"],$f_dt["p_sale"],
-			$rt_dt['img_href']['ava'],$rt_dt['img_href']['ntr'],$f_dt["p_type"],$f_dt["p_dp"],$f_dt["p_dscr"]);
-		print_r($insert_result);
-		return;
+		// ALLOCATE IMG TO FOLDER
+		$rt_dt = $this->upload_image(); 
+		$insert_result = $mdl_obj->insert_record(
+			$f_dt["p_name"],$f_dt["p_price"],$f_dt["p_sale"],
+			$rt_dt['img_href']['ava'],$rt_dt['img_href']['ntr'],
+			$f_dt["p_type"],$f_dt["p_dp"],$f_dt["p_dscr"]);
+		if ($insert_result != 1) {
+			$this->error($insert_result, $this->upl_f_fail);
+		}
 		// DIRECT CLIENT TO SUCCESS PAGE
 		$_SESSION["ntf"] = "Add new product successful!";
 		header('Location: '.$rt_dt['scc_pg']);
 	}
 	function upload_image() {
-		// CURRENT DIRECTORY
 		
 
 		// IMAGE STORAGE DIRECTORY
@@ -74,8 +86,7 @@ class product extends controller {
 		$upl_folder_ntr = $shrc_uplF."ntr/"; 
 		// SUCCESS PAGE
 		$upl_f_scc = 'http://'.$_SERVER['HTTP_HOST'].$this->crr_folder.'admin/product/index';
-		// ERROR PAGE
-		$upl_f_fail = 'http://'.$_SERVER['HTTP_HOST'].$this->crr_folder.'error/admin_product';
+		
 		// NAME OF INPUT(s)
 		$fld_n_ntr = 'p_nutrition';
 		$fld_n_ava = 'p_avatar';
@@ -87,25 +98,25 @@ class product extends controller {
 
 		// CHECK IF AVAILABLE
 		isset($_POST['submit_prd']) 
-		    or $this->error('the upload form is needed', $upl_f_fail);
+		    or $this->error('the upload form is needed', $this->upl_f_fail);
 
 		// CHECK PHP's BUILT-IN ERROR
 		($_FILES[$fld_n_ntr]['error'] == 0) 
-		    or $this->error($errors[$_FILES[$fld_n_ntr]['error']], $upl_f_fail);
+		    or $this->error($errors[$_FILES[$fld_n_ntr]['error']], $this->upl_f_fail);
 		($_FILES[$fld_n_ava]['error'] == 0) 
-		    or $this->error($errors[$_FILES[$fld_n_ava]['error']], $upl_f_fail);
+		    or $this->error($errors[$_FILES[$fld_n_ava]['error']], $this->upl_f_fail);
 		     
 		// CHECK IF HTTP'S SUBJECT UPLOAD
 		@is_uploaded_file($_FILES[$fld_n_ntr]['tmp_name']) 
-		    or $this->error('Invalid HTTP upload', $upl_f_fail);
+		    or $this->error('Invalid HTTP upload', $this->upl_f_fail);
 		@is_uploaded_file($_FILES[$fld_n_ava]['tmp_name']) 
-		    or $this->error('Invalid HTTP upload', $upl_f_fail);
+		    or $this->error('Invalid HTTP upload', $this->upl_f_fail);
 		     
 		// VALIDATION: CHECK IF THIS IMAGE
 		@getimagesize($_FILES[$fld_n_ntr]['tmp_name']) 
-		    or $this->error('Only image is allowed', $upl_f_fail);
+		    or $this->error('Only image is allowed', $this->upl_f_fail);
 		@getimagesize($_FILES[$fld_n_ava]['tmp_name']) 
-		    or $this->error('Only image is allowed', $upl_f_fail);
+		    or $this->error('Only image is allowed', $this->upl_f_fail);
 		// CREATE A UNIQUE FILE NAME
 		$now = time();
 		while(file_exists($upl_fn_ava = $upl_folder_ava.$now)) { $now++; };
@@ -115,9 +126,9 @@ class product extends controller {
 		// print_r($_FILES[$fld_n_ntr]['tmp_name']);
 		// return;
 		move_uploaded_file($_FILES[$fld_n_ntr]['tmp_name'], $upl_fn_ntr) 
-		    or $this->error('Receiving directory insuffiecient permission', $upl_f_fail);
+		    or $this->error('Receiving directory insuffiecient permission', $this->upl_f_fail);
 		move_uploaded_file($_FILES[$fld_n_ava]['tmp_name'], $upl_fn_ava) 
-		    or $this->error('Receiving directory insuffiecient permission', $upl_f_fail);
+		    or $this->error('Receiving directory insuffiecient permission', $this->upl_f_fail);
 		$return_data = array();
 		$return_data['scc_pg'] = $upl_f_scc;
 		$return_data['img_href']['ntr'] = $upl_fn_ntr;
