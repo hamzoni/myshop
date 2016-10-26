@@ -23,9 +23,14 @@ function html_arr(collection) {
 // preview image on canvas
 function handleImage(e){
 	var reader = new FileReader();
-		reader.onload = function(event){
-	img = new Image();
-	img.onload = function(){
+	reader.onload = function(e){
+		readImage(e.target.result);
+	}
+	reader.readAsDataURL(e.target.files[0]);     
+}
+function readImage(imgSrc) {
+	var img = new Image();
+	img.onload = function() {
 		cvs.width = img.width;
 		cvs.height = img.height;
 		ctx.drawImage(img,0,0);
@@ -33,7 +38,16 @@ function handleImage(e){
 		cvs.style.width = "100%";
 		cvs.style.height = "100%";
 	}
-	img.src = event.target.result;
+	img.src = imgSrc;
+}
+// select all checkboxes that are checked
+function get_allCheckedCkb(classname) {
+	var dom = document.getElementsByClassName(classname);
+	var chk_ctner = [];
+	for (var i = 0; i < dom.length; i++) {
+		if (dom[i].checked == true) {
+			chk_ctner.push(dom[i]);
+		}
 	}
-	reader.readAsDataURL(e.target.files[0]);     
+	return chk_ctner;
 }

@@ -11,6 +11,7 @@ class order extends controller {
 
 
 		$this->page_data["page"] = $this->page;
+		$this->page_data["preface_pgc"] = "Order list";
 		$this->page_data["base_url"] = $crr_url; 
 		$this->page_data["header"]["user"] = "admin"; 
 		$this->page_data["header"]["css"][0] = "main";

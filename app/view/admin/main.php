@@ -29,7 +29,11 @@
 		</nav>
 		<div class="main_pg_content">
 		<div class="preface_pgc">
-			<h1 class="fxRtlc"><a id="ol_bt">Order list</a></h1>
+			<h1 class="fxRtlc">
+				<a id="ol_bt">
+				<?=$data["preface_pgc"]?>
+				</a>
+			</h1>
 			<form class="spc_searchEg">
 				<input type="text" name="_typeVal" placeholder="sample..">
 				<button type="submit">
