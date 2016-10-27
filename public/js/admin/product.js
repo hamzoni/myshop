@@ -308,6 +308,7 @@ document.getElementById("rm_item").onclick = function() {
 	// send data to server using ajax
 	ajax_processor_url = tbl_sDt.b_url + '/del_prdRcrd';
 	$.post(ajax_processor_url,id_arC,function(data,status){
+		console.log(data);
 		if (data && parseInt(data) == 1) {
 			for (var i = 0; i < tr_ctner.length; i++) {
 				tr_ctner[0].parentNode.remove(tr_ctner[0]);
@@ -350,7 +351,7 @@ function editPrd_f(elm) {
 	p_n_f.value = prnt_dt.name;
 	p_dp_f.value = prnt_dt.dpl;
 	p_dp_f.value == 1 ? $("#dplbtn_c").click() : null;
-	p_sale.value = prnt_dt.sale*100;
+	p_sale.value = parseInt(parseFloat(prnt_dt.sale)*100);
 	p_price.value = prnt_dt.price;
 	p_type.value = prnt_dt.type;
 	p_dscr.value = prnt_dt.dscr;
@@ -381,6 +382,12 @@ $("#sbmitBt_kl").click(function(e){
 		//check if image is available & set previous link of img for deletion
 		p_avaImg.value !== "" ? img_processor.ava = prnt_dt.ava : null;
 		p_nutriImg.value !== "" ? img_processor.ntr = prnt_dt.ntr : null;
+		if (parseInt(p_sale.value) > 99) {
+			p_sale.value = 0;
+		}
+		if (parseInt(p_sale.value) > 0 && parseInt(p_sale.value) < 100) {
+			p_sale.value = (Math.round(p_sale.value * 100)/100)/100;
+		}
 		img_processor = JSON.stringify(img_processor);
 		// send data to server using ajax
 		previous_pData.value = img_processor;

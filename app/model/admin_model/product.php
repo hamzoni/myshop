@@ -50,15 +50,14 @@ class product_c extends general_c{
 		}
 		return ($this->db->rowCount() !== count($id_arr) ? '0' : '1');
 	}
-	public function delete_record($id_arr,$img_arr,$bsurl) {
+	public function delete_record($id_arr,$bsurl) {
 		if (count($id_arr) > 1) {
 			$queryStr = "id IN (".implode(",",$id_arr).")";
 		} else {
 			$queryStr = "id=".$id_arr[0];
 		}
 		$hrefLink = 'http://'.$_SERVER['HTTP_HOST'].$bsurl;
-		// remove image from directories
-		$this->rmImg_dir($img_arr);
+
 		$queryStr = "DELETE FROM `$this->tbl` WHERE $queryStr";
 		$this->db->query($queryStr);
 		try {
@@ -88,6 +87,6 @@ class product_c extends general_c{
 		} catch (Exception $e) {
 		    return $e->getMessage();
 		}
-		return ($this->db->lastInsertId() ? 1 : 0);
+		return 0 == $this->db->rowCount() ? 0 : 1;
 	}
 }

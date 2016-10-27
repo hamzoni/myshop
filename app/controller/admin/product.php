@@ -290,12 +290,6 @@ class product extends controller {
 	public function adding_dataTbl($offset) {
 		$ogd = $this->mdl_obj->select_record($_SESSION["slc_lm"],$offset);
 		$rdt = $this->dataModification($ogd);
-		for ($i = 0; $i < count($ogd); $i++) {
-			foreach ($ogd[$i] as $k => $v) {
-				$rdt[$i][$k] = utf8_decode($rdt[$i][$k]);
-				$ogd[$i][$k] = utf8_decode($ogd[$i][$k]);
-			}
-		}
 		print_r(json_encode([$ogd,$rdt]));
 	}
 	public function upd_prdDpl() {
@@ -305,7 +299,13 @@ class product extends controller {
 	}
 	public function del_prdRcrd() {
 		$updDpl = json_decode($_POST['DeleteRecords']);
-		$result = $this->mdl_obj->delete_record($updDpl->prdId,$updDpl->prdImg,$this->crr_folder);
+		$result = $this->mdl_obj->delete_record($updDpl->prdId,$this->crr_folder);
+		// remove image from directories
+		for ($i = 0; $i < count($updDpl->prdImg); $i++) {
+			for ($j = 0; $j < count($updDpl->prdImg[$i]); $j++) {
+				unlink($updDpl->prdImg[$i][$j]);
+			}
+		}
 		print_r($result);
 	}
 	public function upd_prdc() {
