@@ -261,3 +261,7 @@ function dp_ppuNtf(pd_n) {
 		$("#ppu_ntf").fadeOut(1000);
 	},3000);
 }
+// pagination function
+$("[_rqpg]").click(function(){
+
+});

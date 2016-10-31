@@ -87,6 +87,6 @@ class product_c extends general_c{
 		} catch (Exception $e) {
 		    return $e->getMessage();
 		}
-		return 0 == $this->db->rowCount() ? 0 : 1;
+		return (0 == $this->db->rowCount() ? 0 : 1);
 	}
 }

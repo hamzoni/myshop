@@ -28,12 +28,12 @@
 			<!-- end of food_type -->
 	 	</div>
 	 	<nav class="slide_container">
-			<!-- start of carousel slide -->
+			<!-- start of carousel slide popular -->
 			<div id="myCarousel" class="carousel slide carousel_size" data-ride="carousel" data-interval="8000">
 
 				<ol class="carousel-indicators">
 					<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-					<?php for ($i = 1; $i < 4; $i++) { ?>
+					<?php for ($i = 1; $i < count($data["items"]["popular"]); $i++) { ?>
 					<li data-target="#myCarousel" data-slide-to="<?php echo $i; ?>"></li>
 					<?php }; ?>
 				</ol>
@@ -66,9 +66,9 @@
 							<input type="hidden" name="f_sale" value="0">
 						</form>
 					</div>
-					<?php for ($i = 2; $i < 5; $i++) { ?>
+					<?php for ($i = 2; $i < count($data["items"]["popular"]); $i++) { ?>
 					<div class="item">
-						<img food-info-id="10" src="img/<?php echo $i; ?>.jpg" alt="Chania">
+						<img food-info-id="<?=$data["items"]["popular"][$i]["id"]?>" src="<?=$data["items"]["popular"][$i]["avatar_img"]?>" alt="Chania">
 						<!-- food_narration -->
 						<article class="food_narration" add-to-cart>
 							<i class="fa fa-cart-plus cart_lil" aria-hidden="true"></i>
@@ -76,22 +76,22 @@
 							<div class="mc_fnr">
 								<div class="trc_fnr">
 									<span class="VAAlign">
-										Sample food name
+									<?=$data["items"]["popular"][$i]["name"]?>
 									</span>
 								</div>
 								<div class="prc_val">
-									200K
+								<?=$data["items"]["popular"][$i]["price"]?>
 								</div>
 							</div>
 						</article>
 						<form class="food_data_cluster">
-							<input type="hidden" name="f_id" value="10">
-							<input type="hidden" name="f_price" value="45000">
-							<input type="hidden" name="f_name" value="Noodle">
-							<input type="hidden" name="f_dscr" value="tasteless">
-							<input type="hidden" name="f_nutri" value="img/sample_nutrition.jpg">
-							<input type="hidden" name="f_ava" value="img/<?php echo $i; ?>.jpg">
-							<input type="hidden" name="f_sale" value="0">
+							<input type="hidden" name="f_id" value="<?=$data["items"]["popular"][$i]["id"]?>">
+							<input type="hidden" name="f_price" value="<?=$data["items"]["popular"][$i]["price"]?>">
+							<input type="hidden" name="f_name" value="<?=$data["items"]["popular"][$i]["name"]?>">
+							<input type="hidden" name="f_dscr" value="<?=$data["items"]["popular"][$i]["description"]?>">
+							<input type="hidden" name="f_nutri" value="<?=$data["items"]["popular"][$i]["nutrition_img"]?>">
+							<input type="hidden" name="f_ava" value="<?=$data["items"]["popular"][$i]["avatar_img"]?>">
+							<input type="hidden" name="f_sale" value="<?=$data["items"]["popular"][$i]["sale"]?>">
 						</form>
 					</div>
 					<?php }; ?>
@@ -392,6 +392,21 @@
 	 	</div>
 	 	<?php }; ?>
 	 </section>
+	 <nav class="pagination_nav">
+	 	<div class="pag_wrapper">
+	 		<a _rqpg='prev'>
+		 		<span class="VAAlign">Previous</span>
+		 	</a>
+		 	<ul class="pagBtn_ctner">
+		 		<li _rqPg='1'>
+		 			<span class="VAAlign">1</span>
+		 		</li>
+		 	</ul>
+		 	<a _rqpg='Next'>
+		 		<span class="VAAlign">Next</span>
+		 	</a>
+	 	</div>
+	 </nav>
 </section>
 <!-- end of wrapper -->
 <nav class="free_nav_bar">
@@ -555,6 +570,19 @@
 	vào giỏ hàng
 </div>
 <!-- end of ctner_ppuntf -->
+<script type="text/javascript">
+	// alert notification if having
+	<?php if (@isset($data["ntf"])) { ?>
+	alert("<?=$data["ntf"];?>");
+	<?php };?>
+	// preset tbl select data
+	var tbl_sDt = {
+		b_url: '<?=$data["base_url"]?>',
+		lmt: <?=$data["slc_lm"]?>, // NUMBER OF RECORD TO BE PULLED
+		ofs: <?=$data["crr_offset"]?>, // POSITION OF STARTED RECORD
+		ttr: <?=$data["total_records"]?> // TOTAL RECORDS IN DATABASE
+	}
+</script>
 <script type="text/javascript" src="js/general/assets.js"></script>
 <script type="text/javascript" src="js/client/home_data.js"></script>
 <script type="text/javascript" src="js/client/home.js"></script>

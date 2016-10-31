@@ -579,3 +579,27 @@ label.swd_lbt {
 .selected_product {
 	background-color: #595959;
 }
+.progress_layer {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: rgba(0,0,0,0.86);
+	z-index: 14;
+	box-shadow: inset 0px 0px 30px 4px #fff;
+}
+.progL_wrapper {
+	overflow: hidden;
+	width: 100%;
+	top: 50%;
+	transform: translateY(-65%);
+}
+#upload_status {
+	font-size: 40px;
+	text-align: center;
+}
+#upl_progBar {
+	display: block;
+	margin: 15px auto;
+}

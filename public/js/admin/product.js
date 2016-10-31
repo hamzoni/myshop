@@ -81,6 +81,7 @@ $(".close_btn").click(function(){
 	$(".boundingLayer").css({
 		"display":"none"
 	});
+	reset_form();
 });
 // identify target, whether it's Edit form (1) or Add form (0)
 var f_trg = 0;
@@ -92,6 +93,8 @@ $("#add_prf").click(function(){
 	});
 	var f_action_val = document.getElementsByClassName("boundingLayer")[0].firstElementChild;
 	f_action_val = f_action_val.getElementsByTagName("form")[0].setAttribute("action",tbl_sDt.b_url + "/add_product");
+});
+function reset_form() {
 	// reset form
 	newPrd_form.reset();
 	p_dp_f.value = "0";
@@ -101,7 +104,7 @@ $("#add_prf").click(function(){
 	// reset canvas
 	ctx_nutr.clearRect(0, 0, cvs_nutr.width, cvs_nutr.height);
 	ctx_avat.clearRect(0, 0, cvs_avat.width, cvs_avat.height);
-});
+}
 var dp_prdTble = document.getElementById("dp_prdTble");
 var tr_dpt_h = dp_prdTble.getElementsByTagName("tr")[0];
 tr_dpt_h = tr_dpt_h.offsetHeight;
@@ -366,6 +369,12 @@ function editPrd_f(elm) {
 	},100);
 }
 // send ajax to server once submit update btn
+var prg_tracker = {
+	bar: document.getElementById("upl_progBar"),
+	layer: document.getElementById("prg_layer"),
+	status: document.getElementById("upload_status"),
+	status_d: ["Upload in process...","Upload successful"]
+}
 $("#sbmitBt_kl").click(function(e){
 	if (f_trg == 1) {
 		e.preventDefault();
@@ -380,8 +389,8 @@ $("#sbmitBt_kl").click(function(e){
 			}
 		}
 		//check if image is available & set previous link of img for deletion
-		p_avaImg.value !== "" ? img_processor.ava = prnt_dt.ava : null;
-		p_nutriImg.value !== "" ? img_processor.ntr = prnt_dt.ntr : null;
+		p_avaImg.value !== "" ? img_processor.ava = prnt_dt.ava : 0;
+		p_nutriImg.value !== "" ? img_processor.ntr = prnt_dt.ntr : 0;
 		if (parseInt(p_sale.value) > 99) {
 			p_sale.value = 0;
 		}
@@ -391,6 +400,8 @@ $("#sbmitBt_kl").click(function(e){
 		img_processor = JSON.stringify(img_processor);
 		// send data to server using ajax
 		previous_pData.value = img_processor;
+		// display upload progress tracker
+		prg_tracker.layer.style.display = "block";
 		$.ajax({
 			url: ajax_processor_url,  //Server script to process data
 			type: 'POST',
@@ -403,7 +414,24 @@ $("#sbmitBt_kl").click(function(e){
 			},
 			beforeSend: null,
 			success: function(data){
-				console.log(data);
+				data = JSON.parse(data);
+				var data0 = data[1][0];
+				data = data[0];
+				var updPrd_Inf = document.querySelectorAll("[prd_id='" + data.id + "']")[0];
+				var tr_updp = updPrd_Inf.parentNode.parentNode;
+				
+				// update data in hidden form
+				updPrd_Inf.prd_name = data.p_name;updPrd_Inf.prd_type = data.p_type;
+				updPrd_Inf.prd_price = data.p_price;updPrd_Inf.prd_display = data.p_display;
+				updPrd_Inf.prd_sale = data.p_sale;updPrd_Inf.prd_description = data.f_dscrp;
+				updPrd_Inf.prd_avatar_img = data.ava;updPrd_Inf.prd_last_update = data.last_upd;
+				updPrd_Inf.prd_nutrition_img = data.ntr;
+				// update data in product rows
+				tr_updp.children[2].innerHTML = updPrd_Inf.prd_name.value;
+				tr_updp.children[3].innerHTML = updPrd_Inf.prd_price.value;
+				tr_updp.children[4].innerHTML = data0.sale;
+				tr_updp.children[6].children[0].className = "fa fa-circle" + data0.display;
+				tr_updp.children[7].innerHTML = data0.type;
 			},
 			error: function(){
 				alert("Unknown error occur!")
@@ -416,8 +444,20 @@ $("#sbmitBt_kl").click(function(e){
 		return false;
 	}
 });
+
 function progressHandlingFunction(e){
     if(e.lengthComputable){
-        $('progress').attr({value:e.loaded,max:e.total});
+        $('#upl_progBar').attr({value:e.loaded,max:e.total});
+        if (e.loaded == e.total) {
+        	prg_tracker.status.innerHTML = prg_tracker.status_d[1];
+        	setTimeout(function(){
+        		// close update box
+        		$(".close_btn").click();
+        		// hide progress tracker layer 
+        		prg_tracker.layer.style.display = "none";
+        		// reset tracker status to default
+        		rg_tracker.status.innerHTML = prg_tracker.status_d[0];
+        	},1000);
+        }
     }
 }

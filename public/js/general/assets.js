@@ -51,3 +51,16 @@ function get_allCheckedCkb(classname) {
 	}
 	return chk_ctner;
 }
+function cvT_timestampSQL(ms) {
+	var date = new Date(ms);
+	var d_obj = {
+		date:date.getDate(),
+		month:date.getMonth() + 1,
+		year:date.getFullYear(),
+		hour:date.getHours() + 1,
+		minute: date.getMinutes(),
+		seconds: date.getSeconds()
+	}
+	var timeStr = d_obj.year + "-" + d_obj.month + "-" + d_obj.date + " " + d_obj.hour + ":" + d_obj.minute + ":" + d_obj.seconds;
+	return timeStr;
+}

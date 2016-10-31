@@ -45,7 +45,7 @@
 		<?php for($i = 0; $i < count($data["products_tray"]); $i++) { ?>
 		<tr>
 			<td>
-				<form class="prd_infoCtner" style="display:none;">
+				<form class="prd_infoCtner" prd_id='<?=$data['products_original'][$i]['id']?>' style="display:none;">
 				<?php foreach ($data["products_original"][$i] as $k => $v) { ?>
 					<input type="hidden" name="prd_<?=$k?>" value="<?=$v?>">
 				<?php }; ?>
@@ -135,7 +135,6 @@
 		</div>
 	</div>
 	<!-- end of r_col_prdmdf -->
-	<progress value="" max="">
 </section>
 <div class="boundingLayer" style="display:none;">
 	<div class="popup_addProduct">
@@ -146,6 +145,13 @@
 			<button class="close_btn">
 				<i class="fa fa-times" aria-hidden="true"></i>
 			</button>
+		</div>
+		<div id="prg_layer" class="progress_layer" style="display:none;">
+			<div class="progL_wrapper">
+				<h1 id="upload_status">Upload in process...</h1>
+				<progress id="upl_progBar" value="" max="">
+			</div>
+
 		</div>
 		<form id="addPr_f" name="upload_newProduct" action="<?=$data["upload_form"]["handler"]?>" method="POST" enctype="multipart/form-data">
 			<input type="hidden" name="MAX_FILE_SIZE" value="<?=$data["upload_form"]["file_size"]?>"> 

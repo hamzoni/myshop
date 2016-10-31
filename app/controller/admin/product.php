@@ -78,7 +78,7 @@ class product extends controller {
 		header('Location: '.$rt_dt['scc_pg']);
 	}
 
-	public function upload_image($imgvF = false, $upl_type = 3, $prv_fn = []) {
+	public function upload_image($imgvF = false, $upl_type = 3, $prv_fn = [],$prevAvailable = ['ava'=>false,'ntr'=>false]) {
 		// imgvF = false: is uploaded from a html form (ajax rather)
 		// upl_type = 0 (ava) or 1 (ntr) or 2 (both) or 3 (none of those)
 
@@ -139,10 +139,19 @@ class product extends controller {
 					$return_data['error'] = 'Only image is allowed';
 					return $return_data['error'];
 				} 
-				// USE PREVIOUS FILE NAME
-				$fldd = preg_match('/\d+$/', $prv_fn['ava']);
-				$upl_fn_ava = $upl_folder_ava.$fldd;
-				$return_data['img_href']['ava'] = $ava_href.$fldd;
+				if ($prevAvailable['ava'] === true) {
+					// USE PREVIOUS FILE NAME
+					$fldd = [];
+					preg_match('/\d+$/', $prv_fn['ava'], $fldd);
+					$fldd = $fldd[0];
+					$upl_fn_ava = $upl_folder_ava.$fldd;
+					$return_data['img_href']['ava'] = $ava_href.$fldd;
+				} else {
+					// CREATE A UNIQUE FILE NAME
+					while(file_exists($upl_fn_ava = $upl_folder_ava.$now)) {$now++;};
+					$return_data['img_href']['ava'] = $ava_href.$now;
+				}
+				
 				// MOVE FILE TO TARGET LOCATION && ALLOCATE NEW FILE NAME
 				if (!move_uploaded_file($_FILES[$fld_n_ava]['tmp_name'], $upl_fn_ava) ) {
 					$return_data['error'] = 'Receiving directory insuffiecient permission';
@@ -186,10 +195,18 @@ class product extends controller {
 					$return_data['error'] = 'Only image is allowed';
 					return $return_data['error'];
 				} 
-				// USE PREVIOUS IMAGE
-				$fldd = preg_match('/\d+$/', $prv_fn['ntr']);
-				$upl_fn_ntr = $upl_folder_ntr.$fldd;
-				$return_data['img_href']['ntr'] = $ntr_href.$fldd;
+				if ($prevAvailable['ntr'] === true) {
+					// USE PREVIOUS IMAGE
+					$fldd = [];
+					preg_match('/\d+$/', $prv_fn['ntr'], $fldd);
+					$fldd = $fldd[0];
+					$upl_fn_ntr = $upl_folder_ntr.$fldd;
+					$return_data['img_href']['ntr'] = $ntr_href.$fldd;
+				} else {
+					// CREATE A UNIQUE FILE NAME
+					while(file_exists($upl_fn_ntr = $upl_folder_ntr.$now)) {$now++;};
+					$return_data['img_href']['ntr'] = $ntr_href.$now;
+					}
 				// MOVE FILE TO TARGET LOCATION && ALLOCATE NEW FILE NAME
 				if (!move_uploaded_file($_FILES[$fld_n_ntr]['tmp_name'], $upl_fn_ntr)) {
 					$return_data['error'] = 'Receiving directory insuffiecient permission';
@@ -309,29 +326,37 @@ class product extends controller {
 		print_r($result);
 	}
 	public function upd_prdc() {
-		
-		
 		$upd_dtrc = json_decode($_POST['previous_pData'],true);
 		$upd_gntr = $_POST;
 		$upd_gntr['id'] = $upd_dtrc['id'];
 		$isEmpty_img = [];
 		$isEmpty_img['ava'] = empty($_FILES['p_avatar']['size']);
 		$isEmpty_img['ntr'] = empty($_FILES['p_nutrition']['size']);
+
+		$fileExist = ['ava'=>file_exists($upd_dtrc['ava']),'ntr'=>file_exists($upd_dtrc['ntr'])];
+		$dl_r = true;
 		if ($isEmpty_img['ava'] == false && $isEmpty_img['ntr'] == false) {
 			// remove image from dir
-			$dl_r = $this->rmImg_dir([$upd_dtrc['ava'],$upd_dtrc['ntr']]);
+			if ($upd_dtrc['ava'] != 0 && $upd_dtrc['ntr'] != 0
+				&& null !== $upd_dtrc) {
+				$dl_r = $this->rmImg_dir([$upd_dtrc['ava'],$upd_dtrc['ntr']]);
+			}
 			// upload image using prev name
-			$upl_rs = $this->upload_image(true, 2,['ava'=>$upd_dtrc['ava'],'ntr'=>$upd_dtrc['ntr']]);
+			$upl_rs = $this->upload_image(true, 2,['ava'=>$upd_dtrc['ava'],'ntr'=>$upd_dtrc['ntr']],$fileExist);
 			$upd_gntr['ava'] = $upl_rs['img_href']['ava'];
 			$upd_gntr['ntr'] = $upl_rs['img_href']['ntr'];
 		} else if ($isEmpty_img['ava'] == true && $isEmpty_img['ntr'] == false) {
-			$dl_r = $this->rmImg_dir($upd_dtrc['ntr']);
-			$upl_rs = $this->upload_image(true, 1,['ntr'=>$upd_dtrc['ntr']]);
+			if ($upd_dtrc['ntr'] != 0 && null !== $upd_dtrc) {
+				$dl_r = $this->rmImg_dir($upd_dtrc['ntr']);
+			}
+			$upl_rs = $this->upload_image(true, 1,['ntr'=>$upd_dtrc['ntr']],$fileExist);
 			$upd_gntr['ntr'] = $upl_rs['img_href']['ntr'];
 			$upd_gntr['ava'] = null;
 		} else if ($isEmpty_img['ava'] == false && $isEmpty_img['ntr'] == true) {
-			$dl_r = $this->rmImg_dir($upd_dtrc['ava']);
-			$upl_rs = $this->upload_image(true, 0,['ava'=>$upd_dtrc['ava']]);
+			if ($upd_dtrc['ava'] != 0 && null !== $upd_dtrc) {
+				$dl_r = $this->rmImg_dir($upd_dtrc['ava']);
+			}
+			$upl_rs = $this->upload_image(true, 0,['ava'=>$upd_dtrc['ava']],$fileExist);
 			$upd_gntr['ava'] = $upl_rs['img_href']['ava'];
 			$upd_gntr['ntr'] = null;
 		} else {
@@ -354,7 +379,13 @@ class product extends controller {
 		}
 		// update record
 		$upd_db = $this->mdl_obj->update_product($upd_gntr);
-		print_r($upd_db);
+		$upd_gntr['last_upd'] = date("Y-m-d h:i:s");
+		$spc_tblDpl = array();
+		$spc_tblDpl['sale'] = $upd_gntr['p_sale'];
+		$spc_tblDpl['type'] = $upd_gntr['p_type'];
+		$spc_tblDpl['display'] = $upd_gntr['p_display'];
+		$spc_tblDpl = $this->dataModification([$spc_tblDpl]);
+		print_r(json_encode([$upd_gntr,$spc_tblDpl]));
 	}
 	public function rmImg_dir($img_src) {
 		if (is_array($img_src)) {
