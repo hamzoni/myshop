@@ -89,4 +89,10 @@ class product_c extends general_c{
 		}
 		return (0 == $this->db->rowCount() ? 0 : 1);
 	}
+	public function get_all_imgUrl($field) {
+		$queryStr = "SELECT `$field` FROM `$this->tbl`";
+		$this->db->query($queryStr);
+		$rows = $this->db->resultset();
+		return $rows;
+	}
 }

@@ -824,3 +824,7 @@ ul.pagBtn_ctner {
 	transform: translateX(-50%);
 	display: inline-block;
 }
+.pagBtn_ctner li.active {
+	background: #fff;
+	color: #000;
+}

@@ -24,6 +24,8 @@ class product extends controller {
 			$this->page_data["ntf"] = $_SESSION["ntf"];
 			unset($_SESSION["ntf"]);
 		}
+		// clear all unknown image in folder everytime load page
+		$this->clr_unuseImg();
 		$this->page_data["page"] = $this->page;
 		$this->page_data["preface_pgc"] = "Products list";
 		$this->page_data["base_url"] = $crr_url;
@@ -49,6 +51,44 @@ class product extends controller {
 		// call view
 		$this->view('admin/main',$this->page_data);
 
+	}
+	public function clr_unuseImg() {
+		$imgType = ["ntr"=>"nutrition_img","ava"=>"avatar_img"];
+		$rootFolder = "img/client/";
+		$vtnt;
+		foreach ($imgType as $t => $f) {
+			$usImgArr = [];
+			$imgDB = ["fn"=>[],"cpl"=>[]]; 
+			$imgFD = [];
+			// get all img href from database
+			$imgDB["cpl"] = $this->mdl_obj->get_all_imgUrl($f);
+			// get all filename from folder
+			$imgFD = scandir($rootFolder.$t);
+			// strip all href to get filename from database
+			for ($i = 0; $i < count($imgDB["cpl"]); $i++) {
+				preg_match('/\d+$/', $imgDB["cpl"][$i][$f], $vtnt);
+				$imgDB["fn"][] = $vtnt[0];
+			}
+			// find discrepancy of between DataBase and FolDer
+			for ($i = 0; $i < count($imgFD); $i++) {
+				if ($this->indexOf($imgFD[$i] ,$imgDB["fn"]) == -1) {
+					$fntrm = $rootFolder.$t."/".$imgFD[$i];
+					// remove all differentiation
+					if (file_exists($fntrm) && intval($imgFD[$i]) != 0) {
+						unlink($fntrm);
+					}
+				}
+			}
+		}
+		
+	}
+	public function indexOf($trg, $arr) {
+		for ($j = 0 ; $j < count($arr); $j++) {
+			if ($trg == $arr[$j]) {
+				return $j;
+			}
+		}
+		return -1;	
 	}
 	public function add_product() {
 		$f_dt = array();

@@ -25,7 +25,7 @@ $("#dplbtn_c").click(function(e){
 	if (p_display) {
 		icon.className = "fa fa-eye-slash";
 		this.className = "dpl_g2";
-		this.title = "show product?"
+		this.title = "show product?";
 		p_dp_f.value = "0";
 		p_display = false;
 	} else {
@@ -189,6 +189,7 @@ function update_prdTable(dtdc) {
 			chkbx_f.elements[n].value = dtdc[0][i][fn1];
 			n++;
 		}
+		chkbx_f.setAttribute("prd_id",dtdc[0][i]['id']);
 		tr_ptbl.appendChild(chkbx);
 		for (var j = 0; j < vfn.length; j++) {
 			if (vfn[j] == 'display') {
@@ -417,6 +418,7 @@ $("#sbmitBt_kl").click(function(e){
 				data = JSON.parse(data);
 				var data0 = data[1][0];
 				data = data[0];
+				console.log(data);
 				var updPrd_Inf = document.querySelectorAll("[prd_id='" + data.id + "']")[0];
 				var tr_updp = updPrd_Inf.parentNode.parentNode;
 				
@@ -456,7 +458,7 @@ function progressHandlingFunction(e){
         		// hide progress tracker layer 
         		prg_tracker.layer.style.display = "none";
         		// reset tracker status to default
-        		rg_tracker.status.innerHTML = prg_tracker.status_d[0];
+        		prg_tracker.status.innerHTML = prg_tracker.status_d[0];
         	},1000);
         }
     }

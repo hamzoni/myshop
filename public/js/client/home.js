@@ -261,7 +261,55 @@ function dp_ppuNtf(pd_n) {
 		$("#ppu_ntf").fadeOut(1000);
 	},3000);
 }
-// pagination function
-$("[_rqpg]").click(function(){
-
-});
+// create pagnition buttons
+var pgBtCtner = document.getElementsByClassName("pagBtn_ctner")[0];
+var mainPgHder = document.querySelectorAll("[crr-pgn]")[0];
+create_pagBtn();
+function create_pagBtn() {
+	var nbBtn = Math.ceil(tbl_sDt.ttr/tbl_sDt.mxDp);
+	var trgCln = document.getElementById("splNb");
+	var cloneBtn = trgCln.cloneNode(true);
+	trgCln.parentNode.removeChild(trgCln);
+	cloneBtn.removeAttribute("id");
+	cloneBtn.removeAttribute("style");
+	for (var i = 1; i <= nbBtn; i++) {
+		// default btn 1 is active
+		var clnB2 = cloneBtn.cloneNode(true);
+		if (i == 1) {
+			clnB2.classList.add("active");
+		}
+		clnB2.setAttribute("_rqpg",i);
+		clnB2.children[0].innerHTML = i;
+		clnB2.addEventListener("click",chgPag);
+		pgBtCtner.appendChild(clnB2);
+	}
+	return cloneBtn;
+}
+var clnDish = {
+	dom: document.getElementsByClassName("dishes")[0].cloneNode(true)
+}
+clnMobj["discount"] = clnDish.dom.getElementsByClassName("discount_tag")[0];
+clnMobj["image_ctner"] = clnDish.dom.querySelectorAll("[food-info-id]")[0];
+clnMobj["p_name"] = clnDish.dom.getElementsByClassName("dsck_n")[0];
+clnMobj["p_price"] = clnDish.dom.getElementsByClassName("dsck_p")[0];
+clnMobj["addCart_bt"] = clnDish.dom.getElementsByClassName("add_to_cart")[0];
+clnMobj["pf_data"]
+function chgPag() {
+	// clear all active btn
+	for (var i = 0; i < pgBtCtner.children.length; i++) {
+		pgBtCtner.children[i].classList.remove("active");
+	}
+	this.classList.add("active");
+	// before server request, check if button is repeatitively active
+	var pgRqD = "pg_selector=" + this.getAttribute("_rqpg");
+	if (mainPgHder.getAttribute("crr-pgn") !== this.getAttribute("_rqpg")) {
+		// send request to server
+		ajax_processor_url = tbl_sDt.b_url + '/chgPag';
+		$.post(ajax_processor_url,pgRqD,function(data,status){
+			data = JSON.parse(data);
+			console.log(data);
+		});
+	}
+	// set new pg trg of mainPgHder
+	mainPgHder.setAttribute("crr-pgn",this.getAttribute("_rqpg"));
+}

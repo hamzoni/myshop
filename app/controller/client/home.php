@@ -33,13 +33,36 @@ class home extends controller {
 		$this->page_data["crr_offset"] = $_SESSION["crr_offset"];
 		// ITEMS DATA
 		// POPULAR ITEMS
-		$this->page_data["items"]["popular"] = $this->mdl_prd->select_byGenre("purchase_count",1,10,["display","1"]);
-
-		print_r($this->page_data["items"]["popular"]);
-		return;
-		$this->page_data["items"] = $this->mdl_prd->select_prdPager($this->page_data["slc_lm"], $_SESSION["crr_offset"]);
+		$this->page_data["items"]["popular"] = $this->mdl_prd->select_byGenre("purchase_count",1,10,[["display","1"],null]); // Sort 1 == DESC, Limit 10 == Display 10 rows
+		// SALE ITEMS
+		$this->page_data["items"]["saleOff"] = $this->mdl_prd->select_byGenre("sale",1,null,[["display","1"],["type","2"]]);
+		// SPECIAL ITEMS
+		$this->page_data["items"]["special"] = $this->mdl_prd->select_byGenre("post_date",1,null,[["display","1"],["type","1"]]);
+		// SUGGESTED ITEMS
+		$suggestFd = $this->mdl_prd->select_byGenre("post_date",1,null,[["display","1"],["type","3"]]);
+		if (count($suggestFd) > 3) {
+			$nbOfDiv = ceil(count($suggestFd)/3);
+			for ($i = 0, $n = 0; $i < $nbOfDiv, $n < count($suggestFd); $i++) {
+				while ($n < 3*($i + 1)) {
+					$this->page_data["items"]["suggest"][$i][] = $suggestFd[$n];
+					$n++;
+					if ($n == count($suggestFd)) {
+						break;
+					}
+				}
+			}
+		} else {
+			$this->page_data["items"]["suggest"][0] = $suggestFd;
+		}
+		// select offset 12 items
+		$this->page_data["items"]["menu"] = $this->mdl_prd->select_prdPager($this->page_data["slc_lm"], $_SESSION["crr_offset"]);
 		// call view
 		$this->view('client/home',$this->page_data);
+	}
+	public function chgPag() {
+		$_SESSION["crr_offset"] = $_SESSION["slc_lm"]*($_POST["pg_selector"] - 1);
+		$chgPgResult = $this->mdl_prd->getMainDishes($_SESSION["slc_lm"],$_SESSION["crr_offset"]);
+		print_r(json_encode($chgPgResult));
 	}
 }
 
