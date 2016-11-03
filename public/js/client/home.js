@@ -285,15 +285,7 @@ function create_pagBtn() {
 	}
 	return cloneBtn;
 }
-var clnDish = {
-	dom: document.getElementsByClassName("dishes")[0].cloneNode(true)
-}
-clnMobj["discount"] = clnDish.dom.getElementsByClassName("discount_tag")[0];
-clnMobj["image_ctner"] = clnDish.dom.querySelectorAll("[food-info-id]")[0];
-clnMobj["p_name"] = clnDish.dom.getElementsByClassName("dsck_n")[0];
-clnMobj["p_price"] = clnDish.dom.getElementsByClassName("dsck_p")[0];
-clnMobj["addCart_bt"] = clnDish.dom.getElementsByClassName("add_to_cart")[0];
-clnMobj["pf_data"]
+var smplc = document.getElementsByClassName("dishes")[0].cloneNode(true);
 function chgPag() {
 	// clear all active btn
 	for (var i = 0; i < pgBtCtner.children.length; i++) {
@@ -305,11 +297,46 @@ function chgPag() {
 	if (mainPgHder.getAttribute("crr-pgn") !== this.getAttribute("_rqpg")) {
 		// send request to server
 		ajax_processor_url = tbl_sDt.b_url + '/chgPag';
+		// clear main_menu
 		$.post(ajax_processor_url,pgRqD,function(data,status){
 			data = JSON.parse(data);
-			console.log(data);
+			for (var i = 0; i < data.length; i++) {
+				var clItb = create_itCln();
+				clItb.discount.innerHTML = data[i].sale;
+				clItb.image_ctner.src = data[i].avatar_img;
+				clItb.image_ctner.setAttribute("food-info-id",data[i].id);
+				clItb.p_name = data[i].name;
+				clItb.p_price = data[i].price;
+				// set items form data
+				clnDish.pform_dt.f_id = data[i].id;
+				clnDish.pform_dt.f_price = data[i].price;
+				clnDish.pform_dt.f_name = data[i].name;
+				clnDish.pform_dt.f_dscr = data[i].description;
+				clnDish.pform_dt.f_nutri = data[i].nutrition_img;
+				clnDish.pform_dt.f_ava = data[i].avatar_img;
+				clnDish.pform_dt.f_sale = data[i].sale;
+			}
+			
 		});
 	}
 	// set new pg trg of mainPgHder
 	mainPgHder.setAttribute("crr-pgn",this.getAttribute("_rqpg"));
+}
+function create_itCln() {
+	var clnDish = {
+		dom: 
+	}
+	clnDish["discount"] = clnDish.dom.getElementsByClassName("discount_tag")[0];
+	clnDish["image_ctner"] = clnDish.dom.querySelectorAll("[food-info-id]")[0];
+	clnDish["p_name"] = clnDish.dom.getElementsByClassName("dsck_n")[0];
+	clnDish["p_price"] = clnDish.dom.getElementsByClassName("dsck_p")[0];
+	clnDish["addCart_bt"] = clnDish.dom.getElementsByClassName("add_to_cart")[0];
+	clnDish["pform_dt"] = clnDish.dom.getElementsByClassName("food_data_cluster")[0];
+	return clnDish;
+}
+function clr_mmn() {
+	var main_menu = document.getElementsByClassName("main_menu")[0];
+	while (main_menu.children.length > 0) {
+		main_menu.removeChild(main_menu.children[0]);
+	}
 }
