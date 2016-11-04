@@ -13,8 +13,6 @@ class product_c extends general_c {
 		return $rows;
 	}
 	public function select_byGenre($orderBy = null,$sortType = 1,$lim = null,$cond = [null,null]) {
-
-
 		$queryStr = "SELECT * FROM `$this->tbl` ";
 		if ($cond[0] !== null && !empty($cond[0])) {
 			if ($cond[0][0] !== null && !empty($cond[0][0]) && $cond[0][1] !== null & !empty($cond[0][1])) {

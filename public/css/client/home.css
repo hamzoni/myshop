@@ -354,6 +354,11 @@ body {
 	border-bottom-left-radius: 5px;
 	border-right-width: 0px;
 	z-index: 2;
+	display: block;
+	margin-bottom: 10px;
+}
+._myCart[id='client_cart'] {
+	margin-bottom: 0px;
 }
 #nbr_itemsIC {
 	width: 16px;
@@ -402,7 +407,7 @@ body {
 .hd_ttl {
 	color: #fff;
 	line-height: inherit;
-	font-size: 32px;
+	font-size: 25px;
 	display: block;
 	float: left;
 	text-transform: uppercase;
@@ -789,7 +794,7 @@ ul.pagBtn_ctner {
 	float: left;
 }
 .pagination_nav a,
-.pagination_nav li
+.pagination_nav button
 {
 	cursor: pointer;
 	border: 1px solid #fff;
@@ -800,9 +805,10 @@ ul.pagBtn_ctner {
 	border-radius: 5px;
 	height: 100%;
 	margin-right: 5px;
+	background-color: transparent;
 }
 .pagination_nav a:hover,
-.pagination_nav li:hover {
+.pagination_nav button:hover {
 	background-color: #fff;
 	color: #000;
 }
@@ -813,7 +819,7 @@ ul.pagBtn_ctner {
 .pagination_nav a:last-child {
 	margin-right: 0px;
 }
-.pagination_nav li {
+.pagination_nav button {
 	width: 30px;
 }
 .pag_wrapper {
@@ -825,7 +831,7 @@ ul.pagBtn_ctner {
 	transform: translateX(-50%);
 	display: inline-block;
 }
-.pagBtn_ctner li.active {
+.pagBtn_ctner button.active {
 	background: #fff;
 	color: #000;
 }

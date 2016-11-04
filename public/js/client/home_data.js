@@ -11,3 +11,6 @@ var cart = {
 	total_bill: 0,
 	items_list: []
 }
+var client_info = {
+	
+}

@@ -64,3 +64,23 @@ function cvT_timestampSQL(ms) {
 	var timeStr = d_obj.year + "-" + d_obj.month + "-" + d_obj.date + " " + d_obj.hour + ":" + d_obj.minute + ":" + d_obj.seconds;
 	return timeStr;
 }
+
+function isInt(n){
+    return Number(n) % 1 === 0;
+}
+
+function isFloat(n){
+    return Number(n) % 1 !== 0;
+}
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+function isEmpty(obj) {
+    if (obj == null) return true;
+    if (obj.length > 0)    return false;
+    if (obj.length === 0)  return true;
+    if (typeof obj !== "object") return true;
+    for (var key in obj) {
+        if (hasOwnProperty.call(obj, key)) return false;
+    }
+    return true;
+}

@@ -5,9 +5,14 @@ var clone_trDtbl = $("#cart_dataTbl").children("tbody").find("tr").clone(true,tr
 $("#cart_dataTbl").children("tbody").find("tr").remove()
 
 // display pop-up
-$(".close_btn").click(function(){
-	var box_to_close = this.parentNode.parentNode;
+$(".close_btn").click(function(e){
+	e.preventDefault();
+	box_to_close = this.parentNode.parentNode;
+	if (html_arr(box_to_close.classList).indexOf("general_popUp") == -1) {
+		box_to_close = box_to_close.parentNode;
+	}
 	box_to_close.style.display = "none";
+	return false;
 });
 var cart_btn = document.getElementById("client_cart");
 cart_btn.onclick = function() {
@@ -19,14 +24,17 @@ cart_btn.onclick = function() {
 	redcart(0);
 }
 $('*[food-info-id]').click(function(){
+	openFood_detail(this);
+});
+function openFood_detail(dom) {
 	var currentScroll = window.scrollY;
 	$(".food_detail").css({
 		"display" : "block",
 		"top" : "calc(25% + " + currentScroll + "px)"
 	});
-	fill_dtFI(this.parentNode.getElementsByClassName("food_data_cluster")[0]);
+	fill_dtFI(dom.parentNode.getElementsByClassName("food_data_cluster")[0]);
 	document.getElementById("qty_ifcIf").value = "1";
-});
+}
 // dragging method
 var drag_activate = false;
 var host_element;
@@ -88,9 +96,12 @@ addEvent(window,"load",function(e) {
 // add food to cart method
 var total_items = 0;
 $('*[add-to-cart]').click(function(){
-	var myDForm = this.parentNode.getElementsByClassName("food_data_cluster")[0];
-	insert_itemCart(myDForm);
+	add_toCartF(this);
 });
+function add_toCartF(dom) {
+	var myDForm = dom.parentNode.getElementsByClassName("food_data_cluster")[0];
+	insert_itemCart(myDForm);
+}
 function insert_itemCart(data_form,i_qty = 1){
 	var is_form = data_form.nodeName !== undefined;
 	// push data to as pre-set
@@ -193,6 +204,7 @@ function update_cart() {
 document.getElementById("clear_cart").onclick = clear_allItem;
 function clear_allItem() {
 	cart_dataTbl.innerHTML = ""
+	total_items = 0;
 	cart.total_bill = 0;
 	cart.items_list = [];
 	update_cart();
@@ -285,7 +297,8 @@ function create_pagBtn() {
 	}
 	return cloneBtn;
 }
-var smplc = document.getElementsByClassName("dishes")[0].cloneNode(true);
+var smplc = document.getElementById("smp_cltD").cloneNode(true);
+var main_menu = document.getElementsByClassName("main_menu")[0];
 function chgPag() {
 	// clear all active btn
 	for (var i = 0; i < pgBtCtner.children.length; i++) {
@@ -298,33 +311,52 @@ function chgPag() {
 		// send request to server
 		ajax_processor_url = tbl_sDt.b_url + '/chgPag';
 		// clear main_menu
+		clr_mmn(main_menu);
 		$.post(ajax_processor_url,pgRqD,function(data,status){
 			data = JSON.parse(data);
 			for (var i = 0; i < data.length; i++) {
-				var clItb = create_itCln();
-				clItb.discount.innerHTML = data[i].sale;
+				var clItb = create_itCln(smplc);
+				// remove original dom attribute
+				clItb.dom.removeAttribute("id");
+				clItb.dom.removeAttribute("style");
+				// set display value
+				if (data[i].sale > 0) {
+					clItb.discount.innerHTML = data[i].sale;
+				} else {
+					clItb.discount.parentNode.removeChild(clItb.discount);
+				}
 				clItb.image_ctner.src = data[i].avatar_img;
 				clItb.image_ctner.setAttribute("food-info-id",data[i].id);
-				clItb.p_name = data[i].name;
-				clItb.p_price = data[i].price;
+				clItb.p_name.innerHTML = data[i].name;
+				clItb.p_price.innerHTML = data[i].price;
 				// set items form data
-				clnDish.pform_dt.f_id = data[i].id;
-				clnDish.pform_dt.f_price = data[i].price;
-				clnDish.pform_dt.f_name = data[i].name;
-				clnDish.pform_dt.f_dscr = data[i].description;
-				clnDish.pform_dt.f_nutri = data[i].nutrition_img;
-				clnDish.pform_dt.f_ava = data[i].avatar_img;
-				clnDish.pform_dt.f_sale = data[i].sale;
+				clItb.pform_dt.f_id.value = data[i].id;
+				clItb.pform_dt.f_price.value = data[i].price;
+				clItb.pform_dt.f_name.value = data[i].name;
+				clItb.pform_dt.f_dscr.value = data[i].description;
+				clItb.pform_dt.f_nutri.value = data[i].nutrition_img;
+				clItb.pform_dt.f_ava.value = data[i].avatar_img;
+				clItb.pform_dt.f_sale.value = data[i].sale;
+				// set events for childnodes
+				clItb.dom.querySelectorAll("[add-to-cart]")[0].onclick = function(){
+					add_toCartF(this);
+				}
+				clItb.image_ctner.onclick = function() {
+					openFood_detail(this);
+				}
+				main_menu.appendChild(clItb.dom);
 			}
-			
+			rewrite_saleTag();
+			rerw_nbPagI();
 		});
 	}
 	// set new pg trg of mainPgHder
 	mainPgHder.setAttribute("crr-pgn",this.getAttribute("_rqpg"));
 }
-function create_itCln() {
+function create_itCln(ntcl) {
+	ntcl = ntcl.cloneNode(true);
 	var clnDish = {
-		dom: 
+		dom: ntcl
 	}
 	clnDish["discount"] = clnDish.dom.getElementsByClassName("discount_tag")[0];
 	clnDish["image_ctner"] = clnDish.dom.querySelectorAll("[food-info-id]")[0];
@@ -334,9 +366,99 @@ function create_itCln() {
 	clnDish["pform_dt"] = clnDish.dom.getElementsByClassName("food_data_cluster")[0];
 	return clnDish;
 }
-function clr_mmn() {
-	var main_menu = document.getElementsByClassName("main_menu")[0];
-	while (main_menu.children.length > 0) {
-		main_menu.removeChild(main_menu.children[0]);
+function clr_mmn(d) {
+	while (d.children.length > 0) {
+		d.removeChild(d.children[0]);
 	}
+}
+rewrite_saleTag();
+function rewrite_saleTag() {
+	var stg = document.querySelectorAll("[sale-tag]");
+	for (var i = 0; i < stg.length; i++) {
+		if (isFloat(stg[i].innerHTML) && !isNaN(Number(stg[i].innerHTML))) {
+			stg[i].innerHTML = "-" + parseFloat(stg[i].textContent)*100 + "%";
+		}
+	}
+}
+// pag next and prev btn
+[$("[_rqpg='prev']")[0],$("[_rqpg='next']")[0]].forEach(function(elm){
+	elm.onclick = function() {
+		var crrPgn = $("[crr-pgn]")[0].getAttribute("crr-pgn");
+		var pgLibt = pgBtCtner.querySelectorAll("[_rqpg]");
+		
+		if (this.getAttribute("_rqpg") == 'prev') {
+			if (crrPgn - 1 >= 1) {
+				pgLibt[crrPgn - 2].click();
+			}
+		} else {
+			if (crrPgn < pgLibt.length) {
+				pgLibt[crrPgn].click();
+			}
+		}
+	}
+});
+/* rewrite number function
+	0 = 10000 => 10K
+	1 = 10000 => 10,000
+*/
+var crs_ct = document.querySelectorAll("[fd_tp]");
+for (var i = 0; i < crs_ct.length; i++) {
+	if (crs_ct[i].getAttribute('fd_tp') != 1) {
+		var dksoz = crs_ct[i].getElementsByClassName("prc_val");
+		for (var j = 0; j < dksoz.length; j++) {
+			rewrnb(0,dksoz[j]);
+		}
+	}
+}
+rerw_nbPagI();
+function rerw_nbPagI() {
+	var dcpk = document.getElementsByClassName("dsck_p");
+	for (var i = 0; i < dcpk.length; i++) {
+		rewrnb(1,dcpk[i]);
+	}
+}
+function rewrnb(t,d) {
+	var str = Number(d.innerHTML);
+	if (t == 0) {
+		str = str/1000 + "K";
+		d.innerHTML = str;
+	} else {
+		d.innerHTML = addComma(str);
+	}
+}
+// check user info once onload via cookie
+var shippingForm = document.getElementById("cltdlvIf");
+window.onload = function() {
+	// check client data. Return Data: 0 == no data found || array of data
+	$.ajax({
+		url: tbl_sDt.b_url + "/chkckk_ajx",
+		success: function(data) {
+			if (data != 0) {
+				client_info = JSON.parse(data);
+			}
+		},
+	});
+}
+// proceed cart
+var prcd_cartb = document.getElementById("prcd_cart");
+prcd_cartb.onclick = function() {
+	// check if client_info in home_data.js available
+	if (isEmpty(client_info)) {
+		// if empty: display client form
+		$("#userProfile").click();
+	}
+}
+$("#userProfile").click(function(){
+	var currentScroll = window.scrollY;
+	$(".ship_info").css({
+		"display" : "block",
+		"top" : "calc(25% + " + currentScroll + "px)"
+	});
+});
+shippingForm.onsubmit = send_shippingInfo;
+shippingForm.submit.onclick = send_shippingInfo;
+function send_shippingInfo(e) {
+	e.preventDefault();
+	
+	return false;
 }

@@ -64,6 +64,46 @@ class home extends controller {
 		$chgPgResult = $this->mdl_prd->getMainDishes($_SESSION["slc_lm"],$_SESSION["crr_offset"]);
 		print_r(json_encode($chgPgResult));
 	}
+	public function chkckk_ajx() {
+		// check client data. Return Data: 0 == no data found || array of data
+		$_SESSION["client_data"] = $this->checkCookie($_SERVER['REMOTE_ADDR']);
+		print_r($_SESSION["client_data"]);
+	}
+	public function checkCookie($cn) {
+		$cn = $this->encrypt_decrypt('encrypt',$cn);
+		if(isset($_COOKIE[$cn])) {
+			// cookie found. Check with Database
+			$chk_rsl = $this->mdl_clt->chkClientData($cn);
+			if (empty($chk_rsl)) {
+				return 0;
+			}
+			return json_encode($chk_rsl[0]);
+		}
+		return 0;
+	}
+	function encrypt_decrypt($action, $string) {
+	    $output = false;
+
+	    $encrypt_method = "AES-256-CBC";
+	    $secret_key = md5($string);
+	    $secret_iv = md5($secret_key);
+
+	    // hash
+	    $key = hash('sha256', $secret_key);
+	    
+	    // iv - encrypt method AES-256-CBC expects 16 bytes 
+	    $iv = substr(hash('sha256', $secret_iv), 0, 16);
+
+	    if( $action == 'encrypt' ) {
+	        $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
+	        $output = base64_encode($output);
+	    }
+	    else if( $action == 'decrypt' ){
+	        $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
+	    }
+
+	    return $output;
+	}
 }
 
 ?>

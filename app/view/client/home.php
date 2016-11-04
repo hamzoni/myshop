@@ -29,7 +29,7 @@
 	 	</div>
 	 	<nav class="slide_container">
 			<!-- start of carousel slide popular -->
-			<div id="myCarousel" class="carousel slide carousel_size" data-ride="carousel" data-interval="8000">
+			<div id="myCarousel" fd_tp='0' class="carousel slide carousel_size" data-ride="carousel" data-interval="8000">
 
 				<ol class="carousel-indicators">
 					<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -108,7 +108,7 @@
 			</div>
 			<!-- start of carousel slide -->
 			<!-- start of carousel slide 2 sale -->
-			<div id="myCarousel1" class="carousel slide carousel_size" data-ride="carousel" data-interval="8000">
+			<div id="myCarousel1" fd_tp='1' class="carousel slide carousel_size" data-ride="carousel" data-interval="8000">
 
 				<ol class="carousel-indicators">
 					<li data-target="#myCarousel1" data-slide-to="0" class="active"></li>
@@ -121,7 +121,7 @@
 
 					<div class="item active">
 						<img food-info-id="<?=$data["items"]["saleOff"][0]["id"];?>" src="<?=$data["items"]["saleOff"][0]["avatar_img"];?>" alt="<?=$data["items"]["saleOff"][0]["name"];?>">
-						<div class="percentage_slf">
+						<div class="percentage_slf" sale-tag>
 						<?=$data["items"]["saleOff"][0]["sale"];?>
 						</div>
 						<article class="food_narration" add-to-cart>
@@ -158,7 +158,7 @@
 					<?php for ($i = 1; $i < count($data["items"]["saleOff"]); $i++) { ?>
 					<div class="item">
 						<img food-info-id="<?=$data["items"]["saleOff"][$i]["id"];?>" src="<?=$data["items"]["saleOff"][$i]["avatar_img"];?>" alt="<?=$data["items"]["saleOff"][$i]["name"];?>">
-						<div class="percentage_slf">
+						<div class="percentage_slf" sale-tag>
 						<?=$data["items"]["saleOff"][$i]["sale"];?>
 						</div>
 						<article class="food_narration" add-to-cart>
@@ -206,7 +206,7 @@
 			</div>
 			<!-- start of carousel slide 2 -->
 			<!-- start of carousel slide 3 special -->
-			<div id="myCarousel2" class="carousel slide carousel_size" data-ride="carousel" data-interval="8000">
+			<div id="myCarousel2" fd_tp='2' class="carousel slide carousel_size" data-ride="carousel" data-interval="8000">
 
 				<ol class="carousel-indicators">
 					<li data-target="#myCarousel2" data-slide-to="0" class="active"></li>
@@ -369,35 +369,58 @@
 	 		</div>
 	 	</nav>
 	 </header>
+	 <div class="dishes" id="smp_cltD" style="display:none">
+ 		<div class="dishes_content">
+ 			<div class="discount_tag" sale-tag>
+ 			</div>
+ 			<img food-info-id="" src="" title="view detail"/>
+ 			<div class="minor_dscr_fic" title="add to cart" add-to-cart>
+				<span class="dsck_n"></span>
+				<span class="dsck_p"></span>
+				<button class="add_to_cart">
+					<i class="fa fa-shopping-cart" aria-hidden="true"></i>
+				</button>
+			</div>
+			<form class="food_data_cluster">
+				<input type="hidden" name="f_id" value="">
+				<input type="hidden" name="f_price" value="">
+				<input type="hidden" name="f_name" value="">
+				<input type="hidden" name="f_dscr" value="">
+				<input type="hidden" name="f_nutri" value="">
+				<input type="hidden" name="f_ava" value="">
+				<input type="hidden" name="f_sale" value="">
+			</form>
+ 		</div>
+ 	</div>
 	 <section class="main_menu" crr-pgn='1'>
-	 	<?php for ($i = 0; $i < count($this->page_data["items"]["menu"]); $i++) { ?>
-	 	<div class="dishes">
-	 		<div class="dishes_content">
-	 			<?php if ($this->page_data["items"]["menu"][$i]['type'] == '2') { ?>
-	 			<div class="discount_tag">
-	 				<?=$this->page_data["items"]["menu"][$i]['sale']?>
-	 			</div>
-	 			<?php }; ?>
-	 			<img food-info-id="<?=$this->page_data["items"]["menu"][$i]["id"]?>" src="<?=$this->page_data["items"]["menu"][$i]["avatar_img"]?>" title="view detail"/>
-	 			<div class="minor_dscr_fic" title="add to cart" add-to-cart>
-					<span class="dsck_n"><?=$this->page_data["items"]["menu"][$i]["name"]?></span>
-					<span class="dsck_p"><?=$this->page_data["items"]["menu"][$i]["price"]?></span>
-					<button class="add_to_cart">
-						<i class="fa fa-shopping-cart" aria-hidden="true"></i>
-					</button>
-				</div>
-				<form class="food_data_cluster">
-					<input type="hidden" name="f_id" value="<?=$data["items"]["menu"][$i]["id"]?>">
-						<input type="hidden" name="f_price" value="<?=$data["items"]["menu"][$i]["price"]?>">
-						<input type="hidden" name="f_name" value="<?=$data["items"]["menu"][$i]["name"]?>">
-						<input type="hidden" name="f_dscr" value="<?=$data["items"]["menu"][$i]["description"]?>">
-						<input type="hidden" name="f_nutri" value="<?=$data["items"]["menu"][$i]["nutrition_img"]?>">
-						<input type="hidden" name="f_ava" value="<?=$data["items"]["menu"][$i]["avatar_img"]?>">
-						<input type="hidden" name="f_sale" value="<?=$data["items"]["menu"][$i]["sale"]?>">
-				</form>
-	 		</div>
-	 	</div>
-	 	<?php }; ?>
+ 	<?php for ($i = 0; $i < count($this->page_data["items"]["menu"]); $i++) { ?>
+ 	<div class="dishes">
+ 		<div class="dishes_content">
+ 			<?php if ($this->page_data["items"]["menu"][$i]['type'] == '2') { ?>
+ 			<div class="discount_tag" sale-tag>
+ 				<?=$this->page_data["items"]["menu"][$i]['sale']?>
+ 			</div>
+ 			<?php }; ?>
+ 			<img food-info-id="<?=$this->page_data["items"]["menu"][$i]["id"]?>" src="<?=$this->page_data["items"]["menu"][$i]["avatar_img"]?>" title="view detail"/>
+ 			<div class="minor_dscr_fic" title="add to cart" add-to-cart>
+				<span class="dsck_n"><?=$this->page_data["items"]["menu"][$i]["name"]?></span>
+				<span class="dsck_p"><?=$this->page_data["items"]["menu"][$i]["price"]?></span>
+				<button class="add_to_cart">
+					<i class="fa fa-shopping-cart" aria-hidden="true"></i>
+				</button>
+			</div>
+			<form class="food_data_cluster">
+				<input type="hidden" name="f_id" value="<?=$data["items"]["menu"][$i]["id"]?>">
+					<input type="hidden" name="f_price" value="<?=$data["items"]["menu"][$i]["price"]?>">
+					<input type="hidden" name="f_name" value="<?=$data["items"]["menu"][$i]["name"]?>">
+					<input type="hidden" name="f_dscr" value="<?=$data["items"]["menu"][$i]["description"]?>">
+					<input type="hidden" name="f_nutri" value="<?=$data["items"]["menu"][$i]["nutrition_img"]?>">
+					<input type="hidden" name="f_ava" value="<?=$data["items"]["menu"][$i]["avatar_img"]?>">
+					<input type="hidden" name="f_sale" value="<?=$data["items"]["menu"][$i]["sale"]?>">
+			</form>
+ 		</div>
+ 	</div>
+ 	<?php }; ?>
 	 </section>
 	 <nav class="pagination_nav">
 	 	<div class="pag_wrapper">
@@ -405,11 +428,11 @@
 		 		<span class="VAAlign">Previous</span>
 		 	</a>
 		 	<ul class="pagBtn_ctner">
-		 		<li _rqPg='' style="display:none" id="splNb">
-		 			<span class="VAAlign">1</span>
-		 		</li>
+		 		<button _rqPg='' style="display:none" id="splNb">
+		 			<span>1</span>
+		 		</button>
 		 	</ul>
-		 	<a _rqpg='Next'>
+		 	<a _rqpg='next'>
 		 		<span class="VAAlign">Next</span>
 		 	</a>
 	 	</div>
@@ -417,6 +440,9 @@
 </section>
 <!-- end of wrapper -->
 <nav class="free_nav_bar">
+	<button class="_myCart" id="userProfile">
+		<i class="fa fa-user-o" aria-hidden="true"></i>
+	</button>
  	<button class="_myCart" id="client_cart">
  		<i class="fa fa-shopping-basket" aria-hidden="true"></i>
  	</button>
@@ -487,7 +513,7 @@
 			</span>
 		</div>
 		<div class="right_cfter">
-			<a class="chkOut_smt">
+			<a class="chkOut_smt" id="prcd_cart">
 				<span class="VAAlign">Proceed</span>
 			</a>
 		</div>
@@ -534,8 +560,8 @@
 		</div>
 	</div>
 </div>
-<div class="general_popUp ship_info clr_dark shd_white" style="display:none;">
-	<form action="" method="GET" class="shipIF_stl">
+<div class="general_popUp ship_info clr_dark shd_white" style="display:block;">
+	<form id="cltdlvIf" class="shipIF_stl">
 	<div class="dragger_ttl">
 		<h2 class="hd_ttl VAAlign">SHIPPING INFO</h2>
 		<button class="close_btn">
@@ -565,7 +591,7 @@
 		</div>
 	</div>
 	<div class="cart_footer crt_fter_sIf">
-		<input type="submit" value="proceed"/>
+		<input name="submit" type="submit" value="proceed"/>
 	</div>
 	</form>
 </div>
