@@ -586,7 +586,7 @@
 			</span>
 		</div>
 		<div class="ip_shIpGr">
-			<input type="checkbox" name="save_data_cookie" class="chkbx_saveDt"/>
+			<input type="checkbox" name="save_data_cookie" value="0" class="chkbx_saveDt"/>
 			<label for="save_data_cookie">Save data in this computer?</label>
 		</div>
 	</div>

@@ -433,7 +433,7 @@ window.onload = function() {
 	$.ajax({
 		url: tbl_sDt.b_url + "/chkckk_ajx",
 		success: function(data) {
-			if (data != 0) {
+			if (typeof data == "string" && data != "") {
 				client_info = JSON.parse(data);
 			}
 		},
@@ -457,8 +457,44 @@ $("#userProfile").click(function(){
 });
 shippingForm.onsubmit = send_shippingInfo;
 shippingForm.submit.onclick = send_shippingInfo;
+var sfl = {
+	cname: shippingForm.client_name,
+	cphone: shippingForm.client_phone,
+	cadd: shippingForm.client_address,
+	storeInfo: shippingForm.save_data_cookie
+}
+// sample data for testing 
+sfl.cname.value = "Quy T";
+sfl.cphone.value = "01299001808";
+sfl.cadd.value ="C103";
+sfl.storeInfo.value = "0";
+// end of sample data
+
+sfl.storeInfo.onchange = function() {
+	if (this.checked == true) {
+		this.value = "1";
+		return;
+	}
+	this.value = "0";
+}
 function send_shippingInfo(e) {
 	e.preventDefault();
-	
+	if (isInputEmpty(shippingForm.elements)) {
+		var sfl_dt = {
+			name: sfl.cname.value,
+			phone: Number(sfl.cphone.value),
+			address: sfl.cadd.value,
+			saveData: sfl.storeInfo.value,
+		}
+		$.ajax({
+			url: tbl_sDt.b_url + "/shipInfo",
+			data: "clt_spI=" + JSON.stringify(sfl_dt),
+			success: function(data) {
+				console.log(data);
+			},
+		});
+	} else {
+		alert("Form is left blank or value is invalid");
+	}
 	return false;
 }

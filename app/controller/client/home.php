@@ -66,8 +66,18 @@ class home extends controller {
 	}
 	public function chkckk_ajx() {
 		// check client data. Return Data: 0 == no data found || array of data
-		$_SESSION["client_data"] = $this->checkCookie($_SERVER['REMOTE_ADDR']);
-		print_r($_SESSION["client_data"]);
+		$user_tkIp = $_SERVER['REMOTE_ADDR'];
+		$user_tkey = $this->checkCookie($user_tkIp);
+		// check existed data on database
+		$_SESSION["client_data"] = [];
+		if (!empty($user_tkey)) {
+			foreach ($user_tkey as $k => $v) {
+				$_SESSION["client_data"][$k] = $v;
+			}
+		} else {
+			$_SESSION["client_data"]['tokenKey'] = $this->encrypt_decrypt('encrypt',$user_tkIp);
+		}
+		print_r(json_encode($_SESSION["client_data"]));
 	}
 	public function checkCookie($cn) {
 		$cn = $this->encrypt_decrypt('encrypt',$cn);
@@ -77,11 +87,14 @@ class home extends controller {
 			if (empty($chk_rsl)) {
 				return 0;
 			}
-			return json_encode($chk_rsl[0]);
+			return $chk_rsl[0];
 		}
 		return 0;
 	}
-	function encrypt_decrypt($action, $string) {
+	public function setCookie($cn,$cv,$exd) {
+		setcookie($cn, $cv, time() + (86400 * $exd), '/');
+	}
+	public function encrypt_decrypt($action, $string) {
 	    $output = false;
 
 	    $encrypt_method = "AES-256-CBC";
@@ -101,8 +114,38 @@ class home extends controller {
 	    else if( $action == 'decrypt' ){
 	        $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
 	    }
-
 	    return $output;
+	}
+	public function shipInfo() {
+		$shipIfd = json_decode($_GET["clt_spI"]);
+		if ($shipIfd->saveData == 1) {
+			// set cookie for client PC
+			$cookieExpiration = 15; // days
+			setCookie("client_data",$_SESSION["client_data"]['tokenKey'],15);
+		}
+		// check if existed data in DB (via session)
+		if (count($_SESSION["client_data"]) > 1) {
+			$diff = false;
+			// update if observed any differences
+			foreach ($shipIfd as $k => $v) {
+				if ($_SESSION["client_data"][$k] != $v) {
+					$_SESSION["client_data"][$k] = $v;
+					$diff = true;
+				}
+			}
+			if ($_SESSION["client_data"]["saveData"] == 0) {
+				setcookie("client_data", "", time()-3600);
+				unset($_COOKIE["client_data"]);
+			}
+			if ($diff == true) {
+				$this->mdl_clt->updateClientInfo($_SESSION["client_data"]);
+			}
+		} else {
+			foreach ($shipIfd as $k => $v) {
+				$_SESSION["client_data"][$k] = $v;
+			}
+			$t = $this->mdl_clt->insert_clientInfo($_SESSION["client_data"]);
+		}
 	}
 }
 

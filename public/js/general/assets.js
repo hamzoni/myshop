@@ -84,3 +84,24 @@ function isEmpty(obj) {
     }
     return true;
 }
+// check if input is black 
+function isInputEmpty(obj) {
+	if (obj.length == undefined) {
+		for (var p in obj) {
+			if (obj[p].nodeName == "INPUT") {
+				if (obj[p].value == "") {
+					return false;
+				}
+			}
+		}
+	} else {
+		for (var i = 0; i < obj.length; i++) {
+			if (obj[i].nodeName == "INPUT") {
+				if (obj[i].value == "") {
+					return false;
+				}
+			}
+		}
+	}
+	return true;
+}
