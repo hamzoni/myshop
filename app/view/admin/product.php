@@ -216,10 +216,10 @@
 	alert("<?=$data["ntf"];?>");
 	<?php };?>
 	// preset tbl select data
-	var tbl_sDt = {
-		b_url: '<?=$data["base_url"]?>',
-		lmt: <?=$data["slc_lm"]?>, // NUMBER OF RECORD TO BE PULLED
-		ofs: <?=$data["crr_offset"]?>, // POSITION OF STARTED RECORD
-		ttr: <?=$data["total_records"]?> // TOTAL RECORDS IN DATABASE
+	function set_preset() {
+		this.base_url = '<?=$data["base_url"]?>';
+		this.lmt = <?=$data["slc_lm"]?>; // NUMBER OF RECORD TO BE PULLED
+		this.ofs = <?=$data["crr_offset"]?>; // POSITION OF STARTED RECORD
+		this.ttr = <?=$data["total_records"]?>; // TOTAL RECORDS IN DATABASE
 	}
 </script>

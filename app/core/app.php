@@ -7,6 +7,7 @@ class app { // MAIN FUNCTION: ROUTING
 	public $base_url = ''; 
 	public function __construct() {
 		session_start();
+		date_default_timezone_set('Asia/Ho_Chi_Minh');
 		$this->base_url = str_replace(basename($_SERVER['PHP_SELF']), '', $_SERVER['PHP_SELF']);
 		$url = $this->parseUrl();
 		// set default component/controller/method

@@ -12,10 +12,9 @@
 		</figure>
 		<!-- end of logo_ctner -->
 		<div class="wrapper_rghtB">
-			<div class="mid_hb_ctn">
-			13:48:56 13/10/2016
+			<div class="mid_hb_ctn" id="adm_pnDt">
 			</div>
-			<button class="log_outMn">
+			<button class="log_outMn" id="lgOut_b">
 				log out
 			</button>
 		</div>
@@ -23,9 +22,11 @@
 	<!-- end of header_bar -->
 	<div class="main_pg_container">
 		<nav class="sideMenu_bar">
+			<a href="admin/statistic">statistic</a>
 			<a href="admin/order">orders</a>
 			<a href="admin/product">products</a>
-			<a href="admin/client-info">clients</a>
+			<a href="admin/user">clients</a>
+			<a href="admin/profile">profile</a>
 		</nav>
 		<div class="main_pg_content">
 		<div class="preface_pgc">
@@ -34,9 +35,9 @@
 				<?=$data["preface_pgc"]?>
 				</a>
 			</h1>
-			<form class="spc_searchEg">
-				<input type="text" name="_typeVal" placeholder="sample..">
-				<button type="submit">
+			<form class="spc_searchEg" name="search_f">
+				<input type="text" name="_typeVal" value="OD asdzxc">
+				<button type="submit" name="sb_sf">
 					<i class="fa fa-search" aria-hidden="true"></i>
 				</button>
 			</form>
@@ -45,9 +46,18 @@
 		</div>
 	</div>
 	<!-- end of main_pg_container -->
+	<div class="_search_rcmd" id="search_thing">
+		<div class="ttl_rcd">search result:</div>
+		<div class="ctn_srcd_wrapper" id="sgg_ctner">
+		</div>
+	</div>
 	<script type="text/javascript" src="js/general/assets.js"></script>
+	<script type="text/javascript" src="js/general/date.js"></script>
+	<script type="text/javascript" src="js/general/admin_panel.js"></script>
+	<?php if (@$data["header"]["js"]) { ?>
 	<?php for ($i = 0; $i < count($data["header"]["js"]); $i++) { ?>
 	<script type="text/javascript" src="js/<?php echo $data["header"]["user"]; ?>/<?php echo $data["header"]["js"][$i]; ?>.js"></script>
+	<?php };?>
 	<?php };?>
 </section>
 </body>

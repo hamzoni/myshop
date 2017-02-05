@@ -546,36 +546,6 @@ label.swd_lbt {
 	border: none;
 	background-color: #292929;
 }
-.slct_r {
-	display: block;
-	margin-left: 3px !important;
-	outline: none;
-}
-.slct_r:after {
-	content: "";
-	display: block;
-	width: 20px;
-	height: 20px;
-	background-color: #C2C2C2;
-	border: 1px solid #383838;
-	position: relative;
-	outline: none;
-
-}
-.slct_r:checked:before {
-	display: block;
-}
-.slct_r:before {
-	content:"";
-	display: none;
-	width: 16px;
-	height: 16px;
-	background-color: #383838;
-	position: absolute;
-	z-index: 3;
-	top: 8px;
-	left: 7px;
-}
 .selected_product {
 	background-color: #595959;
 }

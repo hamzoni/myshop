@@ -4,12 +4,31 @@ class client_c extends general_c {
 		$this->db = new Database();
 		$this->tbl = $tbl;
 	}
-	public function chkClientData($tokenKey) {
+	public function getClientData($tokenKey) {
 		$queryStr = "SELECT * FROM `$this->tbl` WHERE `tokenKey` = :tokenKey";
 		$this->db->query($queryStr);
 		$this->db->bind(":tokenKey",$tokenKey);
 		$row = $this->db->resultset();
 		return $row;
+	}
+	public function countRecord() {
+		$queryStr = "SELECT COUNT(*) FROM `$this->tbl`";
+		$this->db->query($queryStr);
+		return reset($this->db->resultset()[0]);
+	}
+	public function chkClientData($tokenKey) {
+		if ($this->countRecord() == 0) return false;
+		$r = $this->getClientData($tokenKey);
+		if (count($r) != 0) {
+			return true;
+		}
+		return false;
+	}
+	public function deleteClientData($tokenKey) {
+		$queryStr = "DELETE FROM `$this->tbl` WHERE `tokenKey` = :tokenKey";
+		$this->db->query($queryStr);
+		$this->db->bind(':tokenKey', $tokenKey);
+		$this->db->execute();
 	}
 	public function updateClientInfo($cData) {
 		$bindStr = [

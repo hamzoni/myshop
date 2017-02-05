@@ -1,5 +1,5 @@
 <?php
-class controller {
+class controller extends general {
 	public function model($model_name,$table_name = null) {
 		require_once '../app/model/'.$model_name.'.php';
 		$model = explode("/",$model_name);

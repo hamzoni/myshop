@@ -440,10 +440,13 @@
 </section>
 <!-- end of wrapper -->
 <nav class="free_nav_bar">
-	<button class="_myCart" id="userProfile">
+	<button class="_myCart" id="orderInfo" title="Order info">
+		<i class="fa fa-list" aria-hidden="true"></i>
+	</button>
+	<button class="_myCart" id="userProfile" title="Shipping Info">
 		<i class="fa fa-user-o" aria-hidden="true"></i>
 	</button>
- 	<button class="_myCart" id="client_cart">
+ 	<button class="_myCart" id="client_cart" title="Cart Info">
  		<i class="fa fa-shopping-basket" aria-hidden="true"></i>
  	</button>
  	<div id="nbr_itemsIC">
@@ -560,7 +563,7 @@
 		</div>
 	</div>
 </div>
-<div class="general_popUp ship_info clr_dark shd_white" style="display:block;">
+<div class="general_popUp ship_info clr_dark shd_white" style="display:none;">
 	<form id="cltdlvIf" class="shipIF_stl">
 	<div class="dragger_ttl">
 		<h2 class="hd_ttl VAAlign">SHIPPING INFO</h2>
@@ -591,7 +594,7 @@
 		</div>
 	</div>
 	<div class="cart_footer crt_fter_sIf">
-		<input name="submit" type="submit" value="proceed"/>
+		<input name="submit" type="submit" value="save"/>
 	</div>
 	</form>
 </div>
@@ -609,16 +612,20 @@
 	alert("<?=$data["ntf"];?>");
 	<?php };?>
 	// preset tbl select data
-	var tbl_sDt = {
-		b_url: '<?=$data["base_url"]?>',
-		mxDp: 12, // NUMBER OF ITEMS DISPLAYED PER PAGINATION
-		lmt: <?=$data["slc_lm"]?>, // NUMBER OF RECORD TO BE PULLED
-		ofs: <?=$data["crr_offset"]?>, // POSITION OF STARTED RECORD
-		ttr: <?=$data["total_records"]?> // TOTAL RECORDS IN DATABASE
+	function preset_data() {
+		this.b_url = '<?=$data["base_url"]?>';
+		this.mxDp = 12; // NUMBER OF ITEMS DISPLAYED PER PAGINATION
+		this.lmt = <?=$data["slc_lm"]?>; // NUMBER OF RECORD TO BE PULLED
+		this.ofs = <?=$data["crr_offset"]?>; // POSITION OF STARTED RECORD
+		this.ttr = <?=$data["total_records"]?>; // TOTAL RECORDS IN DATABASE
+		this.lg_s = "<?php echo @$_SESSION["admin_login"]["url"] ? $_SESSION["admin_login"]["url"] : 0; ?>";
 	}
 </script>
 <script type="text/javascript" src="js/general/assets.js"></script>
-<script type="text/javascript" src="js/client/home_data.js"></script>
-<script type="text/javascript" src="js/client/home.js"></script>
+<?php if (@$data["header"]["js"]) { ?>
+<?php for ($i = 0; $i < count($data["header"]["js"]); $i++) { ?>
+<script type="text/javascript" src="js/<?php echo $data["header"]["user"]; ?>/<?php echo $data["header"]["js"][$i]; ?>.js"></script>
+<?php };?>
+<?php };?>
 </body>
 </html>

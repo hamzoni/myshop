@@ -6,7 +6,7 @@ var p_price = newPrd_form.p_price;
 var p_type = newPrd_form.p_type;
 var p_dscr = newPrd_form.f_dscrp;
 var previous_pData = newPrd_form.previous_pData;
-
+var tbl_sDt = new set_preset();
 p_price.onkeypress = function(e) {
 	return event.charCode >= 48 && event.charCode <= 57;
 }
@@ -92,7 +92,7 @@ $("#add_prf").click(function(){
 		"display":"block"
 	});
 	var f_action_val = document.getElementsByClassName("boundingLayer")[0].firstElementChild;
-	f_action_val = f_action_val.getElementsByTagName("form")[0].setAttribute("action",tbl_sDt.b_url + "/add_product");
+	f_action_val = f_action_val.getElementsByTagName("form")[0].setAttribute("action",tbl_sDt.base_url + "/add_product");
 });
 function reset_form() {
 	// reset form
@@ -123,7 +123,7 @@ tbl_wpScrll.onscroll = function(e) {
 		&& !pauseScroll) {
 		pauseScroll = true;
 		if (crr_records_view < tbl_sDt.ttr) {
-			ajax_processor_url = tbl_sDt.b_url;
+			ajax_processor_url = tbl_sDt.base_url;
 			if (ajax_processor_url.search(/\/$/g) == -1) {
 				ajax_processor_url += "/";
 			}
@@ -241,7 +241,7 @@ $(".inwbtp").click(function(){
 	}
 	id_arC = "UpdateDisplay=" + JSON.stringify({prdId:id_arC,prdnVal:val_arC});
 	// send data to server using ajax
-	ajax_processor_url = tbl_sDt.b_url + '/upd_prdDpl';
+	ajax_processor_url = tbl_sDt.base_url + '/upd_prdDpl';
 	$.post(ajax_processor_url,id_arC,function(data,status){
 		if (data && parseInt(data) == 1) {
 			for (var i = 0; i < vbk.dom.length; i++) {
@@ -292,7 +292,7 @@ document.getElementById("rm_item").onclick = function() {
 		return;
 	}
 	// ask user if surely want to delete record(s)
-	if (!confirm("This action is not reversable, are you sure to continue?")) {
+	if (!confirm("This action is irreversible, are you sure to continue?")) {
 		return;
 	}
 	// get all ID of slc_ckb
@@ -310,7 +310,7 @@ document.getElementById("rm_item").onclick = function() {
 	}
 	id_arC = "DeleteRecords=" + JSON.stringify({prdId:id_arC,prdImg:pImg_ctner});
 	// send data to server using ajax
-	ajax_processor_url = tbl_sDt.b_url + '/del_prdRcrd';
+	ajax_processor_url = tbl_sDt.base_url + '/del_prdRcrd';
 	$.post(ajax_processor_url,id_arC,function(data,status){
 		console.log(data);
 		if (data && parseInt(data) == 1) {
@@ -379,7 +379,7 @@ var prg_tracker = {
 $("#sbmitBt_kl").click(function(e){
 	if (f_trg == 1) {
 		e.preventDefault();
-		ajax_processor_url = tbl_sDt.b_url + '/upd_prdc';
+		ajax_processor_url = tbl_sDt.base_url + '/upd_prdc';
 		
 		var img_processor = {
 			ava:null,ntr:null

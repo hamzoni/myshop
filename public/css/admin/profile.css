@@ -1,0 +1,181 @@
+.prf_wrp {
+	width: 475px;
+	height: auto;
+	height: 235px;
+	float: left;
+	font-size: 14px;
+}
+.prf_wrp form input {
+	color: #000;
+}
+.prf_wrp form input[type='text'] , 
+.prf_wrp form input[type='password'] {
+	padding-left: 5px;
+}
+.admp_col {
+	height: 100%;
+	overflow: hidden;
+}
+.admp_c_l , .admp_c_r {
+	overflow: hidden;
+}
+.admp_c_l {
+	float: left;
+	width: 310px;
+}
+.admp_c_r {
+	float: right;
+	width: calc(100% - 320px);
+}
+.lg_rKb , .r_infN {
+	margin-bottom: 10px;
+}
+.r_infN {
+	height: 30px;
+	width: 100%;
+	float: left;
+}
+.bsc_ipPrf {
+	width: calc(100% - 60px);
+	height: 100%;
+	display: block;
+	float: right;
+	border: 1px solid #fff;
+}
+.r_infN label {
+	width: 60px;
+	float: left;
+	display: block;
+	line-height: 30px;
+}
+.lg_kBd , .lbl_drKb , .lg_rKb {
+	width: 100%;
+}
+.lg_rKb {
+	height: 50px;
+	float: left;
+}
+.lbl_drKb {
+	height: calc(100% - 30px);
+	line-height: 20px;
+	margin-bottom: 5px;
+	float: left;
+}
+.lg_kBd {
+	height: 30px;
+	float: left;
+}
+
+.rcd_kBtn , .dpl_cBtn {
+	width: 30px;
+	height: 100%;
+	float: right;
+	border: none;
+	background-color: #000;
+	display: none;
+}
+.dpl_cBtn {
+	color: #fff;
+}
+.rcd_kBtn {
+	position: absolute;
+	z-index: 1;
+	right: 0;
+	color: red;
+}
+.lldc_iP {
+	width: 100%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+#spc_keyB {
+	width: 100%;
+	height: 100%;
+	float: left;
+	cursor: pointer;
+	background-color: #fff;
+}
+.wrp_lgC {
+	height: calc(100% - 20px);
+	display: block;
+	width: 100%;
+	float: left;
+	background-color: #fff;
+}
+#spc_keyB span {
+	border: 1px solid #000;
+	color: #000;
+	height: 28px;
+	display: block;
+	float: left;
+	line-height: 28px;
+	margin-top: 1px;
+	margin-left: 1px;
+	padding: 0 8px;
+	font-size: 16px;
+	cursor: pointer;
+}
+.cvs_ctn_adprf {
+	width: 100%;
+	height: 200px;
+	border: 1px solid #fff;
+}
+#admin_avatar {
+	width: 100%;
+	height: 100%;
+}
+.cvs_ctn_adprf input[name="upl_avaCtner"] {
+	display: none;
+}
+button.upl_ava_btn {
+	width: 100%;
+	height: 25px;
+	font-size: 13px;
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	z-index: 1;
+	color: #fff;
+	background-color: #000;
+	opacity: 0.8;
+	text-align: right;
+	border: none;
+	text-align: center;
+	display: none;
+	visibility: hidden;
+}
+.edt_b:hover button.upl_ava_btn {
+	display: block;
+}
+button.upl_ava_btn i {
+	margin-right: 5px;
+}
+input[name="sbm_Dt"] {
+	width: 100%;
+	height: 30px;
+	margin-top: 5px;
+	text-transform: uppercase;
+	border: none;
+}
+.hidden_txt {
+	display: none;
+}
+.unl_rsx {
+	background-color: transparent;
+	color: #fff !important;
+	border: none;
+	border-bottom: 1px dashed #fff;
+}
+#dpl_text {
+	position: absolute;
+	right: 0;
+	z-index: 1;
+}
+.key_ctner {
+	background-color: transparent !important;
+}
+.key_ctner span {
+	color: #fff !important;
+	border-color: #fff !important;
+}

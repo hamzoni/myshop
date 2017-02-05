@@ -27,6 +27,11 @@ class product_c extends general_c{
 		$rows = $this->db->resultset();
 		return $rows;
 	}
+	public function select_specificRow($field, $p_id) {
+		$queryStr = "SELECT $field FROM `$this->tbl` WHERE id = $p_id";
+		$this->db->query($queryStr);
+		return $this->db->single();
+	}
 	public function update_display($id_arr, $upd_val) {
 		if (count($id_arr) > 1) {
 			$queryStr = "CASE id ";

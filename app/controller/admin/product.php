@@ -7,6 +7,10 @@ class product extends controller {
 	private $mdl_gnr; // general model
 	public $page_data = array();
 	public function __construct() {
+
+		$this->AUTHc = new AUTH("admin");
+		$this->AUTHc->check_login();
+		
 		$this->page = "product";
 		// CURRENT DIRECTORY
 		$this->crr_folder = str_replace(basename($_SERVER['PHP_SELF']), '', $_SERVER['PHP_SELF']);

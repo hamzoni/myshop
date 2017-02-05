@@ -32,10 +32,13 @@
 .edit_order:hover {
 	background-color: #000;
 }
-.atv_ship:hover {
-	color: #fff;
+.atv_active , .rmv_order:hover, .edit_order:hover {
+	color: #fff !important;
 }
-.atv_ship {
+.atv_ship , .atv_ship_pk {
+	color: #696969;
+}
+.atv_ship:hover {
 	color: #696969;
 }
 .tbl_orderList_wrapper td:nth-child(7),
@@ -58,6 +61,7 @@
 	border: 1px solid #696969;
 	margin-bottom: 10px;
 	overflow-y: scroll;
+	margin-right: 10px;
 }
 .tbl_orderDetail_wrapper table {
 	width: auto !important;
@@ -186,5 +190,38 @@ a {
 }
 a:hover {
 	text-decoration: none;
-	color: inherit;
+}
+.edit_order_ip {
+	color: #000;
+	height: 21px;
+}
+.edoP_t2 {
+	width: 169px;
+}
+.edoP_t3 {
+	width: 89px;
+}
+.edoP_t4 {
+	width: 55px;
+}
+.load_gif {
+	width: 40px;
+	height: 40px;
+	margin: 0 auto;
+	background-image: url(../../img/admin/load_2w.svg);
+	background-size: 100%;
+}
+.load_gif_2 {
+	width: 100%;
+	height: 100%;
+	background-image: url(../../img/admin/load_w.svg);
+	background-size: 80%;
+	position: absolute;
+	z-index: 3;
+	left: 0;
+	top: 0;
+}
+.load_gif , .load_gif_2 {
+	background-repeat: no-repeat;
+	background-position: center;
 }

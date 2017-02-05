@@ -1,3 +1,5 @@
+(function(){
+var tbl_sDt = new preset_data();
 // pre-set clone
 var cart_dataTbl = document.getElementById("cart_dataTbl");
 cart_dataTbl = cart_dataTbl.childNodes[2];
@@ -445,9 +447,31 @@ prcd_cartb.onclick = function() {
 	// check if client_info in home_data.js available
 	if (isEmpty(client_info)) {
 		// if empty: display client form
+		alert("Please enter shipping info");
 		$("#userProfile").click();
+	} else {
+		var cUrl = tbl_sDt.b_url + "/send_cart";
+		var dtd = "clt_spI=" + JSON.stringify({client: client_info, cart: cart});
+		ajax_request(cUrl, dtd, function(d) {
+			var url = tbl_sDt.b_url + "/add_incomes";
+			var dt = "r=" + cart.total_bill;
+			ajax_request(url,dt, function(dt) {
+				clear_allItem();
+				alert("Submit giỏ hàng thành công");
+			});
+		});
+		$(".close_btn").click();
 	}
 }
+// function ajax_request(url,dt,callback) {
+// 	$.ajax({
+// 		url: url,
+// 		data: dt,
+// 		success: function(data) {
+// 			callback(data);
+// 		},
+// 	});
+// }
 $("#userProfile").click(function(){
 	var currentScroll = window.scrollY;
 	$(".ship_info").css({
@@ -490,11 +514,24 @@ function send_shippingInfo(e) {
 			url: tbl_sDt.b_url + "/shipInfo",
 			data: "clt_spI=" + JSON.stringify(sfl_dt),
 			success: function(data) {
-				console.log(data);
+				client_info = sfl_dt;
+				if (sfl_dt.saveData == 1) {
+					var url = tbl_sDt.b_url + "/add_accounts";
+					ajax_request(url, null, null);
+				}
+				alert("Your shipping info is successfully saved.");
+				hide_shipInfo();
 			},
 		});
 	} else {
 		alert("Form is left blank or value is invalid");
+		hide_shipInfo();
 	}
 	return false;
 }
+function hide_shipInfo() {
+	$(".ship_info").css({
+		"display" : "none"
+	});
+}
+})();
