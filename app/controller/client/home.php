@@ -76,7 +76,6 @@ class home extends controller {
 	}
 	public function add_page_view() {
 		$dt = $this->get_pageData();
-
 		
 		$dt[PG_D]["VIEWS"][TODAY_DATE] += 1;
 		$dt[PG_S]["S_VIEWS"] += 1;
@@ -84,7 +83,7 @@ class home extends controller {
 		$this->put_pageData($dt);
 
 		// $dt = $this->get_pageData();
-		// for ($i = 0; $i < 700; $i++) {
+		// for ($i = 0; $i < 5000; $i++) {
 			
 		// 	$rand = ceil(rand() * 20000);
 		// 	if (@!$dt[PG_D]["VIEWS"][TODAY_DATE - 86400 * ($i + 1)]) $dt[PG_D]["VIEWS"][TODAY_DATE - 86400 * ($i + 1)] = 0;

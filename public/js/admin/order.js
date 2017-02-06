@@ -46,12 +46,14 @@ var order_load = {
 	limit: 12,
 	offset: 0,
 	total_records: null,
-	load_img: null
+	load_img: null,
+	start_id: preset_data.start_id
 }
 var html_ordCtner = document.getElementById("order_ctnerTbl");
 var orders = [];
 var load_pause = false;
 var temp_dom;
+var first_load = true;
 window.onload = function() {
 	load_sumRecords();
 	load_orders();
@@ -120,6 +122,10 @@ function dpl_ordRcd(d) {
 	}
 	order_load.offset += order_load.limit;
 	load_pause = false;
+	if (order_load.start_id != "" && first_load == true) {
+		first_load = false;
+		document.getElementsByClassName("order_tr")[1].children[2].click();
+	}
 }
 function ship_click() {
 	if (this.getAttribute("ship") == 1) {
@@ -229,26 +235,21 @@ function edit_click() {
 
 				// create server request using xhttp
 				var url = base_url + "/edit_order";
-				var send_data = "?r=" +  JSON.stringify(e_dstg[x].af);
-				var xhr = window.XMLHttpRequest ? new window.XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-				xhr.onreadystatechange = function() {
-					if (this.readyState == 4 && this.status == 200) {
-						// remove loading icon
-						if (xhr.responseText == 1) {
-							alert("Edit order info successful");
-							orders[x].name = e_dstg[x].af.name;
-							orders[x].phone = e_dstg[x].af.name;
-							orders[x].address = e_dstg[x].af.name;
-						} else {
-							alert("Failed to edit order. Try again later");
-							td[2].innerHTML = e_dstg[x].bf.name;
-							td[3].innerHTML = e_dstg[x].bf.phone;
-							td[4].innerHTML = e_dstg[x].bf.address;
-						}
+				var send_data = "r=" +  JSON.stringify(e_dstg[x].af);
+				ajax_request(url,send_data,function(d) {
+					console.log(d);
+					if (d == 1) {
+						alert("Edit order info successful");
+						orders[x].name = e_dstg[x].af.name;
+						orders[x].phone = e_dstg[x].af.name;
+						orders[x].address = e_dstg[x].af.name;
+					} else {
+						alert("Failed to edit order. Try again later");
+						td[2].innerHTML = e_dstg[x].bf.name;
+						td[3].innerHTML = e_dstg[x].bf.phone;
+						td[4].innerHTML = e_dstg[x].bf.address;
 					}
-				}
-				xhr.open("GET",url + send_data,true);
-				xhr.send();
+				});
 			}
 			var dtr = host_element.getElementsByTagName("div")[0];
 			host_element.removeChild(dtr);

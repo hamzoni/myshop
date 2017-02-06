@@ -13,13 +13,12 @@ window.onload = function() {
 }
 var cln_m = document.getElementsByClassName("order_tr")[0];
 function load_clientData(a, b) {
-	var client_load = {lim: a, offs: b};
+	var client_load = {lim: a, offs: b, start_id: psd.start_id};
 	var url = psd.base_url;
 	url += "/load_clientData";
 	var ordr_dt = "instruction=" + JSON.stringify(client_load);
 	ajax_request(url, ordr_dt, function(data){solve_data(data)});
 	function solve_data(d) {
-		// delete previous record
 		var prv = document.getElementsByClassName("order_tr");
 		if (prv.length > 0) {
 			while (prv[0]) {

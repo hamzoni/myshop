@@ -9,7 +9,6 @@ class user extends controller {
 	public function __construct() {
 		$this->AUTHc = new AUTH("admin");
 		$this->AUTHc->check_login();
-		$this->check_pageData();
 		
 		$this->page = "user";
 		$this->mdl_gnr = $this->model("general","orders");
@@ -18,7 +17,8 @@ class user extends controller {
 	}
 	public function index() {
 		$args = func_get_args();
-		$crr_url = $args[count($args) - 1];
+		$crr_url = $args[count($args) - 1]; 
+		$this->set_id_start();
 
 		$this->page_data["page"] = $this->page;
 		$this->page_data["preface_pgc"] = "Client info";
@@ -46,7 +46,7 @@ class user extends controller {
 	}
 	public function load_clientData() {
 		$rs = json_decode($_GET["instruction"]);
-		$rs = $this->mdl_clt->select_orderAjax($rs->lim,$rs->offs, "signup_date","DESC");
+		$rs = $this->mdl_clt->select_orderAjax($rs->lim,$rs->offs, "signup_date","DESC",$rs->start_id);
 		print_r(json_encode($rs));
 	}
 	public function count_client_records() {

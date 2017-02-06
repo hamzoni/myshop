@@ -221,5 +221,6 @@
 		this.lmt = <?=$data["slc_lm"]?>; // NUMBER OF RECORD TO BE PULLED
 		this.ofs = <?=$data["crr_offset"]?>; // POSITION OF STARTED RECORD
 		this.ttr = <?=$data["total_records"]?>; // TOTAL RECORDS IN DATABASE
+		this.start_id = "<?php print_r($data["id_start"]); ?>";
 	}
 </script>

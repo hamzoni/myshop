@@ -300,7 +300,7 @@ function set_dataTable(d, t, st) {
     var tr2 = document.createElement("tr"); // value
     var D = chart_cvs[t].AGG._M;
     for (var i in D) {
-        var td = document.createElement("td");
+        var td = document.createElement("th");
         td.innerHTML = MRC[(function(){
             return st == 1 ? max_item(D[i]) : min_item(D[i]);
         })()] + " " + i;

@@ -148,6 +148,7 @@
 		this.base_url = "<?php print_r($data["base_url"]); ?>";
 		this.hdl = ""; // ID of order
 		this.is_pkgD = false; // If header requested Order Detail
+		this.start_id = "<?php print_r($data["id_start"]); ?>";
 	}
 </script>
 

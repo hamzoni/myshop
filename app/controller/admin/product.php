@@ -7,7 +7,6 @@ class product extends controller {
 	private $mdl_gnr; // general model
 	public $page_data = array();
 	public function __construct() {
-
 		$this->AUTHc = new AUTH("admin");
 		$this->AUTHc->check_login();
 		
@@ -23,6 +22,7 @@ class product extends controller {
 	public function index() {
 		$args = func_get_args();
 		$crr_url = $args[count($args) - 1];
+		$this->set_id_start();
 
 		if (@isset($_SESSION["ntf"])) {
 			$this->page_data["ntf"] = $_SESSION["ntf"];
@@ -33,6 +33,7 @@ class product extends controller {
 		$this->page_data["page"] = $this->page;
 		$this->page_data["preface_pgc"] = "Products list";
 		$this->page_data["base_url"] = $crr_url;
+
 		$this->page_data["header"]["user"] = "admin"; 
 		$this->page_data["header"]["css"][0] = "main";
 		$this->page_data["header"]["css"][1] = "product";
@@ -49,9 +50,10 @@ class product extends controller {
 			$_SESSION["slc_lm"] = $this->page_data["slc_lm"];
 		$this->page_data["crr_offset"] = 0;
 		$this->page_data["products_tray"] = array();
-		$this->page_data["products_original"] = $this->mdl_obj->select_record($this->page_data["slc_lm"],$this->page_data["crr_offset"]);
+		$this->page_data["products_original"] = $this->mdl_obj->select_record($this->page_data["slc_lm"],$this->page_data["crr_offset"], $this->page_data["id_start"]);
 		$this->page_data["products_tray"] = $this->dataModification($this->page_data["products_original"]);
 		$this->page_data["crr_offset"] = $this->page_data["slc_lm"];
+
 		// call view
 		$this->view('admin/main',$this->page_data);
 
@@ -348,8 +350,9 @@ class product extends controller {
 		}
 		return $dt_arr;
 	}
-	public function adding_dataTbl($offset) {
-		$ogd = $this->mdl_obj->select_record($_SESSION["slc_lm"],$offset);
+	public function adding_dataTbl() {
+		$r = json_decode($_GET["r"]);
+		$ogd = $this->mdl_obj->select_record($_SESSION["slc_lm"],$r->offset,$r->start_id);
 		$rdt = $this->dataModification($ogd);
 		print_r(json_encode([$ogd,$rdt]));
 	}

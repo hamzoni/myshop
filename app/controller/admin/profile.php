@@ -7,7 +7,6 @@ class profile extends controller {
 	public function __construct() {
 		$this->AUTHc = new AUTH("admin");
 		$this->AUTHc->check_login();
-		$this->check_pageData();
 		
 		$this->page = "profile";
 		$this->profile_ad = getcwd()."/data/";

@@ -133,48 +133,21 @@ tbl_wpScrll.onscroll = function(e) {
 			if (tbl_sDt.ofs > tbl_sDt.ttr) { // offset data in db
 				return;
 			}
-			ajax_processor_url += "adding_dataTbl/" + tbl_sDt.ofs + "/";
-			loadHttpRQ(ajax_processor_url,ld_ctn_prdTbl,'GET');
+			ajax_processor_url += "adding_dataTbl/";
+			var r = {
+				offset: tbl_sDt.ofs,
+				start_id: tbl_sDt.start_id
+			}
+			r = "r=" + JSON.stringify(r);
+			ajax_request(ajax_processor_url,r,function(d){
+				pauseScroll = false;
+				d = JSON.parse(d);
+				update_prdTable(d);
+			});
 			tbl_sDt.ofs += tbl_sDt.lmt;
 			crr_records_view = document.getElementsByClassName("prd_infoCtner").length;
 		}
 	}
-}
-// load xmlhttp
-
-function loadHttpRQ(url,callback,sendType = 'GET',contentType = 'application/x-www-form-urlencoded',jsonDt = "") {
-	var httpRequest;
-	if (window.XMLHttpRequest) {
-		httpRequest = new XMLHttpRequest();
-	} else if (window.ActiveXObject) {
-		httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
-	} else {
-		throw new Error("Ajax is not supported by this browser");
-	}
-
-	if (!httpRequest) {
-		alert('Cannot create httpRequest');
-		return false;
-	}
-	httpRequest.onreadystatechange = function(){
-		if (httpRequest.readyState === XMLHttpRequest.DONE) {
-			if (httpRequest.status === 200) {
-				callback(this);
-			} else {
-				alert('Request data failed.');
-			}
-		}
-	};
-	httpRequest.open(sendType, url, true);
-	httpRequest.setRequestHeader('Content-Type',contentType);
-	httpRequest.send(jsonDt);
-}
-function ld_ctn_prdTbl(xhr) {
-	pauseScroll = false;
-	// decode mb_convert_encoding utf-8
-	ajaxDtstr = xhr.responseText;
-	ajaxDtstr = JSON.parse(ajaxDtstr);
-	update_prdTable(ajaxDtstr);
 }
 function update_prdTable(dtdc) {
 	var tbb = dp_prdTble.firstElementChild;
@@ -418,7 +391,6 @@ $("#sbmitBt_kl").click(function(e){
 				data = JSON.parse(data);
 				var data0 = data[1][0];
 				data = data[0];
-				console.log(data);
 				var updPrd_Inf = document.querySelectorAll("[prd_id='" + data.id + "']")[0];
 				var tr_updp = updPrd_Inf.parentNode.parentNode;
 				

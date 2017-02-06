@@ -34,10 +34,11 @@ class app { // MAIN FUNCTION: ROUTING
 		if (isset($url[2])) {
 			if (method_exists($this->controller, $url[2])) {
 				$this->method = $url[2];
-				unset($url[2]);
+			} else {
+				$this->method = "page_not_found";
 			}
+			unset($url[2]);
 		}
-		// $this->base_url .= "/".$this->method;
 		$this->params = $url ? array_values($url) : [];
 		$this->params[] = $this->base_url;
 		call_user_func_array([$this->controller,$this->method], $this->params);

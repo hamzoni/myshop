@@ -37,4 +37,9 @@ class general_c {
 		$this->db->query($queryStr);
 		return $this->db->resultset();
 	}
+	public function search_ID($tbl,$id,$slcDt = "*") {
+		$queryStr = "SELECT $slcDt FROM $tbl WHERE id = $id";
+		$this->db->query($queryStr);
+		return $this->db->resultset();
+	}
 }

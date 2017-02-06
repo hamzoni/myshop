@@ -1,4 +1,5 @@
 <?php
+define("BASE_URL", str_replace(basename($_SERVER['PHP_SELF']), '', $_SERVER['PHP_SELF']));
 define("ROOT_DIR",     "myshop");
 define("OP_DIR",	"app");
 // password for decrypt_file 

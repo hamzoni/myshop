@@ -22,8 +22,16 @@ class product_c extends general_c{
 		}
 		return $this->db->lastInsertId();
 	}
-	public function select_record($limit , $offset) {
-		$this->db->query("SELECT * FROM `$this->tbl` LIMIT $limit OFFSET $offset");
+	public function select_record($limit , $offset, $whereAt = null) {
+		if ($whereAt == null) {
+			$queryStr = "SELECT * FROM `$this->tbl` ORDER BY post_date DESC LIMIT :limit OFFSET :offset";
+		} else {
+			$queryStr = "(SELECT * FROM products WHERE id = $whereAt ORDER BY post_date DESC LIMIT :limit OFFSET :offset)
+				UNION ALL (SELECT * FROM products WHERE id < $whereAt ORDER BY post_date DESC LIMIT :limit OFFSET :offset)";
+		}
+		$this->db->query($queryStr);
+		$this->db->bind(":limit",$limit);
+		$this->db->bind(":offset",$offset);
 		$rows = $this->db->resultset();
 		return $rows;
 	}

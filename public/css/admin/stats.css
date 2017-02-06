@@ -143,3 +143,6 @@
 	background-color: #fff;
 	padding-left: 10px;
 }
+table[term] th {
+	text-align: center;
+}

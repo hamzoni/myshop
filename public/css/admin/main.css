@@ -304,6 +304,10 @@ html[xmlns] .clearfix { display: block; }
 ._search_rcmd {
   display: none;
 }
+a[selected] {
+  background-color: #292929;
+}
+
 
 
 

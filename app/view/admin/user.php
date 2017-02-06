@@ -88,6 +88,7 @@
 	function set_preset() {
 		this.base_url = "<?php print_r($data["base_url"]); ?>";
 		this.maxData_length = JSON.parse(<?php print_r($data["input_length"]);?>);
+		this.start_id = "<?php print_r($data["id_start"]); ?>";
 	}
 
 </script>

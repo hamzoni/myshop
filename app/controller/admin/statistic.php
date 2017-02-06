@@ -9,7 +9,6 @@ class statistic extends controller {
 	public function __construct() {
 		$this->AUTHc = new AUTH("admin");
 		$this->AUTHc->check_login();
-		$this->check_pageData();
 		
 		$this->page = "statistic";
 		$this->mdl_gnr = $this->model("general","orders");

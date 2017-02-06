@@ -37,6 +37,8 @@
 			</h1>
 			<form class="spc_searchEg" name="search_f">
 				<input type="text" name="_typeVal" value="OD asdzxc">
+				<input type="text" name="sr_tId" value="" style="display:none">
+				<input type="text" name="sr_tPg" value="" style="display:none">
 				<button type="submit" name="sb_sf">
 					<i class="fa fa-search" aria-hidden="true"></i>
 				</button>

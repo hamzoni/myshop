@@ -4,12 +4,15 @@ class order_c extends general_c {
 		$this->db = new Database();
 		$this->tbl = $tbl;
 	}
-	public function select_orderAjax($lim, $offs, $sortby = null, $sort_order = null) {
+	public function select_orderAjax($lim, $offs, $sortby = null, $sort_order = null, $whereAt = null) {
 		$queryStr = "SELECT * FROM `$this->tbl` ";
+	
+		if (!is_null($whereAt) && $whereAt != "") $queryStr .= "WHERE id <= $whereAt";
 		if (!is_null($sortby) && !is_null($sort_order)) {
 			$queryStr .= " ORDER BY $sortby $sort_order";
 		}
 		$queryStr .= " LIMIT :lim OFFSET :offs";
+
 		$this->db->query($queryStr);
 		$this->db->bind(":lim",$lim);
 		$this->db->bind(":offs",$offs);
