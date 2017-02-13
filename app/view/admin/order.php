@@ -83,6 +83,16 @@
 						</span>
 					</th>
 					<th>
+						<span style="width:80px; display: block;overflow: hidden;">
+							Price Sale
+						</span>
+					</th>
+					<th>
+						<span style="width:40px; display: block;overflow: hidden;">
+							Sale
+						</span>
+					</th>
+					<th>
 						<span style="width:40px; display: block;overflow: hidden;">
 							Qty
 						</span>

@@ -1,8 +1,11 @@
+(function(){
+
 var map = {}; // You could also use an array
+var data_load = false;
 onkeydown = onkeyup = function(e){
     e = e || event; // to deal with IE
     map[e.keyCode] = e.type == 'keydown';
-    check_loginKey();
+    if (data_load) check_loginKey();
 }
 var admin_data = {};
 window.onload = function() {
@@ -12,6 +15,7 @@ function load_admin_profile() {
 	var url = new preset_data().b_url + "/load_Adprofile";
 	ajax_request(url,null,function(d){
 		admin_data = JSON.parse(/.+(?=\")/.exec(d.replace(/\\+/g,"").replace(/^\"/g,''))[0]);
+		data_load = true;
 	});
 }
 function check_loginKey() {
@@ -54,3 +58,6 @@ function check_login_status() {
 		}
 	});
 }
+
+
+})();

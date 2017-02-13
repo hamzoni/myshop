@@ -15,7 +15,7 @@
 			</th>
 			<!-- 4 Price -->
 			<th>
-				<span class="fixed_widthTd">Price</span>
+				<span class="fixed_widthTd">Price / Price Sale</span>
 			</th>
 			<!-- 5 Sale off -->
 			<th>

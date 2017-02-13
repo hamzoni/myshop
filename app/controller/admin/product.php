@@ -37,8 +37,7 @@ class product extends controller {
 		$this->page_data["header"]["user"] = "admin"; 
 		$this->page_data["header"]["css"][0] = "main";
 		$this->page_data["header"]["css"][1] = "product";
-		$this->page_data["header"]["js"][0] = "product_data";
-		$this->page_data["header"]["js"][1] = "product";
+		$this->page_data["header"]["js"][0] = "product";
 		// set add_product form data
 		$this->page_data["upload_form"]["handler"] = $this->page_data["base_url"]."/add_product";
 		$this->page_data["upload_form"]["file_size"] = 200000*1000; //Bytes

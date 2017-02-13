@@ -5,7 +5,6 @@
 	<?php include_once "_header.php"; ?>
 </head>
 <body>
-
 <section class="wrapper">
 	 <header class="_header">
 	 	<div class="_typeWrapper">
@@ -52,13 +51,14 @@
 									</span>
 								</div>
 								<div class="prc_val">
-									<?=$data["items"]["popular"][0]['price']?>
+									<?=$data["items"]["popular"][0]['price_s']?>
 								</div>
 							</div>
 						</article>
 						<form class="food_data_cluster">
 							<input type="hidden" name="f_id" value="<?=$data["items"]["popular"][0]["id"]?>">
 							<input type="hidden" name="f_price" value="<?=$data["items"]["popular"][0]["price"]?>">
+							<input type="hidden" name="f_price_s" value="<?=$data["items"]["popular"][0]["price_s"]?>">
 							<input type="hidden" name="f_name" value="<?=$data["items"]["popular"][0]["name"]?>">
 							<input type="hidden" name="f_dscr" value="<?=$data["items"]["popular"][0]["description"]?>">
 							<input type="hidden" name="f_nutri" value="<?=$data["items"]["popular"][0]["nutrition_img"]?>">
@@ -80,13 +80,14 @@
 									</span>
 								</div>
 								<div class="prc_val">
-								<?=$data["items"]["popular"][$i]["price"]?>
+								<?=$data["items"]["popular"][$i]["price_s"]?>
 								</div>
 							</div>
 						</article>
 						<form class="food_data_cluster">
 							<input type="hidden" name="f_id" value="<?=$data["items"]["popular"][$i]["id"]?>">
 							<input type="hidden" name="f_price" value="<?=$data["items"]["popular"][$i]["price"]?>">
+							<input type="hidden" name="f_price_s" value="<?=$data["items"]["popular"][$i]["price_s"]?>">
 							<input type="hidden" name="f_name" value="<?=$data["items"]["popular"][$i]["name"]?>">
 							<input type="hidden" name="f_dscr" value="<?=$data["items"]["popular"][$i]["description"]?>">
 							<input type="hidden" name="f_nutri" value="<?=$data["items"]["popular"][$i]["nutrition_img"]?>">
@@ -230,13 +231,14 @@
 									</span>
 								</div>
 								<div class="prc_val">
-								<?=$data["items"]["special"][0]['price'];?>
+								<?=$data["items"]["special"][0]['price_s'];?>
 								</div>
 							</div>
 						</article>
 						<form class="food_data_cluster">
 							<input type="hidden" name="f_id" value="<?=$data["items"]["special"][0]["id"]?>">
 							<input type="hidden" name="f_price" value="<?=$data["items"]["special"][0]["price"]?>">
+							<input type="hidden" name="f_price_s" value="<?=$data["items"]["special"][0]["price_s"]?>">
 							<input type="hidden" name="f_name" value="<?=$data["items"]["special"][0]["name"]?>">
 							<input type="hidden" name="f_dscr" value="<?=$data["items"]["special"][0]["description"]?>">
 							<input type="hidden" name="f_nutri" value="<?=$data["items"]["special"][0]["nutrition_img"]?>">
@@ -257,13 +259,14 @@
 									</span>
 								</div>
 								<div class="prc_val">
-								<?=$data["items"]["special"][$i]["price"]?>
+								<?=$data["items"]["special"][$i]["price_s"]?>
 								</div>
 							</div>
 						</article>
 						<form class="food_data_cluster">
 							<input type="hidden" name="f_id" value="<?=$data["items"]["special"][$i]["id"]?>">
 							<input type="hidden" name="f_price" value="<?=$data["items"]["special"][$i]["price"]?>">
+							<input type="hidden" name="f_price_s" value="<?=$data["items"]["special"][$i]["price_s"]?>">
 							<input type="hidden" name="f_name" value="<?=$data["items"]["special"][$i]["name"]?>">
 							<input type="hidden" name="f_dscr" value="<?=$data["items"]["special"][$i]["description"]?>">
 							<input type="hidden" name="f_nutri" value="<?=$data["items"]["special"][$i]["nutrition_img"]?>">
@@ -373,10 +376,13 @@
  		<div class="dishes_content">
  			<div class="discount_tag" sale-tag>
  			</div>
- 			<img food-info-id="" src="" title="view detail"/>
+ 			<img food-info-id="" src="#" title="view detail"/>
  			<div class="minor_dscr_fic" title="add to cart" add-to-cart>
 				<span class="dsck_n"></span>
-				<span class="dsck_p"></span>
+				<span class="dsck_p">
+					<span class="prc_sale"></span>
+					<span class="prc_origin"></span>
+				</span>
 				<button class="add_to_cart">
 					<i class="fa fa-shopping-cart" aria-hidden="true"></i>
 				</button>
@@ -384,6 +390,7 @@
 			<form class="food_data_cluster">
 				<input type="hidden" name="f_id" value="">
 				<input type="hidden" name="f_price" value="">
+				<input type="hidden" name="f_sale_s" value="">
 				<input type="hidden" name="f_name" value="">
 				<input type="hidden" name="f_dscr" value="">
 				<input type="hidden" name="f_nutri" value="">
@@ -393,34 +400,6 @@
  		</div>
  	</div>
 	 <section class="main_menu" crr-pgn='1'>
- 	<?php for ($i = 0; $i < count($this->page_data["items"]["menu"]); $i++) { ?>
- 	<div class="dishes">
- 		<div class="dishes_content">
- 			<?php if ($this->page_data["items"]["menu"][$i]['type'] == '2') { ?>
- 			<div class="discount_tag" sale-tag>
- 				<?=$this->page_data["items"]["menu"][$i]['sale']?>
- 			</div>
- 			<?php }; ?>
- 			<img food-info-id="<?=$this->page_data["items"]["menu"][$i]["id"]?>" src="<?=$this->page_data["items"]["menu"][$i]["avatar_img"]?>" title="view detail"/>
- 			<div class="minor_dscr_fic" title="add to cart" add-to-cart>
-				<span class="dsck_n"><?=$this->page_data["items"]["menu"][$i]["name"]?></span>
-				<span class="dsck_p"><?=$this->page_data["items"]["menu"][$i]["price"]?></span>
-				<button class="add_to_cart">
-					<i class="fa fa-shopping-cart" aria-hidden="true"></i>
-				</button>
-			</div>
-			<form class="food_data_cluster">
-				<input type="hidden" name="f_id" value="<?=$data["items"]["menu"][$i]["id"]?>">
-					<input type="hidden" name="f_price" value="<?=$data["items"]["menu"][$i]["price"]?>">
-					<input type="hidden" name="f_name" value="<?=$data["items"]["menu"][$i]["name"]?>">
-					<input type="hidden" name="f_dscr" value="<?=$data["items"]["menu"][$i]["description"]?>">
-					<input type="hidden" name="f_nutri" value="<?=$data["items"]["menu"][$i]["nutrition_img"]?>">
-					<input type="hidden" name="f_ava" value="<?=$data["items"]["menu"][$i]["avatar_img"]?>">
-					<input type="hidden" name="f_sale" value="<?=$data["items"]["menu"][$i]["sale"]?>">
-			</form>
- 		</div>
- 	</div>
- 	<?php }; ?>
 	 </section>
 	 <nav class="pagination_nav">
 	 	<div class="pag_wrapper">
@@ -619,6 +598,7 @@
 		this.ofs = <?=$data["crr_offset"]?>; // POSITION OF STARTED RECORD
 		this.ttr = <?=$data["total_records"]?>; // TOTAL RECORDS IN DATABASE
 		this.lg_s = "<?php echo @$_SESSION["admin_login"]["url"] ? $_SESSION["admin_login"]["url"] : 0; ?>";
+		this.pg_d = <?=$this->page_data["items"]["menu"];?>;
 	}
 </script>
 <script type="text/javascript" src="js/general/assets.js"></script>

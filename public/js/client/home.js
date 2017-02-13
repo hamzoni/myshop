@@ -1,4 +1,20 @@
-(function(){
+// (function(){
+/* CART DATA 
+{
+	total_bill: "",
+	items_list:
+		[
+			index = {id,name,price,quantity},
+		]
+}
+*/
+var cart = {
+	total_bill: 0,
+	items_list: []
+}
+var client_info = {
+	
+}
 var tbl_sDt = new preset_data();
 // pre-set clone
 var cart_dataTbl = document.getElementById("cart_dataTbl");
@@ -87,6 +103,7 @@ function addEvent(obj, evt, fn) {
     }
 }
 addEvent(window,"load",function(e) {
+	prepare_cData();
 	 addEvent(document, "mouseout", function(e) {
         e = e ? e : window.event;
         var from = e.relatedTarget || e.toElement;
@@ -111,13 +128,14 @@ function insert_itemCart(data_form,i_qty = 1){
 		id: is_form ? data_form.f_id.value : data_form.f_id,
 		name: is_form ? data_form.f_name.value : data_form.f_name,
 		price: is_form ? data_form.f_price.value : data_form.f_price,
+		sale: is_form ? data_form.f_sale.value : data_form.f_sale,
+		price_s: 0,
 		qty: parseInt(i_qty == 0 ? 1 : i_qty) // default
 	}
+	item_info.price_s = parseInt(item_info.price) * (1 - parseFloat(item_info.sale));
 	// check if data is repeated
 	var fId_list = [];
-	for (var i =0; i < cart.items_list.length; i++) {
-		fId_list.push(cart.items_list[i].id);
-	}
+	for (var i = 0; i < cart.items_list.length; i++) fId_list.push(cart.items_list[i].id);
 	if (fId_list.indexOf(item_info.id) != -1) {
 		alert("Đã có sản phẩm này trong giỏ hàng");
 		return;
@@ -129,7 +147,7 @@ function insert_itemCart(data_form,i_qty = 1){
 	tr_clone.find("[idx]").text(total_items + 1);
 	tr_clone.find("[fdn]").find('a').text(cart.items_list[total_items].name);
 	tr_clone.find("[qty]").find('.qty_cIp').val(cart.items_list[total_items].qty);
-	tr_clone.find("[prc]").text(addComma(cart.items_list[total_items].price));
+	tr_clone.find("[prc]").text(addComma(item_info.price_s));
 	//set events for elm 
 	setEvt_rmvF(tr_clone[0]);
 	cart_dataTbl.appendChild(tr_clone[0]);
@@ -196,7 +214,7 @@ function rm_foodFC(htmlc){
 function update_cart() {
 	cart.total_bill = 0;
 	for (var i = 0; i < cart.items_list.length; i++) {
-		cart.total_bill += cart.items_list[i].qty * parseInt(cart.items_list[i].price);
+		cart.total_bill += cart.items_list[i].qty * parseInt(cart.items_list[i].price_s);
 	}
 	var sum_bill = document.getElementById("sum_billC");
 	sum_bill.innerHTML = addComma(cart.total_bill);
@@ -301,73 +319,6 @@ function create_pagBtn() {
 }
 var smplc = document.getElementById("smp_cltD").cloneNode(true);
 var main_menu = document.getElementsByClassName("main_menu")[0];
-function chgPag() {
-	// clear all active btn
-	for (var i = 0; i < pgBtCtner.children.length; i++) {
-		pgBtCtner.children[i].classList.remove("active");
-	}
-	this.classList.add("active");
-	// before server request, check if button is repeatitively active
-	var pgRqD = "pg_selector=" + this.getAttribute("_rqpg");
-	if (mainPgHder.getAttribute("crr-pgn") !== this.getAttribute("_rqpg")) {
-		// send request to server
-		ajax_processor_url = tbl_sDt.b_url + '/chgPag';
-		// clear main_menu
-		clr_mmn(main_menu);
-		$.post(ajax_processor_url,pgRqD,function(data,status){
-			data = JSON.parse(data);
-			for (var i = 0; i < data.length; i++) {
-				var clItb = create_itCln(smplc);
-				// remove original dom attribute
-				clItb.dom.removeAttribute("id");
-				clItb.dom.removeAttribute("style");
-				// set display value
-				if (data[i].sale > 0) {
-					clItb.discount.innerHTML = data[i].sale;
-				} else {
-					clItb.discount.parentNode.removeChild(clItb.discount);
-				}
-				clItb.image_ctner.src = data[i].avatar_img;
-				clItb.image_ctner.setAttribute("food-info-id",data[i].id);
-				clItb.p_name.innerHTML = data[i].name;
-				clItb.p_price.innerHTML = data[i].price;
-				// set items form data
-				clItb.pform_dt.f_id.value = data[i].id;
-				clItb.pform_dt.f_price.value = data[i].price;
-				clItb.pform_dt.f_name.value = data[i].name;
-				clItb.pform_dt.f_dscr.value = data[i].description;
-				clItb.pform_dt.f_nutri.value = data[i].nutrition_img;
-				clItb.pform_dt.f_ava.value = data[i].avatar_img;
-				clItb.pform_dt.f_sale.value = data[i].sale;
-				// set events for childnodes
-				clItb.dom.querySelectorAll("[add-to-cart]")[0].onclick = function(){
-					add_toCartF(this);
-				}
-				clItb.image_ctner.onclick = function() {
-					openFood_detail(this);
-				}
-				main_menu.appendChild(clItb.dom);
-			}
-			rewrite_saleTag();
-			rerw_nbPagI();
-		});
-	}
-	// set new pg trg of mainPgHder
-	mainPgHder.setAttribute("crr-pgn",this.getAttribute("_rqpg"));
-}
-function create_itCln(ntcl) {
-	ntcl = ntcl.cloneNode(true);
-	var clnDish = {
-		dom: ntcl
-	}
-	clnDish["discount"] = clnDish.dom.getElementsByClassName("discount_tag")[0];
-	clnDish["image_ctner"] = clnDish.dom.querySelectorAll("[food-info-id]")[0];
-	clnDish["p_name"] = clnDish.dom.getElementsByClassName("dsck_n")[0];
-	clnDish["p_price"] = clnDish.dom.getElementsByClassName("dsck_p")[0];
-	clnDish["addCart_bt"] = clnDish.dom.getElementsByClassName("add_to_cart")[0];
-	clnDish["pform_dt"] = clnDish.dom.getElementsByClassName("food_data_cluster")[0];
-	return clnDish;
-}
 function clr_mmn(d) {
 	while (d.children.length > 0) {
 		d.removeChild(d.children[0]);
@@ -376,9 +327,13 @@ function clr_mmn(d) {
 rewrite_saleTag();
 function rewrite_saleTag() {
 	var stg = document.querySelectorAll("[sale-tag]");
+	var npt = document.getElementsByClassName("prc_discounted");
+	var npi = document.getElementsByClassName("_lineCrossed");
 	for (var i = 0; i < stg.length; i++) {
 		if (isFloat(stg[i].innerHTML) && !isNaN(Number(stg[i].innerHTML))) {
-			stg[i].innerHTML = "-" + parseFloat(stg[i].textContent)*100 + "%";
+			var dct = stg[i].textContent;
+			if (i < npi.length) npt[i].innerHTML = parseInt(npi[i].textContent) * (1 - dct);
+			stg[i].innerHTML = "-" + parseFloat(dct) * 100 + "%";
 		}
 	}
 }
@@ -408,17 +363,17 @@ for (var i = 0; i < crs_ct.length; i++) {
 	if (crs_ct[i].getAttribute('fd_tp') != 1) {
 		var dksoz = crs_ct[i].getElementsByClassName("prc_val");
 		for (var j = 0; j < dksoz.length; j++) {
-			rewrnb(0,dksoz[j]);
+			rewrnb(1,dksoz[j]);
 		}
 	}
 }
-rerw_nbPagI();
-function rerw_nbPagI() {
-	var dcpk = document.getElementsByClassName("dsck_p");
-	for (var i = 0; i < dcpk.length; i++) {
-		rewrnb(1,dcpk[i]);
+[document.getElementsByClassName("_lineCrossed"),
+document.getElementsByClassName("prc_discounted")].forEach(function(a){
+	for (var i = 0; i < a.length; i++) {
+		a[i].innerHTML = addComma(Number(a[i].innerHTML));
 	}
-}
+});
+
 function rewrnb(t,d) {
 	var str = Number(d.innerHTML);
 	if (t == 0) {
@@ -430,16 +385,82 @@ function rewrnb(t,d) {
 }
 // check user info once onload via cookie
 var shippingForm = document.getElementById("cltdlvIf");
-window.onload = function() {
-	// check client data. Return Data: 0 == no data found || array of data
-	$.ajax({
-		url: tbl_sDt.b_url + "/chkckk_ajx",
-		success: function(data) {
-			if (typeof data == "string" && data != "") {
-				client_info = JSON.parse(data);
-			}
-		},
-	});
+var sfl = {
+	cname: shippingForm.client_name,
+	cphone: shippingForm.client_phone,
+	cadd: shippingForm.client_address,
+	storeInfo: shippingForm.save_data_cookie
+}
+
+var slow_network = setInterval(function(){
+	if (tbl_sDt.pg_d) {
+		set_menu(tbl_sDt.pg_d);
+		clearInterval(slow_network);
+	}
+}, 100);
+
+function set_menu(d) {
+	main_menu.innerHTML = "";
+	var c = document.getElementsByClassName("dishes");
+	for (var i = 0; i < d.length; i++) {
+		var x = smplc.cloneNode(true);
+		x.removeAttribute("style");
+		x.removeAttribute("id");
+
+		x.querySelector("img[food-info-id]").src = d[i].avatar_img;
+		x.querySelector("img[food-info-id]").setAttribute("food-info-id",d[i].id);
+		var y = "";
+		var z = x.getElementsByClassName("discount_tag")[0];
+		if (parseFloat(d[i].sale) > 0) {
+			y = parseInt(d[i].price) * (1 - parseFloat(d[i].sale));
+			x.getElementsByClassName("prc_sale")[0].innerHTML = addComma(y);
+			x.getElementsByClassName("prc_origin")[0].innerHTML = addComma(d[i].price);
+			z.innerHTML = "-" + (parseFloat(d[i].sale) * 100) + "%";
+		} else {
+			x.getElementsByClassName("prc_sale")[0].innerHTML = addComma(d[i].price);
+			z.parentNode.removeChild(z);
+		}
+		x.getElementsByClassName("dsck_n")[0].innerHTML = d[i].name;
+
+		x.querySelector("input[name=f_id]").value = d[i].id;
+		x.querySelector("input[name=f_price]").value = d[i].price;
+		x.querySelector("input[name=f_sale_s]").value = y;
+		x.querySelector("input[name=f_name]").value = d[i].name;
+		x.querySelector("input[name=f_dscr]").value = d[i].description;
+		x.querySelector("input[name=f_nutri]").value = d[i].nutrition_img;
+		x.querySelector("input[name=f_ava]").value = d[i].avatar_img;
+		x.querySelector("input[name=f_sale]").value = d[i].sale;
+
+		x.querySelectorAll("[add-to-cart]")[0].onclick = function(){
+			add_toCartF(this);
+		}
+		x.querySelector("img[food-info-id]").onclick = function() {
+			openFood_detail(this);
+		}
+		// reform sale-tag
+		main_menu.appendChild(x);
+	}
+}
+function chgPag() {
+	// clear all active btn
+	for (var i = 0; i < pgBtCtner.children.length; i++) {
+		pgBtCtner.children[i].classList.remove("active");
+	}
+	this.classList.add("active");
+	// before server request, check if button is repeatitively active
+	var pgRqD = "pg_selector=" + this.getAttribute("_rqpg");
+	if (mainPgHder.getAttribute("crr-pgn") !== this.getAttribute("_rqpg")) {
+		// send request to server
+		ajax_processor_url = tbl_sDt.b_url + '/chgPag';
+		// clear main_menu
+		clr_mmn(main_menu);
+		$.post(ajax_processor_url,pgRqD,function(data,status){
+			data = JSON.parse(data);
+			set_menu(data);
+		});
+	}
+	// set new pg trg of mainPgHder
+	mainPgHder.setAttribute("crr-pgn",this.getAttribute("_rqpg"));
 }
 // proceed cart
 var prcd_cartb = document.getElementById("prcd_cart");
@@ -453,25 +474,12 @@ prcd_cartb.onclick = function() {
 		var cUrl = tbl_sDt.b_url + "/send_cart";
 		var dtd = "clt_spI=" + JSON.stringify({client: client_info, cart: cart});
 		ajax_request(cUrl, dtd, function(d) {
-			var url = tbl_sDt.b_url + "/add_incomes";
-			var dt = "r=" + cart.total_bill;
-			ajax_request(url,dt, function(dt) {
-				clear_allItem();
-				alert("Submit giỏ hàng thành công");
-			});
+			clear_allItem();
+			alert("Submit giỏ hàng thành công");
 		});
 		$(".close_btn").click();
 	}
 }
-// function ajax_request(url,dt,callback) {
-// 	$.ajax({
-// 		url: url,
-// 		data: dt,
-// 		success: function(data) {
-// 			callback(data);
-// 		},
-// 	});
-// }
 $("#userProfile").click(function(){
 	var currentScroll = window.scrollY;
 	$(".ship_info").css({
@@ -481,25 +489,30 @@ $("#userProfile").click(function(){
 });
 shippingForm.onsubmit = send_shippingInfo;
 shippingForm.submit.onclick = send_shippingInfo;
-var sfl = {
-	cname: shippingForm.client_name,
-	cphone: shippingForm.client_phone,
-	cadd: shippingForm.client_address,
-	storeInfo: shippingForm.save_data_cookie
-}
-// sample data for testing 
-sfl.cname.value = "Quy T";
-sfl.cphone.value = "01299001808";
-sfl.cadd.value ="C103";
-sfl.storeInfo.value = "0";
-// end of sample data
 
-sfl.storeInfo.onchange = function() {
-	if (this.checked == true) {
-		this.value = "1";
+
+function prepare_cData() {
+	var url = tbl_sDt.b_url + "/chkckk_ajx";
+	ajax_request(url,null, function(d){
+		if (typeof d == "string" && d != "") {
+			client_info = JSON.parse(d);
+
+			sfl.cphone.value = client_info.phone;
+			sfl.cadd.value = client_info.address;
+			sfl.cname.value = client_info.name;
+			sfl.storeInfo.value = client_info.saveData;
+			sfl.storeInfo.checked = sfl.storeInfo.value == 1 ? true : false;
+		}
+	});
+}
+
+sfl.storeInfo.onchange = function() {tick_strIf(this)};
+function tick_strIf(d) {
+	if (d.checked == true) {
+		d.value = "1";
 		return;
 	}
-	this.value = "0";
+	d.value = "0";
 }
 function send_shippingInfo(e) {
 	e.preventDefault();
@@ -534,4 +547,4 @@ function hide_shipInfo() {
 		"display" : "none"
 	});
 }
-})();
+// })();

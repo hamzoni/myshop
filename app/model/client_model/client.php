@@ -11,6 +11,12 @@ class client_c extends general_c {
 		$row = $this->db->resultset();
 		return $row;
 	}
+	public function getClientData_c($tokenKey, $col) {
+		$queryStr = "SELECT $col FROM `$this->tbl` WHERE `tokenKey` = :tokenKey";
+		$this->db->query($queryStr);
+		$this->db->bind(":tokenKey",$tokenKey);;
+		return $this->db->single();
+	}
 	public function countRecord() {
 		$queryStr = "SELECT COUNT(*) FROM `$this->tbl`";
 		$this->db->query($queryStr);
@@ -19,7 +25,7 @@ class client_c extends general_c {
 	public function chkClientData($tokenKey) {
 		if ($this->countRecord() == 0) return false;
 		$r = $this->getClientData($tokenKey);
-		if (count($r) != 0) {
+		if (count($r) > 0) {
 			return true;
 		}
 		return false;
@@ -36,17 +42,17 @@ class client_c extends general_c {
 			'phone' => ':cphone',
 			'address' => ':cAddr',
 			'saveData' => ':csave',
-			'tokenKey' => ':ctkey'
+			'tokenKey' => ':ctkey',
+			'last_update' => ':cLUpd'
 		];
-		$setStr = ""; $c = 0;
+		$setStr = "";
+		$last_elm = end($bindStr);
 		foreach ($bindStr as $k => $v) {
 			if ($k != 'tokenKey') {
-				$setStr .= " `$k` = $v ".($c++ < 3 ? "," : "");
+				$setStr .= " `$k` = $v ".($v != $last_elm ? "," : "");
 			}
 		}
-		$queryStr = "UPDATE `$this->tbl`
-			SET $setStr
-			WHERE `tokenKey` = :ctkey";
+		$queryStr = "UPDATE `$this->tbl` SET $setStr WHERE `tokenKey` = :ctkey";
 		$this->db->query($queryStr);
 		foreach ($cData as $k => $v) {
 			$this->db->bind($bindStr[$k],$v);
@@ -55,13 +61,14 @@ class client_c extends general_c {
 		return $this->db->rowCount();
 	}
 	public function insert_clientInfo($cData) {
-		$qrtr["col"] = ""; $qrtr["val"] = ""; $c = 0;
+		$qrtr["col"] = ""; $qrtr["val"] = "";
+		$last_elm = end($cData);
 		foreach ($cData as $k => $v) {
-			$qrtr["col"] .= "$k".($c < 4 ? "," : ""); 
-			$qrtr["val"] .= ":$k".($c < 4 ? "," : "");
-			$c++;
+			$qrtr["col"] .= "$k".($v != $last_elm ? "," : ""); 
+			$qrtr["val"] .= ":$k".($v != $last_elm ? "," : "");
 		}
 		$queryStr = "INSERT INTO `$this->tbl`(".$qrtr['col'].") VALUES(".$qrtr['val'].")";
+
 		$this->db->query($queryStr);
 		foreach ($cData as $k => $v) {
 			$this->db->bind(":$k",$v);
@@ -72,5 +79,32 @@ class client_c extends general_c {
 		    return $e->getMessage();
 		}
 		return $this->db->lastInsertId();
+	}
+	public function update_last_activity($token) {
+		$queryStr = "UPDATE `$this->tbl` SET `last_update` = NOW() WHERE `tokenKey`=$token";
+		$this->db->query($queryStr);
+		try {
+		    $this->db->execute();
+		} catch (Exception $e) {
+		    return $e->getMessage();
+		}
+		return $this->db->rowCount();
+	}
+	public function upd_client_record($token, $totalBill, $crrPC, $crrPV) {
+		$crrPV += intval($totalBill);
+		$crrPC += 1;
+		$queryStr = "UPDATE `$this->tbl` 
+					 SET `purchase_count` = :crrPC , `total_purchaseVal` = :crrPV 
+					 WHERE `tokenKey` = :token";
+		$this->db->query($queryStr);
+		$this->db->bind(':token',$token);
+		$this->db->bind(':crrPC',$crrPC);
+		$this->db->bind(':crrPV',$crrPV);
+		try {
+		    $this->db->execute();
+		} catch (Exception $e) {
+		    return $e->getMessage();
+		}
+		return $this->db->rowCount();
 	}
 }

@@ -435,3 +435,16 @@ function progressHandlingFunction(e){
         }
     }
 }
+add_price_sale();
+function add_price_sale() {
+	var td, td_o, df;
+	var tr = dp_prdTble.getElementsByTagName("tr");
+	for (var i = 1, j = 0; i < tr.length; i++, j++) {
+		df = tr[i].getElementsByClassName("prd_infoCtner")[0];
+		df = parseFloat(df.querySelector("[name=prd_sale]").value);
+		td = tr[i].getElementsByTagName("td")[3];
+		td_o = parseInt(td.textContent);
+		td.innerHTML = "";
+		td.innerHTML = addComma(td_o) + " / " + addComma(td_o * (1 - df));
+	}
+}

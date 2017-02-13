@@ -110,6 +110,7 @@
 }
 .prc_origin {
 	color: #fff !important;
+	text-decoration: line-through;
 }
 ._lineCrossed {
 	position: relative;

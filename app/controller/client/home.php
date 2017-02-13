@@ -22,8 +22,6 @@ class home extends controller {
 	public function index() {
 		$args = func_get_args();
 		$crr_url = $args[count($args) - 1];
-		$this->add_page_view();
-		$this->check_pageData();
 		
 		if (@isset($_SESSION["ntf"])) {
 			$this->page_data["ntf"] = $_SESSION["ntf"];
@@ -33,9 +31,8 @@ class home extends controller {
 		$this->page_data["header"]["css"][0] = "main";
 		$this->page_data["header"]["css"][1] = "home";
 		$this->page_data["header"]["css"][2] = "color";
-		$this->page_data["header"]["js"][0] = "home_data";
-		$this->page_data["header"]["js"][1] = "home";
-		$this->page_data["header"]["js"][2] = "auth_admin";
+		$this->page_data["header"]["js"][0] = "home";
+		$this->page_data["header"]["js"][1] = "auth_admin";
 		$this->page_data["base_url"] = $crr_url;
 
 		// total records in view products table
@@ -53,6 +50,18 @@ class home extends controller {
 		$this->page_data["items"]["saleOff"] = $this->mdl_prd->select_byGenre("sale",1,null,[["display","1"],["type","2"]]);
 		// SPECIAL ITEMS
 		$this->page_data["items"]["special"] = $this->mdl_prd->select_byGenre("post_date",1,null,[["display","1"],["type","1"]]);
+		// CHANGE PRICE OF PRICE
+		$cpg = [$this->page_data["items"]["popular"],
+				$this->page_data["items"]["special"],
+				$this->page_data["items"]["saleOff"]];
+		for ($i = 0; $i < count($cpg); $i++) {
+			for ($j = 0; $j < count($cpg[$i]); $j++) {
+				$sale = floatval($cpg[$i][$j]['sale']);
+				$cpg[$i][$j]['price_s'] = intval($cpg[$i][$j]['price']) * (1 - $sale);
+			}
+		}
+		$this->page_data["items"]["popular"] = $cpg[0];
+		$this->page_data["items"]["special"] = $cpg[1];
 		// SUGGESTED ITEMS
 		$suggestFd = $this->mdl_prd->select_byGenre("post_date",1,null,[["display","1"],["type","3"]]);
 		if (count($suggestFd) > 3) {
@@ -71,18 +80,25 @@ class home extends controller {
 		}
 		// select offset 12 items
 		$this->page_data["items"]["menu"] = $this->mdl_prd->select_prdPager($this->page_data["slc_lm"], $_SESSION["crr_offset"]);
+		$this->page_data["items"]["menu"] = json_encode($this->page_data["items"]["menu"]);
+
+		$this->set_pageData();
+		$this->add_page_view();
 		// call view
 		$this->view('client/home',$this->page_data);
 	}
 	public function add_page_view() {
-		$dt = $this->get_pageData();
-		
-		$dt[PG_D]["VIEWS"][TODAY_DATE] += 1;
-		$dt[PG_S]["S_VIEWS"] += 1;
+		$dt = $this->open_pageData();
+		try {
+			$dt[PG_D]["VIEWS"][TODAY_DATE] += 1;
+			$dt[PG_S]["S_VIEWS"] += 1;
+		} catch (Exception $e) {
+			header("Refresh:0; url=".$this->page_data["base_url"]);
+		};
 
 		$this->put_pageData($dt);
 
-		// $dt = $this->get_pageData();
+		// $dt = $this->open_pageData();
 		// for ($i = 0; $i < 5000; $i++) {
 			
 		// 	$rand = ceil(rand() * 20000);
@@ -110,7 +126,7 @@ class home extends controller {
 
 	}
 	public function add_transactions() {
-		$dt = $this->get_pageData();
+		$dt = $this->open_pageData();
 
 		$dt[PG_D]["TRANSACTIONS"][TODAY_DATE] += 1;
 		$dt[PG_S]["S_TRANSACTIONS"] += 1;
@@ -118,16 +134,15 @@ class home extends controller {
 		$this->put_pageData($dt);
 	}
 	public function add_accounts() {
-		$dt = $this->get_pageData();
+		$dt = $this->open_pageData();
 
 		$dt[PG_D]["ACCOUNTS"][TODAY_DATE] += 1;
 		$dt[PG_S]["S_ACCOUNTS"] += 1;
 		
 		$this->put_pageData($dt);
 	}
-	public function add_incomes() {
-		$r = $_GET["r"];
-		$dt = $this->get_pageData();
+	public function add_incomes($r) {
+		$dt = $this->open_pageData();
 
 		$dt[PG_D]["INCOMES"][TODAY_DATE] += $r;
 		$dt[PG_S]["S_INCOMES"] += $r;
@@ -156,13 +171,13 @@ class home extends controller {
 		$_SESSION["user_ip"] = $this->encrypt_decrypt('encrypt', $this->get_client_ip());
 		$inDB = $this->mdl_clt->chkClientData($_SESSION["user_ip"]);
 		$inCK = $this->check_cookie($_SESSION["user_ip"]);
+
 		if ($inDB && $inCK) {
-			$c_info = $this->mdl_clt->getClientData($_SESSION["user_ip"]);
-			foreach ($c_info as $k => $v) {
-				$_SESSION["client_data"][$k] = $v;
-			}
+			$this->mdl_clt->update_last_activity($_SESSION["user_ip"]);
+			$c_info = $this->mdl_clt->getClientData($_SESSION["user_ip"])[0];
+			foreach ($c_info as $k => $v) $_SESSION["client_data"][$k] = $v;
 			$_SESSION["client_data"]['tokenKey'] = $_SESSION["user_ip"];
-			print_r(json_encode($_SESSION["client_data"][0]));
+			print_r(json_encode($_SESSION["client_data"]));
 		} else {
 			$_SESSION["client_data"] = null;
 			$this->unset_cookie($_SESSION["user_ip"]);
@@ -177,8 +192,8 @@ class home extends controller {
 	}
 	public function unset_cookie($cookie_name) {
 		if (isset($_COOKIE[$cookie_name])) {
-		    unset($_COOKIE[$cookie_name]);
-		    setcookie($cookie_name, null, -1, '/');
+		    setcookie($cookie_name, false, time() - 3600,"/");
+		  	unset($_COOKIE[$cookie_name]);
 		    return true;
 		} else {
 		    return false;
@@ -203,7 +218,7 @@ class home extends controller {
 	    return $ipaddress;
 	}
 	public function setCookie($cn,$cv,$exd) {
-		setcookie($cn, $cv, time() + (86400 * $exd), '/');
+		setcookie($cn, $cv, time() + (86400 * $exd),"/");
 	}
 	public function encrypt_decrypt($action, $string) {
 	    $output = false;
@@ -230,19 +245,19 @@ class home extends controller {
 	public function shipInfo() {
 		$shipIfd = json_decode($_GET["clt_spI"]);
 		$shipIfd->tokenKey = $_SESSION["user_ip"];
+		$shipIfd->last_update = date('Y-m-d H:i:s',time());;
+		$exd_ck = time() + 86400 * 30;
 		if (@(!is_null($_SESSION["client_data"]) && isset($_SESSION["client_data"]))) {
 			if ($this->checkDiff($_SESSION["client_data"], $shipIfd)) {
 				$this->mdl_clt->updateClientInfo($shipIfd);
-				if ($shipIfd->saveData != 0) {
-					$exd_ck = intval(round(microtime(true) * 1000) + 86400);
+				if ($shipIfd->saveData == 1) {
 					setcookie($_SESSION["user_ip"],time(),$exd_ck, '/');
 				} else {
 					$this->unset_cookie($_SESSION["user_ip"]);
 				}
 			}
 		} else {
-			if ($shipIfd->saveData != 0) {
-				$exd_ck = intval(round(microtime(true) * 1000) + 86400);
+			if ($shipIfd->saveData == 1) {
 				setcookie($_SESSION["user_ip"],time(),$exd_ck, '/');
 				$this->mdl_clt->insert_clientInfo($shipIfd);
 			} else {
@@ -260,17 +275,21 @@ class home extends controller {
 	}
 	public function send_cart() {
 		$cartIfd = json_decode($_GET["clt_spI"]);
-		$insertOrder = $this->mdl_ord->insert_order($cartIfd->client->name,
+		$ord_id = $this->mdl_ord->insert_order($cartIfd->client->name,
 													$cartIfd->client->phone,
 													$cartIfd->client->address);
 		$items_list = $cartIfd->cart->items_list;
 		for ($i = 0; $i < count($items_list); $i++) {
-			$totalPrice = $items_list[$i]->price * $items_list[$i]->qty;
+			$totalPrice = $items_list[$i]->price_s * $items_list[$i]->qty;
 			$this->mdl_pkg->insert_package($items_list[$i]->id,
-											$insertOrder,
+											$ord_id,
 											$items_list[$i]->qty,
 											$totalPrice);
 		}
+		$c_PC = intval($this->mdl_clt->getClientData_c($_SESSION["user_ip"],'purchase_count')['purchase_count']);
+		$c_PV = intval($this->mdl_clt->getClientData_c($_SESSION["user_ip"],'total_purchaseVal')['total_purchaseVal']);
+		$this->mdl_clt->upd_client_record($_SESSION["user_ip"], $cartIfd->cart->total_bill, $c_PC, $c_PV);
+		$this->add_incomes($cartIfd->cart->total_bill);
 		$this->add_transactions();
 	}
 	public function check_ADlogin_stt() {

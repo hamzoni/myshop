@@ -48,14 +48,12 @@
 	padding: 0 !important;
 }
 .tbl_orderList_wrapper {
-	width: 740px;
 	padding: 10px;
 	height: 400px;
 	overflow-y: scroll;
 	border: 1px solid #696969;
 }
 .tbl_orderDetail_wrapper {
-	width: 636px;
 	height: 400px;
 	padding: 10px;
 	border: 1px solid #696969;

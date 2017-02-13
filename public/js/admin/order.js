@@ -295,15 +295,22 @@ function dpl_pkgRcd(d) {
 	pkg_sum.totalPrice = 0;
 	for (var i = 0; i < d.length; i++) {
 		var tr = document.createElement("tr");
-		for (var j = 0; j < 6; j++) tr.appendChild(document.createElement("td"));
+		for (var j = 0; j < 8; j++) tr.appendChild(document.createElement("td"));
 		var td_s = tr.getElementsByTagName("td");
 		td_s[0].innerHTML = i + 1;
 		td_s[1].setAttribute("product-id",d[i].product_id);
 		td_s[1].innerHTML = add_IDPrefix("SP",d[i].product_id);
 		td_s[2].innerHTML = d[i].p_name;
 		td_s[3].innerHTML = addComma(d[i].p_price);
-		td_s[4].innerHTML = d[i].qty;
-		td_s[5].innerHTML = addComma(d[i].prcTotal);
+		// price sale
+		var p_sale = d[i].prcTotal / d[i].qty;
+		td_s[4].innerHTML = addComma(p_sale);
+		// sale
+		p_sale = p_sale / d[i].p_price;
+		p_sale = p_sale < 1 ? (100 - p_sale * 100) + "%" : 0;
+		td_s[5].innerHTML = p_sale;
+		td_s[6].innerHTML = d[i].qty;
+		td_s[7].innerHTML = addComma(d[i].prcTotal);
 		pkg_sum.totalPrice += parseInt(d[i].prcTotal);
 		pkg_tblD.appendChild(tr);
 	}

@@ -30,7 +30,7 @@ class statistic extends controller {
 		$this->page_data["header"]["js"][0] = "graph.min";
 		$this->page_data["header"]["js"][1] = "stats";
 
-		$this->page_data["stats"] = json_encode($this->get_pageData());
+		$this->page_data["stats"] = json_encode($this->open_pageData());
 		$this->view('admin/main',$this->page_data);
 
 	}

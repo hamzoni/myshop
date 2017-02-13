@@ -55,44 +55,41 @@ class general {
 			echo 'Caught exception: ',  $e->getMessage(), "\n";
 		}
 	}
-	public function check_pageData() {
-		$dt = $this->open_pageData();
-		if (@!$dt[PG_D]["VIEWS"][TODAY_DATE]) $dt[PG_D]["VIEWS"][TODAY_DATE] = 0;
-		if (@!$dt[PG_D]["TRANSACTIONS"][TODAY_DATE]) $dt[PG_D]["TRANSACTIONS"][TODAY_DATE] = 0;
-		if (@!$dt[PG_D]["ACCOUNTS"][TODAY_DATE]) $dt[PG_D]["ACCOUNTS"][TODAY_DATE] = 0;
-		if (@!$dt[PG_D]["INCOMES"][TODAY_DATE]) $dt[PG_D]["INCOMES"][TODAY_DATE] = 0;
-		$this->put_pageData($dt);
-	}
-	public function setup_PageData() {
-		if (@filesize(PAGE_STATS) == 0 || !file_exists(PAGE_STATS)) {
-			$f = fopen(PAGE_STATS, "w+");
-			$page_data = [
-				PG_D => [
-					"VIEWS" => [],
-					"TRANSACTIONS" => [],
-					"ACCOUNTS" => [],
-					"INCOMES" => []
-				],
-				PG_S => [
-					"S_VIEWS" => 0,
-					"S_TRANSACTIONS" => 0,
-					"S_ACCOUNTS" => 0,
-					"S_INCOMES" => 0
-				]
-			];
-			$page_data = json_encode($page_data);
-			fwrite($f, $page_data);
-			fclose($f);
-			return true;
+	public function set_pageData() {
+		$a = @filesize(PAGE_STATS) == 0 || !file_exists(PAGE_STATS);
+		$b = @!$dt[PG_D]["VIEWS"][TODAY_DATE];
+		clearstatcache();
+		if ($a && $b) {
+			$fp = fopen(PAGE_STATS, "w+");
+			if ($a) {
+				$dt = array();
+				$dt[PG_D] = array();
+				$dt[PG_S] = array();	
+				$dt[PG_D]["VIEWS"] = array();
+				$dt[PG_D]["TRANSACTIONS"] = array();
+				$dt[PG_D]["ACCOUNTS"] = array();
+				$dt[PG_D]["INCOMES"] = array();
+
+				$dt[PG_S]["S_VIEWS"] = 0;
+				$dt[PG_S]["S_TRANSACTIONS"] = 0;
+				$dt[PG_S]["S_ACCOUNTS"] = 0;
+				$dt[PG_S]["S_INCOMES"] = 0;
+			} else {
+				$dt = fread($fp, filesize(PAGE_STATS));
+			}
+			if ($b) {
+				if (@!$dt[PG_D]["VIEWS"][TODAY_DATE]) $dt[PG_D]["VIEWS"][TODAY_DATE] = 0;
+				if (@!$dt[PG_D]["TRANSACTIONS"][TODAY_DATE]) $dt[PG_D]["TRANSACTIONS"][TODAY_DATE] = 0;
+				if (@!$dt[PG_D]["ACCOUNTS"][TODAY_DATE]) $dt[PG_D]["ACCOUNTS"][TODAY_DATE] = 0;
+				if (@!$dt[PG_D]["INCOMES"][TODAY_DATE]) $dt[PG_D]["INCOMES"][TODAY_DATE] = 0;
+			}
+			$dt = json_encode($dt);
+			fwrite($fp, $dt);
+			fclose($fp);
 		}
-		return false;
-	}
-	public function get_pageData() {
-		$this->setup_PageData();
-		$this->check_pageData();
-		return $this->open_pageData();
 	}
 	public function open_pageData() {
+		clearstatcache();
 		$fp = fopen(PAGE_STATS, "r");
 		$dt = fread($fp, filesize(PAGE_STATS));
 		fclose($fp);
@@ -100,7 +97,7 @@ class general {
 	}
 	public function put_pageData($dt) {
 		$dt = json_encode($dt);
-		$fp = fopen(PAGE_STATS, "w+");
+		$fp = fopen(PAGE_STATS, "w");
 		fwrite($fp, $dt);
 		fclose($fp);
 	}
