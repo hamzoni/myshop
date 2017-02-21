@@ -41,4 +41,12 @@ class product_c extends general_c {
 		$rows = $this->db->resultset();
 		return $rows;
 	}
+	public function slc_spec_unique($cols, $cnd, $val) {
+		$cols = filter_var(join(",",$cols));
+		$cnd = filter_var($cnd);
+		$val = filter_var($val);
+		$queryStr = "SELECT $cols FROM `$this->tbl` WHERE $cnd = $val";
+		$this->db->query($queryStr);
+		return $this->db->single();
+	}
 }

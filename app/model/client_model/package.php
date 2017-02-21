@@ -18,4 +18,12 @@ class package_c extends general_c {
 		}
 		return $this->db->lastInsertId();
 	}
+	public function slc_spec($cols, $cnd, $val) {
+		$cols = filter_var(join(",",$cols));
+		$cnd = filter_var($cnd);
+		$val = filter_var($val);
+		$queryStr = "SELECT $cols FROM `$this->tbl` WHERE $cnd = $val";
+		$this->db->query($queryStr);
+		return $this->db->resultset();
+	}
 }

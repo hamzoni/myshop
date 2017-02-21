@@ -49,14 +49,16 @@ function display_loginPanel() {
 	}
 }
 function check_login_status() {
-	var url = new preset_data().b_url + "/check_ADlogin_stt"; 
-	ajax_request(url, null, function(d){
-		if (d == 0) {
-			location.reload();
-		} else {
-			logged_in = d;
-		}
-	});
+	try {
+		var url = new preset_data().b_url + "/check_ADlogin_stt"; 
+			ajax_request(url, null, function(d){
+				if (d == 0) {
+					location.reload();
+				} else {
+					logged_in = d;
+				}
+			});
+	} catch (err) {};
 }
 
 

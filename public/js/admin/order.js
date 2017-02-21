@@ -148,8 +148,6 @@ function ship_click() {
 function cb_ship_stt(data) {
 	if (data == 0) {
 		alert("Edit ship status error. Try again");
-	} else {
-		alert("Update ship status successfully");
 	}
 }
 function remove_click() {

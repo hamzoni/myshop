@@ -89,14 +89,17 @@ class home extends controller {
 	}
 	public function add_page_view() {
 		$dt = $this->open_pageData();
-		try {
-			$dt[PG_D]["VIEWS"][TODAY_DATE] += 1;
-			$dt[PG_S]["S_VIEWS"] += 1;
-		} catch (Exception $e) {
-			header("Refresh:0; url=".$this->page_data["base_url"]);
-		};
+
+		if (@!$dt[PG_D]["VIEWS"][TODAY_DATE]) $dt[PG_D]["VIEWS"][TODAY_DATE] = 0;
+		if (@!$dt[PG_D]["TRANSACTIONS"][TODAY_DATE]) $dt[PG_D]["TRANSACTIONS"][TODAY_DATE] = 0;
+		if (@!$dt[PG_D]["ACCOUNTS"][TODAY_DATE]) $dt[PG_D]["ACCOUNTS"][TODAY_DATE] = 0;
+		if (@!$dt[PG_D]["INCOMES"][TODAY_DATE]) $dt[PG_D]["INCOMES"][TODAY_DATE] = 0;
+
+		$dt[PG_D]["VIEWS"][TODAY_DATE] += 1;
+		$dt[PG_S]["S_VIEWS"] += 1;
 
 		$this->put_pageData($dt);
+
 
 		// $dt = $this->open_pageData();
 		// for ($i = 0; $i < 5000; $i++) {
@@ -275,9 +278,12 @@ class home extends controller {
 	}
 	public function send_cart() {
 		$cartIfd = json_decode($_GET["clt_spI"]);
+		if (count($cartIfd->cart->items_list) <= 0) return;
 		$ord_id = $this->mdl_ord->insert_order($cartIfd->client->name,
-													$cartIfd->client->phone,
-													$cartIfd->client->address);
+												$cartIfd->client->phone,
+												$cartIfd->client->address,
+												$cartIfd->client->tokenKey,
+												$cartIfd->cart->total_bill);
 		$items_list = $cartIfd->cart->items_list;
 		for ($i = 0; $i < count($items_list); $i++) {
 			$totalPrice = $items_list[$i]->price_s * $items_list[$i]->qty;
@@ -298,6 +304,57 @@ class home extends controller {
 		} else { 
 			echo $_SESSION["admin_login"]["url"]; 
 		}
+	}
+	public function get_ord_antiquity() {
+		$r = json_decode($_GET["r"],true);
+		$aqd_data = [];
+		$slc_cols = ["id","time_order","address","ship_status"];
+		$qry_data = [
+			"cnd1" => ["tokenKey",$r["tk"]],
+			"cnd2" => ["display","1"],
+			"sort" => ["time_order","DESC"],
+			"mere" => [$r["limit"],$r["offset"]]
+		];
+		$ord_data = $this->mdl_ord->select_order($qry_data,$slc_cols);
+		for ($i = 0; $i < count($ord_data); $i++) {
+			$aqd_data[$i] = array();
+			$aqd_data[$i]["ord"] = [];
+			foreach ($ord_data[$i] as $k => $v) {
+				$aqd_data[$i]["ord"][$k] = $v;
+			}
+			$aqd_data[$i]["prd"] = array();
+			// select pkg_qty, pkg_ttp, pkg_prd_id => prd_name, prd_price
+			$pkg_slc_cols = ["product_id","qty","prcTotal"];
+			$pkg_data = $this->mdl_pkg->slc_spec($pkg_slc_cols, 
+														  "order_id", 
+														  $ord_data[$i]["id"]);
+			for ($j = 0; $j < count($pkg_data); $j++) {
+				$ord_slc_cols = ["name","price","avatar_img"];
+				$prd_data = $this->mdl_prd->slc_spec_unique($ord_slc_cols,"id",$pkg_data[$j]["product_id"]);
+				$aqd_data[$i]["prd"][$j] = [
+					"name" => $prd_data["name"],
+					"price" => $prd_data["price"],
+					"qty" => $pkg_data[$j]["qty"],
+					"prcTotal" => $pkg_data[$j]["prcTotal"],
+					"thumbnail" => $prd_data["avatar_img"]
+				];
+			}
+		}
+		print_r(json_encode($aqd_data));
+	}
+	public function change_display_orders() {
+		$r = $_GET["r"];
+		$r = $this->mdl_ord->edit_display('0',$r);
+		print_r($r);
+	}
+	public function count_orders_wcd() {
+		$r = json_decode($_GET["r"],true);
+		$k = [];
+		if (@$r['tk']) $k[0] = ["tokenKey",$r['tk']];
+		if (@$r['dp']) $k[1] = ["display",$r['dp']];
+		$d = $this->mdl_ord->count_orders_wCnds($k);
+		$d = reset($d);
+		print_r($d);
 	}
 }
 

@@ -29,16 +29,16 @@ $(".close_btn").click(function(e){
 	if (html_arr(box_to_close.classList).indexOf("general_popUp") == -1) {
 		box_to_close = box_to_close.parentNode;
 	}
-	box_to_close.style.display = "none";
+	box_to_close.setAttribute("hide","");
 	return false;
 });
 var cart_btn = document.getElementById("client_cart");
 cart_btn.onclick = function() {
 	var currentScroll = window.scrollY;
 	$(".cart_detail").css({
-		"display" : "block",
 		"top" : "calc(25% + " + currentScroll + "px)"
 	});
+	popup_blk_fm(".cart_detail");
 	redcart(0);
 }
 $('*[food-info-id]').click(function(){
@@ -47,9 +47,9 @@ $('*[food-info-id]').click(function(){
 function openFood_detail(dom) {
 	var currentScroll = window.scrollY;
 	$(".food_detail").css({
-		"display" : "block",
 		"top" : "calc(25% + " + currentScroll + "px)"
 	});
+	$(".food_detail")[0].removeAttribute("hide");
 	fill_dtFI(dom.parentNode.getElementsByClassName("food_data_cluster")[0]);
 	document.getElementById("qty_ifcIf").value = "1";
 }
@@ -102,16 +102,6 @@ function addEvent(obj, evt, fn) {
         obj.attachEvent("on" + evt, fn);
     }
 }
-addEvent(window,"load",function(e) {
-	prepare_cData();
-	 addEvent(document, "mouseout", function(e) {
-        e = e ? e : window.event;
-        var from = e.relatedTarget || e.toElement;
-        if (!from || from.nodeName == "HTML") {
-            drag_activate = false;
-        };
-    });
-});
 // add food to cart method
 var total_items = 0;
 $('*[add-to-cart]').click(function(){
@@ -156,7 +146,7 @@ function insert_itemCart(data_form,i_qty = 1){
 	// vibrate cart button & display notification
 	vibration(cart_btn);
 	redcart(1);
-	dp_ppuNtf(item_info.name);
+	dp_ppuNtf("Đã thêm " + item_info.name + " vào giỏ hàng");
 }
 // reset cart inner function
 function setEvt_rmvF(elm) {
@@ -251,7 +241,8 @@ function fill_dtFI(dt_f) {
 	crr_slcItem = {
 		f_id: dt_f.f_id.value,
 		f_name: dt_f.f_name.value,
-		f_price: dt_f.f_price.value,
+		f_price: parseInt(dt_f.f_price.value),
+		f_sale: parseFloat(dt_f.f_sale.value),
 	} 
 	var dts = {
 		og:{
@@ -272,7 +263,7 @@ function fill_dtFI(dt_f) {
 		}
 	}
 	dts.tg.nm.innerHTML = dts.og.nm ;
-	dts.tg.prc.innerHTML = addComma(dts.og.prc) ;
+	dts.tg.prc.innerHTML = addComma(crr_slcItem.f_price - crr_slcItem.f_price * crr_slcItem.f_sale) ;
 	dts.tg.dsc.innerHTML = dts.og.dsc ;
 	dts.tg._ntr.src = dts.og._ntr ;
 	dts.tg._ava.src = dts.og._ava ;
@@ -464,6 +455,7 @@ function chgPag() {
 }
 // proceed cart
 var prcd_cartb = document.getElementById("prcd_cart");
+var ntf_str;
 prcd_cartb.onclick = function() {
 	// check if client_info in home_data.js available
 	if (isEmpty(client_info)) {
@@ -471,26 +463,40 @@ prcd_cartb.onclick = function() {
 		alert("Please enter shipping info");
 		$("#userProfile").click();
 	} else {
-		var cUrl = tbl_sDt.b_url + "/send_cart";
-		var dtd = "clt_spI=" + JSON.stringify({client: client_info, cart: cart});
-		ajax_request(cUrl, dtd, function(d) {
-			clear_allItem();
-			alert("Submit giỏ hàng thành công");
-		});
+		if (cart.items_list.length != 0) {
+			var cUrl = tbl_sDt.b_url + "/send_cart";
+			var dtd = "clt_spI=" + JSON.stringify({client: client_info, cart: cart});
+			ajax_request(cUrl, dtd, function(d) {
+				return;
+				reset_ord_history();
+				load_ord_history(true);
+				clear_allItem(cart);
+				ntf_str = "Submit giỏ hàng thành công";
+				dp_ppuNtf(ntf_str);
+			});
+		} else {
+			alert("Giỏ hàng trống.")
+		}
 		$(".close_btn").click();
 	}
 }
 $("#userProfile").click(function(){
 	var currentScroll = window.scrollY;
+	popup_blk_fm(".ship_info");
 	$(".ship_info").css({
-		"display" : "block",
 		"top" : "calc(25% + " + currentScroll + "px)"
 	});
 });
 shippingForm.onsubmit = send_shippingInfo;
 shippingForm.submit.onclick = send_shippingInfo;
-
-
+function popup_blk_fm(d) {
+	if ($(d)[0].hasAttribute("hide")) {
+		$(d)[0].removeAttribute("hide");
+	} else {
+		$(d)[0].setAttribute("hide","");
+	}
+	
+}
 function prepare_cData() {
 	var url = tbl_sDt.b_url + "/chkckk_ajx";
 	ajax_request(url,null, function(d){
@@ -502,6 +508,10 @@ function prepare_cData() {
 			sfl.cname.value = client_info.name;
 			sfl.storeInfo.value = client_info.saveData;
 			sfl.storeInfo.checked = sfl.storeInfo.value == 1 ? true : false;
+
+			// load client order history
+			load_ord_history();
+			load_max_ttORD();
 		}
 	});
 }
@@ -532,7 +542,8 @@ function send_shippingInfo(e) {
 					var url = tbl_sDt.b_url + "/add_accounts";
 					ajax_request(url, null, null);
 				}
-				alert("Your shipping info is successfully saved.");
+				ntf_str = "Your shipping info is successfully saved.";
+				dp_ppuNtf(ntf_str);
 				hide_shipInfo();
 			},
 		});
@@ -547,4 +558,205 @@ function hide_shipInfo() {
 		"display" : "none"
 	});
 }
+// client order history 
+var c_ord = document.getElementById("orderInfo");
+var ord_M = document.getElementById("user_dplH");
+var ord_w = document.getElementById("ord_dpl_wrapper");
+var ord_m = document.getElementById("ord_DK");
+var ord_k = document.getElementById("ord_DC");
+var _loading_dt = document.getElementsByClassName("_loading_dt")[0];
+var pause_vPkg = false;
+var pause_lPkg = false;
+var max_orders = 0;
+var max_orders_dpl = 0;
+var ttl_orders = 0;
+var rq_resetOH = false;
+var pull_dt_reg = {
+	limit: 15,
+	offset: 0
+}
+var cn_dh = {
+	ord_c: ord_m.querySelector("[sample=ord]"),
+	pkg_c: ord_m.querySelector("[sample=pkg]"),
+	prd_c: ord_m.querySelector("[sample=prd]")
+}
+for (var p in cn_dh) {
+	cn_dh[p].parentNode.removeChild(cn_dh[p]);
+	cn_dh[p].removeAttribute("sample");
+	cn_dh[p].removeAttribute("hide");
+}
+var pkg_cc;
+var ord_cc;
+var prd_cc;
+
+c_ord.onclick = close_ord_dpl;
+$(".close_btn_2").click(close_ord_dpl);
+function close_ord_dpl() {
+	if (ord_M.hasAttribute("hide")) {
+		ord_M.removeAttribute("hide");
+	} else {
+		ord_M.setAttribute("hide","");
+	}
+}
+function load_max_ttORD() {
+	var dr = document.getElementById("cdmxzk");
+	dr.innerHTML = "";
+	var mdkrt = "r=" + JSON.stringify({
+		"tk":  client_info.tokenKey
+	});
+	ajax_request(tbl_sDt.b_url + "/count_orders_wcd",mdkrt,function(d){
+		ttl_orders = d;
+		dr.innerHTML = ttl_orders;
+	});
+}
+function load_ord_history(reset = false) {
+	rq_resetOH = reset;
+	var rdt = "r=" + JSON.stringify({
+		"tk":  client_info.tokenKey,
+		"dp": "1"
+	});
+	ajax_request(tbl_sDt.b_url + "/count_orders_wcd",rdt,function(d){
+		max_orders_dpl = d;
+		max_orders = d;
+		document.getElementById("cdMdoc").innerHTML = max_orders;
+		if (d == 0) {
+			popup_blk_fm("._load_blank");
+			return;
+		}
+		if (!(Object.keys(client_info).length === 0 && client_info.constructor === Object || max_orders == 0)) {
+			get_ord_history(append_HOrder);
+		}
+	});
+}
+function get_ord_history(cb_fx) {
+	if (!rq_resetOH) _loading_dt.removeAttribute("hide");
+	pull_dt_reg.tk = client_info.tokenKey;
+	var r = "r=" + JSON.stringify(pull_dt_reg);
+	var url = tbl_sDt.b_url + "/get_ord_antiquity";
+	ajax_request(url,r,function(d){
+		if (!_loading_dt.hasAttribute("hide")) _loading_dt.setAttribute("hide","");
+		if (rq_resetOH) ord_m.innerHTML = "";
+		cb_fx(JSON.parse(d));
+	});
+}
+ord_k.onscroll = function(e) {
+	if (pause_lPkg) return;
+	var x = this.scrollTop;
+	var y = this.offsetHeight;
+	var z = ord_m.offsetHeight;
+	if (x + y >= z - 30) {
+		pause_lPkg = true;
+		var a = pull_dt_reg.offset > max_orders;
+		var b = max_orders == 0;
+		if (!(a || b)) load_ord_history();
+	}
+}
+function append_HOrder(d) {
+	for (var i = 0; i < d.length; i++) {
+		ord_cc = cn_dh.ord_c.cloneNode(true);
+		ord_cc.setAttribute("ord",d[i]['ord']['id']);
+		ord_cc.querySelector("[class=stt]").innerHTML = i + 1;
+		ord_cc.querySelector("[class=ord_time]").innerHTML = sql_date_converter(d[i]['ord']['time_order']);
+		ord_cc.querySelector("[class=ord_pval]").innerHTML = (function(){
+			var prcT = 0;
+			d[i]['prd'].forEach(function(x){prcT += parseInt(x['prcTotal']);});
+			return addComma(prcT);
+		})();
+		ord_cc.querySelector("[class=ord_room]").innerHTML = d[i]['ord']['address'];
+		if (d[i]['ord']['ship_status'] == 1) {
+			ord_cc.querySelector("[class=ord_status]").firstElementChild.removeAttribute('static');	
+		}
+		ord_cc.querySelector("[class=cancle_ship]").addEventListener("click",remove_order);
+		ord_cc.querySelector("[class=cancle_ship]").addEventListener("mouseout",function(){
+			pause_vPkg = false;
+		});
+		ord_cc.querySelector("[class=cancle_ship]").addEventListener("mouseover",function(){
+			pause_vPkg = true;
+		});
+		ord_cc.addEventListener("click",function(){
+			display_package(this.getAttribute("ord"));
+		});
+		ord_m.appendChild(ord_cc);
+
+		pkg_cc = cn_dh.pkg_c.cloneNode(true);
+		pkg_cc.setAttribute("prd",d[i]['ord']['id']);
+		pkg_cc.setAttribute("hide","");
+		for (var j = 0; j < d[i]['prd'].length; j++) {
+			var prd = d[i]['prd'][j];
+			prd_cc = cn_dh.prd_c.cloneNode(true);
+
+			prd_cc.querySelector("[class=prd_img]").firstElementChild.src = prd["thumbnail"];
+			prd_cc.querySelector("[class=prd_name]").innerHTML = prd["name"];
+			prd_cc.querySelector("[class=prd_prc]").innerHTML = (function(){
+				var p_prc = parseInt(prd["price"]);
+				var p_dsc = parseInt(prd["prcTotal"]) / parseInt(prd["qty"]);
+				return addComma(p_dsc);
+			})();
+			prd_cc.querySelector("[class=prd_qty]").innerHTML = prd["qty"];
+			prd_cc.querySelector("[class=prd_tval]").innerHTML = addComma(prd["prcTotal"]);
+			pkg_cc.appendChild(prd_cc);
+		}
+		ord_m.appendChild(pkg_cc);
+	}
+
+	pull_dt_reg.offset += pull_dt_reg.limit;
+	pause_lPkg = false;
+	rearrange_stt();
+}
+function display_package(x) {
+	if (pause_vPkg) return;
+	var dtpId = ord_m.querySelector("[prd='" + x + "']");
+	if (dtpId.hasAttribute("hide")) {
+		dtpId.removeAttribute("hide");
+	} else {
+		dtpId.setAttribute("hide","");
+	}
+}
+var rmv_ctn = true;
+function remove_order(e) {
+	e.preventDefault();
+	if (!rmv_ctn) return false;
+	rmv_ctn = false;
+	var crr_d = get_parent_cn(this, "ord_dcrp");
+	var ord_id = crr_d.getAttribute("ord");
+	var crr_p = ord_m.querySelector("[prd='" + ord_id + "']");
+	var r = "r=" + ord_id;
+	var url = tbl_sDt.b_url + "/change_display_orders";
+	ajax_request(url,r,function(d){
+		rmv_ctn = true;
+		crr_p.parentNode.removeChild(crr_p);
+		crr_d.parentNode.removeChild(crr_d);
+		document.getElementById("cdMdoc").innerHTML = --max_orders_dpl;
+		pull_dt_reg.offset--;
+		var rmn = ord_m.getElementsByClassName("ord_dcrp").length;
+		if (rmn <= 10) load_ord_history(true);
+		rearrange_stt();
+		// if (d == 1) {
+			
+		// } else {
+		// 	alert("Xóa lỗi, thử lại");
+		// }
+	});
+	return false;
+}
+function rearrange_stt() {
+	var stt_d = ord_m.getElementsByClassName("stt");
+	for (var i = 0; i < stt_d.length; i++) {
+		stt_d[i].innerHTML = i + 1;
+	}
+}
+function reset_ord_history() {
+	pull_dt_reg.offset = 0;
+	load_max_ttORD();
+}
+addEvent(window,"load",function(e) {
+	prepare_cData();
+	addEvent(document, "mouseout", function(e) {
+        e = e ? e : window.event;
+        var from = e.relatedTarget || e.toElement;
+        if (!from || from.nodeName == "HTML") {
+            drag_activate = false;
+        };
+    });
+});
 // })();

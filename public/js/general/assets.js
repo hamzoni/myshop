@@ -8,6 +8,16 @@ function addComma(a) {
 	}
 	return n;
 }
+function addChar(a,c) {
+	if (a == undefined || a == null) return;
+	a = a.toString();
+	var n = "" , j = 0;
+	for (var i = a.length - 1; i >= 0; i--) {
+		n += i % 3 == 0 && i != 0 ? + a[j] + c : a[j];
+		j++;
+	}
+	return n;
+}
 function attr_selector(attr) {
 	var match_elms = [];
 	var all = document.getElementsByTagName('*');
@@ -18,6 +28,18 @@ function attr_selector(attr) {
 	}
 	return match_elms;
 }
+function attr_slc_d(d,a) {
+	var r = [];
+	var m = d.getElementsByTagName('*');
+	for (var i = 0; i < m.length; i++) {
+		if (a.length < 2) {
+			if (m[i].hasAttribute(a)) r.push(m[i]);
+		} else {
+			if (m[i].getAttribute(a[0]) == a[1]) r.push(m[i]);
+		}
+	}
+	return r;
+}
 function html_arr(collection) {
 	return Array.prototype.slice.call(collection);
 }
@@ -27,7 +49,9 @@ function handleImage(e){
 	reader.onload = function(e){
 		readImage(e.target.result);
 	}
-	reader.readAsDataURL(e.target.files[0]);     
+	var trf = e.target.files[0];
+	reader.readAsDataURL(trf);
+	return trf;
 }
 function readImage(imgSrc) {
 	var img = new Image();
@@ -38,6 +62,19 @@ function readImage(imgSrc) {
 		// resize canvas to fit outer layer
 		cvs.style.width = "100%";
 		cvs.style.height = "100%";
+	}
+	img.src = imgSrc;
+}
+function readImage_c(x, imgSrc) {
+	var img = new Image();
+	var y = x.getContext('2d');
+	img.onload = function() {
+		x.width = img.width;
+		x.height = img.height;
+		y.drawImage(img,0,0);
+		// resize canvas to fit outer layer
+		x.style.width = "100%";
+		x.style.height = "100%";
 	}
 	img.src = imgSrc;
 }
@@ -248,4 +285,45 @@ function min_item_val(a) {
 		if (a[b[i]] < m) m = a[b[i]];
 	}
 	return m;
+}
+// get parentNode by class
+function get_parent_cn(d, cn) {
+	var docE_c = document.querySelectorAll("*").length;
+	var p, c = 0;
+	p = d.parentNode;
+	return p;
+	do {
+		if (p.className == cn) break;
+		p = p.parentNode;
+		c++;
+	} while (c < docE_c);
+}
+function findAncestor (el, cls) {
+    while ((el = el.parentElement) && !el.classList.contains(cls));
+    return el;
+}
+
+function get_ridExtra() {
+	$( document ).ready(function() {
+	    var abc = document.body.innerHTML;
+	    var a = String(abc).replace(/\u200B/g,'');
+	    document.body.innerHTML = a;
+	});
+}
+// compare object
+Object.cpare = function( x, y ) {
+  if ( x === y ) return true;
+  if ( ! ( x instanceof Object ) || ! ( y instanceof Object ) ) return false;
+  if ( x.constructor !== y.constructor ) return false;
+  for ( var p in x ) {
+    if ( ! x.hasOwnProperty( p ) ) continue;
+    if ( ! y.hasOwnProperty( p ) ) return false;
+    if ( x[ p ] === y[ p ] ) continue;
+    if ( typeof( x[ p ] ) !== "object" ) return false;
+    if ( ! Object.cpare( x[ p ],  y[ p ] ) ) return false;
+  }
+  for ( p in y ) {
+    if ( y.hasOwnProperty( p ) && ! x.hasOwnProperty( p ) ) return false;
+  }
+  return true;
 }

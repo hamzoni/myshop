@@ -1,5 +1,6 @@
 <?php
 class app { // MAIN FUNCTION: ROUTING
+	public $cc;
 	protected $component = '';
 	protected $controller = '';
 	protected $method = '';
@@ -8,6 +9,7 @@ class app { // MAIN FUNCTION: ROUTING
 	public function __construct() {
 		session_start();
 		date_default_timezone_set('Asia/Ho_Chi_Minh');
+		
 		$this->base_url = str_replace(basename($_SERVER['PHP_SELF']), '', $_SERVER['PHP_SELF']);
 		$url = $this->parseUrl();
 		// set default component/controller/method
@@ -28,6 +30,10 @@ class app { // MAIN FUNCTION: ROUTING
 		}
 		$this->base_url .= $this->component;
 		$this->base_url .= "/".$this->controller;
+		// start central controller
+		// require_once '../app/controller/'.$this->component.'/center.php';
+		// $this->cc = new center();
+		// start specific controller
 		require_once '../app/controller/'.$this->component.'/'.$this->controller.'.php';
 		$this->controller = new $this->controller;
 		// check existed method 

@@ -1,6 +1,5 @@
 <?php
 class general {
-	public $AUTHc;
 	public $user;
 	public $cBaseURL;
 	public function is_contain_char($str) {
@@ -56,37 +55,25 @@ class general {
 		}
 	}
 	public function set_pageData() {
-		$a = @filesize(PAGE_STATS) == 0 || !file_exists(PAGE_STATS);
-		$b = @!$dt[PG_D]["VIEWS"][TODAY_DATE];
 		clearstatcache();
-		if ($a && $b) {
+		if (@filesize(PAGE_STATS) == 0 || !file_exists(PAGE_STATS)) {
 			$fp = fopen(PAGE_STATS, "w+");
-			if ($a) {
-				$dt = array();
-				$dt[PG_D] = array();
-				$dt[PG_S] = array();	
-				$dt[PG_D]["VIEWS"] = array();
-				$dt[PG_D]["TRANSACTIONS"] = array();
-				$dt[PG_D]["ACCOUNTS"] = array();
-				$dt[PG_D]["INCOMES"] = array();
+			$dt = array();
+			$dt[PG_D] = array();
+			$dt[PG_S] = array();	
+			$dt[PG_D]["VIEWS"] = array();
+			$dt[PG_D]["TRANSACTIONS"] = array();
+			$dt[PG_D]["ACCOUNTS"] = array();
+			$dt[PG_D]["INCOMES"] = array();
 
-				$dt[PG_S]["S_VIEWS"] = 0;
-				$dt[PG_S]["S_TRANSACTIONS"] = 0;
-				$dt[PG_S]["S_ACCOUNTS"] = 0;
-				$dt[PG_S]["S_INCOMES"] = 0;
-			} else {
-				$dt = fread($fp, filesize(PAGE_STATS));
-			}
-			if ($b) {
-				if (@!$dt[PG_D]["VIEWS"][TODAY_DATE]) $dt[PG_D]["VIEWS"][TODAY_DATE] = 0;
-				if (@!$dt[PG_D]["TRANSACTIONS"][TODAY_DATE]) $dt[PG_D]["TRANSACTIONS"][TODAY_DATE] = 0;
-				if (@!$dt[PG_D]["ACCOUNTS"][TODAY_DATE]) $dt[PG_D]["ACCOUNTS"][TODAY_DATE] = 0;
-				if (@!$dt[PG_D]["INCOMES"][TODAY_DATE]) $dt[PG_D]["INCOMES"][TODAY_DATE] = 0;
-			}
+			$dt[PG_S]["S_VIEWS"] = 0;
+			$dt[PG_S]["S_TRANSACTIONS"] = 0;
+			$dt[PG_S]["S_ACCOUNTS"] = 0;
+			$dt[PG_S]["S_INCOMES"] = 0;
 			$dt = json_encode($dt);
 			fwrite($fp, $dt);
 			fclose($fp);
-		}
+		} 
 	}
 	public function open_pageData() {
 		clearstatcache();
@@ -111,5 +98,37 @@ class general {
 			$this->page_data["id_start"] = $_SESSION["search_id"];
 			unset($_SESSION["search_id"]);
 		}
+	}
+	// start order notification
+	public function request_new_order() {
+		$r = json_decode($_GET["r"],true);
+		$m = $this->model("admin_model/order","orders");
+		$r = $m->rq_new_ord($r);
+		$r = json_encode($r);
+		print_r($r);
+	}
+	public function count_new_order() {
+		$m = $this->model("admin_model/order","orders");
+		$r = $m->get_maxNew_ord();
+		$r = reset($r);
+		print_r($r);
+	}
+	public function have_seen_order_ntf() {
+		$m = $this->model("admin_model/order","orders");
+		$r = $m->seen_order_ntf();
+		print_r($r);
+	}
+	public function count_all_order() {
+		$m = $this->model("admin_model/order","orders");
+		$r = $m->count_all_order();
+		$r = reset($r);
+		print_r($r);
+	}
+	public function check_new_order() {
+		$r = $_GET["r"];
+		$m = $this->model("admin_model/order","orders");
+		$r = $m->check_new_order($r);
+		$r = json_encode($r);
+		print_r($r);
 	}
 }

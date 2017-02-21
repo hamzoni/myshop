@@ -36,8 +36,6 @@ strong { font-weight: bold; }
 table { border-collapse: collapse; border-spacing: 0; }
 img { border: 0; max-width: 100%; }
  
-p { font-size: 1.2em; line-height: 1.0em; color: #333; margin: 0px !important; }
-
 .VAAlign {
   display: block;
   position: relative;
@@ -121,7 +119,7 @@ html[xmlns] .clearfix { display: block; }
   font-size: 15px;
 }
 .mid_hb_ctn {
-  width: calc(100% - 100px);
+  width: auto;
   line-height: 30px;
 }
 .log_outMn {
@@ -307,9 +305,130 @@ html[xmlns] .clearfix { display: block; }
 a[selected] {
   background-color: #292929;
 }
-
-
-
+.ctrl_br {
+  float: right;
+  overflow: hidden;
+  height: 100%;
+  text-align: center;
+}
+.ctrl_br ul {
+  display: block;
+  float: right;
+  overflow: hidden;
+}
+.ctrl_br li {
+  display: block;
+  float: right;
+  width: 30px;
+  height: 100%;
+  cursor: pointer;
+}
+.ctrl_br li i {
+  font-size: 20px;
+  line-height: 30px;
+}
+.ctrl_br li:hover {
+  text-shadow: 1px 1px 1px red;
+}
+.admin_popup {
+  position: absolute;
+  top: 30px;
+  z-index: 10;
+  right: 0;
+  width: 574px;
+  height: 292px;
+  border: 1px solid #fff;
+  background-color: #333333;
+  color: inherit;
+}
+.th_ctt_adnt_t {
+  height: 20px;
+  text-align: center;
+  float: left;
+  font-variant: small-caps;
+}
+.th_ctt_adnt {
+  overflow-y: scroll;
+  height: calc(100% - 20px);
+  float: left;
+}
+.th_ctt_adnt_t .odth_adnt {
+  line-height: 20px;
+  font-size: 12px;
+  border-bottom: 1px solid #5E5E5E;
+  background-color: #383838;
+  color: #fff;
+}
+.th_ctt_adnt .odth_adnt {
+  cursor: pointer;
+}
+.ord_clst_ntf:hover {
+  background-color: #545454;
+}
+.th_ctt_adnt .ord_clst_ntf:hover {
+  text-shadow: 1px 1px 1px #000;
+  color: #eee;
+}
+.ord_clst_ntf .odth_adnt {
+  line-height: 30px;
+}
+.odth_adnt {
+  float: left;
+  border-right: 1px solid #5E5E5E;
+  height: 100%;
+}
+.ord_clst_ntf {
+  height: 30px;
+  line-height: 30px;
+  width: 100%;
+  float: left;
+  border-bottom: 1px solid #5E5E5E;
+  overflow: hidden;
+  font-size: 14px;
+  color: #fff;
+}
+.ordID {
+  width: 70px;
+  text-align: center;
+}
+.ordCname {
+  width: 180px;
+  padding-left: 5px;
+}
+.ordprcVal {
+  width: 85px;
+  padding-left: 5px;
+}
+.ordtime {
+  width: 170px;
+  text-align: center;
+}
+.ordAdd {
+  width: 50px;
+  text-align: center;
+}
+#notificationsCountValue {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0 3px;
+  height: 12px;
+  width: auto;
+  background-color: red;
+  color: #fff;
+  font-size: 10px;
+  line-height: 12px;
+  display: block;
+  float: right;
+  z-index: 10;
+  border-radius: 2px;
+}
+*[hide] {
+  display: none !important;
+}
+*[not_seen] {
+  background-color: #4A4A4A;
+}
 
 
 

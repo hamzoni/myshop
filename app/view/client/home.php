@@ -433,7 +433,7 @@
  	</div>
  </nav>
 <!-- start of pop-up cluster -->
-<div class="general_popUp cart_detail clr_dark shd_white" style="display:none;">
+<div class="general_popUp cart_detail clr_dark shd_white" hide>
 	<div class="dragger_ttl">
 		<h2 class="hd_ttl VAAlign">cart</h2>
 		<button class="close_btn">
@@ -501,7 +501,7 @@
 		</div>
 	</div>
 </div>
-<div class="general_popUp food_detail clr_dark shd_white" style="display:none;">
+<div class="general_popUp food_detail clr_dark shd_white" hide>
 	<div class="dragger_ttl">
 		<h2 class="hd_ttl VAAlign">
 			<span id="og_nm">PEPPERONI PIZZA</span>
@@ -542,7 +542,7 @@
 		</div>
 	</div>
 </div>
-<div class="general_popUp ship_info clr_dark shd_white" style="display:none;">
+<div class="general_popUp ship_info clr_dark shd_white" hide>
 	<form id="cltdlvIf" class="shipIF_stl">
 	<div class="dragger_ttl">
 		<h2 class="hd_ttl VAAlign">SHIPPING INFO</h2>
@@ -578,11 +578,68 @@
 	</form>
 </div>
 <!-- end of pop-up cluster -->
+<!-- start of client order history -->
+<div class="ord_history" id="user_dplH" hide>
+	<h1 class="tt_ordh">
+		<div class="hdttx">
+			Order history  
+		</div>
+		<span class="ordrec_wr">
+			<p class="adzkkd"> --- records:</p> 
+			<p id="cdmxzk"></p>
+			<p class="adzkkd"> show:</p> 
+			<p id="cdMdoc"></p>
+		</span>
+		<span class="btOdh_wrp">
+			<button class="close_btn_2">
+				<i class="fa fa-times" aria-hidden="true"></i>
+			</button>
+		</span>
+	</h1>
+	<div id="ord_dpl_wrapper">
+		<div class="order_ctner" id="ord_DC">
+			<section class="mn_dtWrp" id="ord_DK">
+				<div class="ord_dcrp" sample="ord" hide>
+					<div class="stt"></div>
+					<div class="ord_time"></div>
+					<div class="ord_pval"></div>
+					<div class="ord_room"></div>
+					<div class="ord_status">
+						<i class="fa fa-truck" aria-hidden="true" static></i>
+					</div>
+					<button class="cancle_ship">
+						<i class="fa fa-times" aria-hidden="true"></i>
+					</button>
+				</div>
+				<!-- end of ord -->
+				<div class="pkg_dcrp" sample="pkg" hide>
+					<div class="prd_dcrp" sample="prd" hide>
+						<div class="prd_img">
+							<img/>
+						</div>
+						<div class="prd_name"></div>
+						<div class="prd_prc"></div>
+						<div class="prd_qty"></div>
+						<div class="prd_tval"></div>
+					</div>
+				</div>
+				<!-- end of pkg -->
+			</section>
+		</div>
+		<div class="_loading_dt">
+			<img class="VAAlign" src="img/admin/load_2w.svg">
+		</div>
+		<div class="_load_blank" hide>
+			<i class="fa fa-shopping-cart" aria-hidden="true"></i>
+			<p class="cart_empty">cart empty</p>
+		</div>
+	</div>
+</div>
+
+<!-- end of client order history -->
 <!-- start of ctner_ppuntf -->
 <div id="ppu_ntf" class="clrD_whiteB">
-	Đã thêm
 	<span id="fd_ntf">sample product name</span>
-	vào giỏ hàng
 </div>
 <!-- end of ctner_ppuntf -->
 <script type="text/javascript">

@@ -6,6 +6,7 @@ define("OP_DIR",	"app");
 define("SPEC_PWD", "fptdining"); 
 // path to page_stats
 define("PAGE_STATS", getcwd()."\data\page_stats.txt");
+define("PAGE_INFO", getcwd()."\data\contact.txt");
 /*
 	page_stats labels
 	"DETAIL" => [
@@ -25,3 +26,5 @@ define("PG_D", "DETAIL");
 define("PG_S", "SUMMARY");
 // today date
 define("TODAY_DATE", strtotime(date("Y/m/d")));
+// random favicon
+define("V_FAVICON",round(microtime(true)));

@@ -24,7 +24,14 @@
 .right_cfter , 
 .left_cfter, 
 .ip_shIpGr , 
-.lbl_ipClts {
+.lbl_ipClts ,
+.mn_dtWrp ,
+#ord_dpl_wrapper ,
+.tt_ordh ,
+.hdttx ,
+#cdMdoc ,
+._load_blank
+{
 	float: left;
 	overflow: hidden;
 }
@@ -428,7 +435,9 @@ body {
 	width: 100%;
 	overflow-y: scroll;
 }
-.close_btn {
+.close_btn ,
+.close_btn_2
+{
 	border: none;
 	background: none;
 	width: 30px;
@@ -835,4 +844,253 @@ ul.pagBtn_ctner {
 .pagBtn_ctner button.active {
 	background: #fff;
 	color: #000;
+}
+.ord_history {
+	display: block;
+	width: 375px;
+	height: 300px;
+	border: 1px solid #fff;
+	background-color: #000;
+	color: #fff;
+	overflow: hidden;
+	position: fixed;
+	right: 31px;
+	z-index: 10;
+	top: 25%;
+	font-size: 14px;
+}
+.tt_ordh {
+	width: 100%;
+	height: 30px;
+	padding-left: 10px;
+}
+.hdttx ,
+#cdMdoc ,
+.adzkkd ,
+#cdmxzk
+{
+	line-height: 30px;
+	height: 100%;
+	color: inherit;
+	float: left;
+}
+.adzkkd {
+	font-variant: small-caps;
+	font-size: 12px;
+}
+.hdttx {
+	font-size: 18px;
+	text-transform: uppercase;
+}
+.adzkkd {
+	margin-right: 5px;
+}
+#cdMdoc ,
+#cdmxzk
+{
+	margin-right: 10px;
+	font-size: 12px;
+}
+#cdmxzk {
+	color: #FF1414;
+}
+.order_ctner {
+	width: 100%;
+	height: 100%;
+	float: left;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+#ord_dpl_wrapper {
+	height: calc(100% - 30px);
+	width: 100%;
+}
+.mn_dtWrp {
+	width: 100%;
+}
+.ord_dcrp {
+	height: 30px;
+	line-height: 30px;
+	float: left;
+	width: 100%;
+	border-bottom-width: 1px;
+	border-style: solid;
+	border-color: #e3e3e3;
+	cursor: pointer;
+}
+.ord_dcrp:hover {
+	background-color: #1F1F1F;
+}
+.ord_dcrp:first-child {
+	border-top-width: 1px;
+}
+.ord_dcrp div {
+	height: 30px;
+	float: left;
+	overflow: hidden;
+}
+.prd_dcrp div {
+	float: left;
+	height: 100%;
+	border-right-width: 1px;
+	padding-left: 5px;
+}
+.prd_dcrp ,
+.prd_dcrp div {
+	border-style: dashed;
+	border-color: #4D4D4D;
+}
+.pkg_dcrp div  {
+	float: left;
+	height:30px;
+}
+.stt,
+.ord_time,
+.ord_room,
+.ord_status {
+	text-align: center;
+}
+.stt {
+	width: 30px;
+}
+.ord_time {
+	width: 135px;
+}
+.ord_pval {
+	width: 70px;
+	padding-left: 5px;
+	color: #07D600;
+}
+.ord_room {
+	width: 60px;
+}
+.ord_status {
+	width: 30px;
+}
+.cancle_ship {
+	width: 30px;
+	height: 100%;
+	padding: 0px;
+	line-height: 30px;
+	border: none;
+	background-color: transparent;
+}
+.pkg_dcrp {
+	width: 100%;
+	height: auto;
+	border-bottom: 1px solid #eeeeee;
+	background-color: #3D3D3D;
+}
+.pkg_dcrp,
+.prd_dcrp {
+	float: left;
+	overflow: hidden;
+}
+.prd_dcrp {
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	border-width: 1px;
+}
+.prd_dcrp:last-child {
+	border: none;
+}
+.prd_img {
+	width: 30px;
+	padding: 0 !important;
+	border: none !important;
+}
+.prd_img img {
+	width: 100%;
+	height: 100%;
+	display: block;
+	float: left;
+}
+.prd_name {
+	width: 158px;
+}
+.prd_prc ,
+.prd_tval
+{
+	width: 68px;
+}
+.prd_qty {
+	width: 30px;
+}
+* [hide] {
+	display: none;
+}
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotating {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+* [static] {
+	color: #454545;
+}
+.ordrec_wr {
+	line-height: 30px;
+}
+._loading_dt , 
+._load_blank 
+{
+	position: absolute;
+	z-index: 10;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	line-height: 100%;
+}
+._loading_dt {
+	background-color: rgba(0,0,0,0.75);
+}
+._loading_dt img {
+	margin: 0 auto;
+	width: 50px;
+	height: 50px;
+}
+._load_blank {
+	font-size: 40px;
+	font-weight: bold;
+	background: #222;
+	text-align: center;
+}
+._load_blank i {
+	font-size: 200px;
+	text-align: center;
+}
+.cart_empty ,
+._load_blank i
+{
+	text-transform: uppercase;
+	color: rgba(0,0,0,0.6);
+    text-shadow: 2px 2px 3px rgba(255,255,255,0.05);
 }
