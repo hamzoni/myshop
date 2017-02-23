@@ -69,11 +69,16 @@ $(".dragger_ttl").mousedown(function(e){
 	if (host_element.nodeName == "FORM") {
 		host_element = this.parentNode.parentNode;
 	}
+	var isPgInfo = host_element.classList.contains("dcrtp_cpg");
+	if (isPgInfo) {
+		host_element = findAncestor(this,"pg_detail");
+	}
+	set_prioritize(host_element);
 	var obj_top = window.getComputedStyle(host_element).top;
 	obj_top = parseInt(obj_top);
 	var obj_left = host_element.getBoundingClientRect().left;
 	ctc.y = obj_top;
-	ctc.x = obj_left;
+	ctc.x = obj_left + (isPgInfo ? host_element.clientWidth/2 : 0);
 	host_element.style.top = ctc.y + "px";
 	host_element.style.left = ctc.x + "px";
 	drag_activate = true;
@@ -93,6 +98,11 @@ window.onmousemove = function(e) {
 			host_element.style.left = newX + "px";
 		}
 	}
+}
+function set_prioritize(d) {
+	var x = attr_selector("prioritized");
+	for (var i = 0; i < x.length; i++) x[i].removeAttribute("prioritized");
+	d.setAttribute("prioritized","");
 }
 function addEvent(obj, evt, fn) {
     if (obj.addEventListener) {
@@ -467,7 +477,6 @@ prcd_cartb.onclick = function() {
 			var cUrl = tbl_sDt.b_url + "/send_cart";
 			var dtd = "clt_spI=" + JSON.stringify({client: client_info, cart: cart});
 			ajax_request(cUrl, dtd, function(d) {
-				return;
 				reset_ord_history();
 				load_ord_history(true);
 				clear_allItem(cart);
@@ -493,6 +502,7 @@ function popup_blk_fm(d) {
 	if ($(d)[0].hasAttribute("hide")) {
 		$(d)[0].removeAttribute("hide");
 	} else {
+		$(d)[0].removeAttribute("style");
 		$(d)[0].setAttribute("hide","");
 	}
 	
@@ -750,6 +760,7 @@ function reset_ord_history() {
 	load_max_ttORD();
 }
 addEvent(window,"load",function(e) {
+	$(".pg_nameB").text(window.location.hostname);
 	prepare_cData();
 	addEvent(document, "mouseout", function(e) {
         e = e ? e : window.event;
@@ -759,4 +770,57 @@ addEvent(window,"load",function(e) {
         };
     });
 });
+$("#cls_dtsk").click(function(){
+	$("#pgDetail_prmt").attr("hide","");
+});
+$("#contact_info_b").click(function(){
+	var aDpg = document.getElementById("pgDetail_prmt");
+	if (aDpg.hasAttribute("hide")) {
+		aDpg.removeAttribute("hide");
+		var currentScroll = window.scrollY;
+		$("#pgDetail_prmt").css({
+			"top" : "calc(25% + " + currentScroll + "px)"
+		});
+	} else {
+		aDpg.setAttribute("hide","");
+		aDpg.removeAttribute("style");
+	}
+});
+$("#phone_prompt").click(function(){
+	var t = $("#ctn_dpl");
+	if (t[0].hasAttribute("hide")) {
+		var x = getOffsetLeft(this) + this.clientWidth;
+		var y = getOffsetTop(this);
+		t.css({
+			"top": y + "px",
+			"left": x + "px"
+		});
+		t[0].removeAttribute("hide");
+	} else {
+		t[0].setAttribute("hide","");
+	}
+});
+$(".dtt_pdDt").click(function(){
+	SelectText(this);
+});
+$(".i_pctn_dp").click(function(){
+	SelectText($(".phv_dp")[0]);
+});
+function SelectText(element) {
+    var doc = document
+        , text = $(element)[0]
+        , range, selection
+    ;    
+    if (doc.body.createTextRange) {
+        range = document.body.createTextRange();
+        range.moveToElementText(text);
+        range.select();
+    } else if (window.getSelection) {
+        selection = window.getSelection();        
+        range = document.createRange();
+        range.selectNodeContents(text);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+}
 // })();

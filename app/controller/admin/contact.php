@@ -65,12 +65,12 @@ class contact extends controller {
 				}
 				if ($i == 0) {
 					$upl_fs = $fd[$i].md5(time());
-					$upl_fn = $dir_s.$upl_fs;
 					$this->store_page_logo($upl_fs);
-					echo json_encode(["file_name"=>$upl_fs]);
 				} else {
-					$upl_fn = $dir_s.$fd[$i].'favicon.ico';
+					$upl_fs = $fd[$i].'favicon.ico';
 				}
+				$upl_fn = $dir_s.$upl_fs;
+				echo json_encode(["file_name"=>$upl_fs]);
 				move_uploaded_file($_FILES[$fn[$i]]['tmp_name'], $upl_fn);
 			}
 		}

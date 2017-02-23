@@ -18,16 +18,13 @@ class product extends controller {
 		// SET MODEL 
 		$this->mdl_gnr = $this->model("general","products");
 		$this->mdl_obj = $this->model("admin_model/product","products");
+		$this->mdl_str = $this->model("admin_model/store","stores");
 	}
 	public function index() {
 		$args = func_get_args();
 		$crr_url = $args[count($args) - 1];
 		$this->set_id_start();
 
-		if (@isset($_SESSION["ntf"])) {
-			$this->page_data["ntf"] = $_SESSION["ntf"];
-			unset($_SESSION["ntf"]);
-		}
 		// clear all unknown image in folder everytime load page
 		$this->clr_unuseImg();
 		$this->page_data["page"] = $this->page;
@@ -52,7 +49,8 @@ class product extends controller {
 		$this->page_data["products_original"] = $this->mdl_obj->select_record($this->page_data["slc_lm"],$this->page_data["crr_offset"], $this->page_data["id_start"]);
 		$this->page_data["products_tray"] = $this->dataModification($this->page_data["products_original"]);
 		$this->page_data["crr_offset"] = $this->page_data["slc_lm"];
-
+		// get seller data 
+		$this->page_data["seller"] = $this->mdl_str->get_store_data(["id","store_name"]);
 		// call view
 		$this->view('admin/main',$this->page_data);
 
@@ -72,7 +70,7 @@ class product extends controller {
 			// strip all href to get filename from database
 			for ($i = 0; $i < count($imgDB["cpl"]); $i++) {
 				preg_match('/\d+$/', $imgDB["cpl"][$i][$f], $vtnt);
-				$imgDB["fn"][] = $vtnt[0];
+				if ($vtnt) $imgDB["fn"][] = $vtnt[0];
 			}
 			// find discrepancy of between DataBase and FolDer
 			for ($i = 0; $i < count($imgFD); $i++) {
@@ -104,163 +102,61 @@ class product extends controller {
 			$f_dt["p_type"] = $_POST["p_type"];
 			$f_dt["p_dp"] = $_POST["p_display"];
 			$f_dt["p_dscr"] = $_POST["f_dscrp"];
+			$f_dt["p_seller"] = $_POST["p_store"];
 		} catch (Exception $e) {};
 		// DATA VALIDATION
-		$this->f_vld($f_dt, $this->crr_folder.'/admin/product');
+		$err = $this->f_vld($f_dt, $this->crr_folder.'/admin/product');
+		if ($err != 0) echo $err;
 		
 		// ALLOCATE IMG TO FOLDER
-		$rt_dt = $this->upload_image(false,2);
-		// INSERT DATA TO DATABASE
-		$insert_result = $this->mdl_obj->insert_record(
-			$f_dt["p_name"],$f_dt["p_price"],$f_dt["p_sale"],
-			$rt_dt['img_href']['ava'],$rt_dt['img_href']['ntr'],
-			$f_dt["p_type"],$f_dt["p_dp"],$f_dt["p_dscr"]);
-		if (!is_int(intval($insert_result))) {
-			$this->error($insert_result, $this->upl_f_fail);
-		}
-		// DIRECT CLIENT TO SUCCESS PAGE
-		$_SESSION["ntf"] = "Add new product successful!";
-		header('Location: '.$rt_dt['scc_pg']);
-	}
-
-	public function upload_image($imgvF = false, $upl_type = 3, $prv_fn = [],$prevAvailable = ['ava'=>false,'ntr'=>false]) {
-		// imgvF = false: is uploaded from a html form (ajax rather)
-		// upl_type = 0 (ava) or 1 (ntr) or 2 (both) or 3 (none of those)
-
-		// IMAGE STORAGE DIRECTORY
-		$shrc_uplF = $_SERVER['DOCUMENT_ROOT'].$this->crr_folder.'img/client/';
-		$src_view_base = 'img/client/';
-		// SUCCESS PAGE
-		$upl_f_scc = 'http://'.$_SERVER['HTTP_HOST'].$this->crr_folder.'admin/product/index';
-		// UPLOAD ERROR
-		$errors = array(1 => 'php.ini max file size exceeded', 
-		                2 => 'html form max file size exceeded', 
-		                3 => 'file upload was only partial', 
-		                4 => 'no file was attached');
-		// CHECK IF IMAGE IS SUMMITED THROUGH FORM 
-		if (!$imgvF) {
-			isset($_POST['submit_prd']) 
-			or $this->error('the upload form is needed', $this->upl_f_fail);
-		}
-		$now = time();
-		$return_data = array();
-		if ($upl_type == 3) {
+		$rt_dt = $this->upload_image();
+		if (empty(@$rt_dt['ava'])) {
+			echo "Main image is required";
 			return;
 		}
-		if ($upl_type == 0 || $upl_type == 2) {
-			$upl_folder_ava = $shrc_uplF."ava/";
-			$ava_href = $src_view_base."ava/";
-			// NAME OF INPUT(s)
-			$fld_n_ava = 'p_avatar';
-			if (!$imgvF) { // different in handling error
-				// CHECK PHP's BUILT-IN ERROR
-				($_FILES[$fld_n_ava]['error'] == 0) 
-			    or $this->error($errors[$_FILES[$fld_n_ava]['error']], $this->upl_f_fail);
-			    // CHECK IF HTTP'S SUBJECT UPLOAD
-				@is_uploaded_file($_FILES[$fld_n_ava]['tmp_name']) 
-				or $this->error('Invalid HTTP upload', $this->upl_f_fail);
-				// VALIDATION: CHECK IF THE FILE IS GENUINELY AN IMAGE
-				@getimagesize($_FILES[$fld_n_ava]['tmp_name']) 
-				or $this->error('Only image is allowed', $this->upl_f_fail);
-				// CREATE A UNIQUE FILE NAME
-				while(file_exists($upl_fn_ava = $upl_folder_ava.$now)) {$now++;};
-				$return_data['img_href']['ava'] = $ava_href.$now;
-				// MOVE FILE TO TARGET LOCATION && ALLOCATE NEW FILE NAME
-				move_uploaded_file($_FILES[$fld_n_ava]['tmp_name'], $upl_fn_ava) 
-				or $this->error('Receiving directory insuffiecient permission', $this->upl_f_fail);
-			} else {
-				// CHECK PHP's BUILT-IN ERROR
-				if ($_FILES[$fld_n_ava]['error'] != 0) {
-					$return_data['error'] = $errors[$_FILES[$fld_n_ava]['error']];
-					return $return_data['error'];
-				}
-			    // CHECK IF HTTP'S SUBJECT UPLOAD
-				if (!is_uploaded_file($_FILES[$fld_n_ava]['tmp_name'])) {
-					$return_data['error'] = 'Invalid HTTP upload';
-					return $return_data['error'];
-				}
-				// VALIDATION: CHECK IF THE FILE IS GENUINELY AN IMAGE
-				if (!getimagesize($_FILES[$fld_n_ava]['tmp_name'])) {
-					$return_data['error'] = 'Only image is allowed';
-					return $return_data['error'];
-				} 
-				if ($prevAvailable['ava'] === true) {
-					// USE PREVIOUS FILE NAME
-					$fldd = [];
-					preg_match('/\d+$/', $prv_fn['ava'], $fldd);
-					$fldd = $fldd[0];
-					$upl_fn_ava = $upl_folder_ava.$fldd;
-					$return_data['img_href']['ava'] = $ava_href.$fldd;
-				} else {
-					// CREATE A UNIQUE FILE NAME
-					while(file_exists($upl_fn_ava = $upl_folder_ava.$now)) {$now++;};
-					$return_data['img_href']['ava'] = $ava_href.$now;
-				}
-				
-				// MOVE FILE TO TARGET LOCATION && ALLOCATE NEW FILE NAME
-				if (!move_uploaded_file($_FILES[$fld_n_ava]['tmp_name'], $upl_fn_ava) ) {
-					$return_data['error'] = 'Receiving directory insuffiecient permission';
-					return $return_data['error'];
-				}
-			}	
-		} 
-		if ($upl_type == 1 || $upl_type == 2) {
-			$upl_folder_ntr = $shrc_uplF."ntr/";
-			$ntr_href = $src_view_base."ntr/";
-			// NAME OF INPUT(s)
-			$fld_n_ntr = 'p_nutrition';
-			if (!$imgvF) {
-				// CHECK PHP's BUILT-IN ERROR
-				($_FILES[$fld_n_ntr]['error'] == 0) 
-			    or $this->error($errors[$_FILES[$fld_n_ntr]['error']], $this->upl_f_fail);
-			    // CHECK IF HTTP'S SUBJECT UPLOAD
-				@is_uploaded_file($_FILES[$fld_n_ntr]['tmp_name']) 
-				or $this->error('Invalid HTTP upload', $this->upl_f_fail);
-				// VALIDATION: CHECK IF THE FILE IS GENUINELY AN IMAGE
-				@getimagesize($_FILES[$fld_n_ntr]['tmp_name']) 
-				or $this->error('Only image is allowed', $this->upl_f_fail);
-				// CREATE A UNIQUE FILE NAME
-				while(file_exists($upl_fn_ntr = $upl_folder_ntr.$now)) {$now++;};
-				$return_data['img_href']['ntr'] = $ntr_href.$now;
-				// MOVE FILE TO TARGET LOCATION && ALLOCATE NEW FILE NAME
-				move_uploaded_file($_FILES[$fld_n_ntr]['tmp_name'], $upl_fn_ntr) 
-				or $this->error('Receiving directory insuffiecient permission', $this->upl_f_fail);
-			} else {
-				if ($_FILES[$fld_n_ntr]['error'] != 0) {
-					$return_data['error'] = $errors[$_FILES[$fld_n_ntr]['error']];
-					return $return_data['error'];
-				}
-			    // CHECK IF HTTP'S SUBJECT UPLOAD
-				if (!is_uploaded_file($_FILES[$fld_n_ntr]['tmp_name'])) {
-					$return_data['error'] = 'Invalid HTTP upload';
-					return $return_data['error'];
-				}
-				// VALIDATION: CHECK IF THE FILE IS GENUINELY AN IMAGE
-				if (!getimagesize($_FILES[$fld_n_ntr]['tmp_name'])) {
-					$return_data['error'] = 'Only image is allowed';
-					return $return_data['error'];
-				} 
-				if ($prevAvailable['ntr'] === true) {
-					// USE PREVIOUS IMAGE
-					$fldd = [];
-					preg_match('/\d+$/', $prv_fn['ntr'], $fldd);
-					$fldd = $fldd[0];
-					$upl_fn_ntr = $upl_folder_ntr.$fldd;
-					$return_data['img_href']['ntr'] = $ntr_href.$fldd;
-				} else {
-					// CREATE A UNIQUE FILE NAME
-					while(file_exists($upl_fn_ntr = $upl_folder_ntr.$now)) {$now++;};
-					$return_data['img_href']['ntr'] = $ntr_href.$now;
-					}
-				// MOVE FILE TO TARGET LOCATION && ALLOCATE NEW FILE NAME
-				if (!move_uploaded_file($_FILES[$fld_n_ntr]['tmp_name'], $upl_fn_ntr)) {
-					$return_data['error'] = 'Receiving directory insuffiecient permission';
-					return $return_data['error'];
-				}
+		// INSERT DATA TO DATABASE
+		$prepare_dd = [
+			"name" => $f_dt["p_name"],
+			"price" => $f_dt["p_price"],
+			"sale" => $f_dt["p_sale"],
+			"avatar_img" => $rt_dt["ava"],
+			"nutrition_img" => $rt_dt["ntr"],
+			"type" => $f_dt["p_type"],
+			"display" => $f_dt["p_dp"],
+			"description" => $f_dt["p_dscr"],
+			"store_id" => $f_dt["p_seller"]
+		];
+		$rsl = $this->mdl_obj->insert_record($prepare_dd);
+		if ($rsl == 1) {
+			echo "Add new product successful!";
+		} else {
+			echo "Error: duplicated item name.";
+		}
+	}
+	public function upload_image() {
+		$img_chk = ['p_avatar','p_nutrition'];
+		$img_str = ['ava','ntr'];
+		$img_rtc = [];
+		$lc = "img/client/";
+		$allow_f = ["jpg","png","jpeg","gif","bmp","ico"];
+		for ($i = 0; $i < count($img_chk); $i++) {
+			$f = $img_chk[$i];
+			$n = explode(".", $_FILES[$f]["name"]);
+			$k = $img_str[$i];
+			$img_rtc[$k] = "";
+			if (!empty($_FILES[$f]['tmp_name']) &&
+				getimagesize($_FILES[$f]['tmp_name']) &&
+				$_FILES[$f]["size"] < 200*1000 &&
+				in_array(end($n),$allow_f)) {
+
+				$s = $lc.$k."/";
+				$now = time();
+				while(file_exists($x = $s.$now)) {$now++;};
+				$img_rtc[$k] = $s.$now;
+				move_uploaded_file($_FILES[$f]['tmp_name'], $img_rtc[$k]);
 			}
 		}
-		$return_data['scc_pg'] = $upl_f_scc;
-		return $return_data;
+		return $img_rtc;
 	}
 	public function f_vld($f,$l) {
 		// LOCATION OF UPLOAD FORM
@@ -271,17 +167,12 @@ class product extends controller {
 			|| $f["p_sale"] >= 1
 			|| !is_int($f["p_price"])
 			|| ($f["p_sale"] != 0 ? !is_double($f["p_sale"]) : false)) {
-			$_SESSION["ntf"] = "Invalid numberic input";
-			header("Location: $l");
-			return;
+			return "Invalid numberic input";
 		}
 
 		// CHECK IF INPUT IS EMPTY
-		if($this->blank_inputChecker($f)) {
-			$_SESSION["ntf"] = "Inadequate necessary information";
-			header("Location: $l");
-			return;
-		}
+		if($this->blank_inputChecker($f)) return "Inadequate necessary information";
+		return 0;
 	}
 	public function blank_inputChecker($dt) {
 		foreach ($dt as $k => $v) {
@@ -375,61 +266,38 @@ class product extends controller {
 		$upd_dtrc = json_decode($_POST['previous_pData'],true);
 		$upd_gntr = $_POST;
 		$upd_gntr['id'] = $upd_dtrc['id'];
-		$isEmpty_img = [];
-		$isEmpty_img['ava'] = empty($_FILES['p_avatar']['size']);
-		$isEmpty_img['ntr'] = empty($_FILES['p_nutrition']['size']);
-
-		$fileExist = ['ava'=>file_exists($upd_dtrc['ava']),'ntr'=>file_exists($upd_dtrc['ntr'])];
-		$dl_r = true;
-		if ($isEmpty_img['ava'] == false && $isEmpty_img['ntr'] == false) {
-			// remove image from dir
-			if ($upd_dtrc['ava'] != 0 && $upd_dtrc['ntr'] != 0
-				&& null !== $upd_dtrc) {
-				$dl_r = $this->rmImg_dir([$upd_dtrc['ava'],$upd_dtrc['ntr']]);
-			}
-			// upload image using prev name
-			$upl_rs = $this->upload_image(true, 2,['ava'=>$upd_dtrc['ava'],'ntr'=>$upd_dtrc['ntr']],$fileExist);
-			$upd_gntr['ava'] = $upl_rs['img_href']['ava'];
-			$upd_gntr['ntr'] = $upl_rs['img_href']['ntr'];
-		} else if ($isEmpty_img['ava'] == true && $isEmpty_img['ntr'] == false) {
-			if ($upd_dtrc['ntr'] != 0 && null !== $upd_dtrc) {
-				$dl_r = $this->rmImg_dir($upd_dtrc['ntr']);
-			}
-			$upl_rs = $this->upload_image(true, 1,['ntr'=>$upd_dtrc['ntr']],$fileExist);
-			$upd_gntr['ntr'] = $upl_rs['img_href']['ntr'];
-			$upd_gntr['ava'] = null;
-		} else if ($isEmpty_img['ava'] == false && $isEmpty_img['ntr'] == true) {
-			if ($upd_dtrc['ava'] != 0 && null !== $upd_dtrc) {
-				$dl_r = $this->rmImg_dir($upd_dtrc['ava']);
-			}
-			$upl_rs = $this->upload_image(true, 0,['ava'=>$upd_dtrc['ava']],$fileExist);
-			$upd_gntr['ava'] = $upl_rs['img_href']['ava'];
-			$upd_gntr['ntr'] = null;
-		} else {
-			$upd_gntr['ava'] = null;
-			$upd_gntr['ntr'] = null;
-			$dl_r = true;
-			$upl_rs = true;
-		}
-		if (is_array($dl_r)) {
-			if (array_key_exists('error',$dl_r)) {
-				print_r($dl_r['error']);
-				return;
+		$upd_gntr['p_store'] = $upd_gntr['p_store'] == 0 ? null : $upd_gntr['p_store'];
+		$img_chk = ['p_avatar','p_nutrition'];
+		$img_typ = ['ava','ntr'];
+		$allow_f = ["jpg","png","jpeg","gif","bmp","ico"];
+		for ($i = 0; $i < count($img_chk); $i++) {
+			$f = $img_chk[$i];
+			$g = $img_typ[$i];
+			$upd_gntr[$g] = $upd_dtrc[$g];
+			$n = explode(".", $_FILES[$f]["name"]);
+			if (!empty($_FILES[$f]['tmp_name']) &&
+				getimagesize($_FILES[$f]['tmp_name']) &&
+				$_FILES[$f]["size"] < 200*1000 &&
+				in_array(end($n),$allow_f)) {
+				if (file_exists($upd_dtrc[$g])) unlink($upd_dtrc[$g]);
+				$lc = str_replace(basename($upd_dtrc[$g]), '', $upd_dtrc[$g]);
+				$now = time();
+				while(file_exists($x = $lc.$now)) {$now++;};
+				$upd_gntr[$g] = $lc.$now;
+				move_uploaded_file($_FILES[$f]['tmp_name'], $upd_gntr[$g]);
 			}
 		}
-		if (is_array($upl_rs)) {
-			if (array_key_exists('error',$upl_rs)) {
-				print_r($upl_rs['error']);
-				return;
-			}
-		}
-		// update record
-		$upd_db = $this->mdl_obj->update_product($upd_gntr);
+		$upd_db = $this->mdl_obj->update_product($upd_gntr); 
 		$upd_gntr['last_upd'] = date("Y-m-d h:i:s");
 		$spc_tblDpl = array();
 		$spc_tblDpl['sale'] = $upd_gntr['p_sale'];
 		$spc_tblDpl['type'] = $upd_gntr['p_type'];
 		$spc_tblDpl['display'] = $upd_gntr['p_display'];
+		$spc_tblDpl['store_name'] = "";
+		if ($upd_gntr['p_store'] != 0) {
+			$stn = $this->mdl_str->get_store_data("store_name",["id",$upd_gntr["p_store"]]);
+			$spc_tblDpl['store_name'] = reset($stn[0]);
+		}
 		$spc_tblDpl = $this->dataModification([$spc_tblDpl]);
 		print_r(json_encode([$upd_gntr,$spc_tblDpl]));
 	}

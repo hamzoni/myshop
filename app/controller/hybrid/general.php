@@ -131,4 +131,16 @@ class general {
 		$r = json_encode($r);
 		print_r($r);
 	}
+	public function load_file_content($ajax = true, $file_name) {
+		if(!$fp = $this->decrypt_file($file_name)) {
+			if ($ajax) echo 0;
+			return false;
+		}
+		$contents = stream_get_contents($fp);
+		if ($ajax) {
+			print_r($contents);
+		} else {
+			return $contents;
+		}
+	}
 }

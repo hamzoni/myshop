@@ -327,3 +327,18 @@ Object.cpare = function( x, y ) {
   }
   return true;
 }
+// get offset position
+function getOffsetLeft( elem ) {
+    var offsetLeft = 0;
+	do {
+		if ( !isNaN( elem.offsetLeft )) offsetLeft += elem.offsetLeft;
+	} while(elem = elem.offsetParent);
+	return offsetLeft;
+}
+function getOffsetTop( elem ) {
+    var offsetTop = 0;
+	do {
+		if ( !isNaN( elem.offsetTop )) offsetTop += elem.offsetTop;
+	} while(elem = elem.offsetParent);
+	return offsetTop;
+}

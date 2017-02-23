@@ -329,16 +329,14 @@ f.d.f.onsubmit = function(e) {
 			contentType: false,
 			processData: false,
 			success:function(data){
-				if (typeof data == 'object') {
-					data = JSON.parse(data);
-					if (data.error != undefined && data.file_name == undefined) {
-						alert(data.error);
-					} else {
-						f.v.wBLogo = data.file_name;
-						store_pageInfo();
-					}
+				data = JSON.parse(data);
+				if (data.error != undefined && data.file_name == undefined) {
+					alert(data.error);
+				} else {
+					if (f.d.lg.value != "") f.v.wBLogo = data.file_name;
+					if (f.d.fc.value != "") {};
+					store_pageInfo();
 				}
-				console.log(data);
 			},
 			error: function(data){
 				throw data;

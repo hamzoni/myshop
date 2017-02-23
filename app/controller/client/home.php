@@ -63,7 +63,7 @@ class home extends controller {
 		$this->page_data["items"]["popular"] = $cpg[0];
 		$this->page_data["items"]["special"] = $cpg[1];
 		// SUGGESTED ITEMS
-		$suggestFd = $this->mdl_prd->select_byGenre("post_date",1,null,[["display","1"],["type","3"]]);
+		$suggestFd = $this->mdl_prd->select_random(10, ["display","1"]);
 		if (count($suggestFd) > 3) {
 			$nbOfDiv = ceil(count($suggestFd)/3);
 			for ($i = 0, $n = 0; $i < $nbOfDiv, $n < count($suggestFd); $i++) {
@@ -81,11 +81,21 @@ class home extends controller {
 		// select offset 12 items
 		$this->page_data["items"]["menu"] = $this->mdl_prd->select_prdPager($this->page_data["slc_lm"], $_SESSION["crr_offset"]);
 		$this->page_data["items"]["menu"] = json_encode($this->page_data["items"]["menu"]);
+		// load page contact data
+		$this->page_data["contact"] = $this->load_contact_data();
 
 		$this->set_pageData();
 		$this->add_page_view();
 		// call view
 		$this->view('client/home',$this->page_data);
+	}
+	public function load_contact_data() {
+		$r = getcwd()."/data/contact.txt";
+		$r = $this->load_file_content(false, $r);
+		preg_match_all("/{.+}/", $r, $r);
+		$r = "\"".$r[0][0]. "\"";
+		$r = json_decode(json_decode($r),true);
+		return $r;
 	}
 	public function add_page_view() {
 		$dt = $this->open_pageData();
@@ -291,6 +301,7 @@ class home extends controller {
 											$ord_id,
 											$items_list[$i]->qty,
 											$totalPrice);
+			$this->mdl_prd->add_purchase_count($items_list[$i]->id);
 		}
 		$c_PC = intval($this->mdl_clt->getClientData_c($_SESSION["user_ip"],'purchase_count')['purchase_count']);
 		$c_PV = intval($this->mdl_clt->getClientData_c($_SESSION["user_ip"],'total_purchaseVal')['total_purchaseVal']);

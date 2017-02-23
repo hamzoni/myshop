@@ -42,4 +42,9 @@ class general_c {
 		$this->db->query($queryStr);
 		return $this->db->resultset();
 	}
+	public function select_random($n, $c) {
+		$queryStr = "SELECT * FROM products WHERE `".$c[0]."` = '".$c[1]."' ORDER BY RAND() LIMIT ".$n;
+		$this->db->query($queryStr);
+		return $this->db->resultset();
+	}
 }

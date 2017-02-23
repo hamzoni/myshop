@@ -4,31 +4,44 @@ class product_c extends general_c{
 		$this->db = new Database();
 		$this->tbl = $tbl;
 	}
-	public function insert_record($name,$price,$sale,$ava,$ntr,$type,$dp,$dc) {
-		$this->db->query("INSERT INTO `$this->tbl`(name,price,sale,avatar_img,nutrition_img,type,display,description) 
-			VALUES (:nm,:prc,:sl,:av,:nr,:tp,:dp,:dc)");
-		$this->db->bind(':nm',$name);
-		$this->db->bind(':prc',$price);
-		$this->db->bind(':sl',$sale);
-		$this->db->bind(':av',$ava);
-		$this->db->bind(':nr',$ntr);
-		$this->db->bind(':tp',$type);
-		$this->db->bind(':dp',$dp);
-		$this->db->bind(':dc',$dc);
+	public function insert_record($d) {
+		$c = ["",""];
+		end($d);
+		$lk = key($d);
+
+		if ($d['store_id'] == 0) $d['store_id'] = null;
+		foreach ($d as $k => $v) {
+			$c[0] .= $k.($k == $lk ? "" : ",");
+			$c[1] .= ":".$k.($k == $lk ? "" : ",");
+		}
+		$queryStr = "INSERT INTO `$this->tbl`(".$c[0].") VALUES (".$c[1].")";
+		$this->db->query($queryStr);
+		foreach ($d as $k => $v) $this->db->bind(':'.$k,$v);
 		try {
 		    $this->db->execute();
 		} catch (Exception $e) {
 		    return $e->getMessage();
 		}
-		return $this->db->lastInsertId();
+		return $this->db->rowCount();
 	}
 	public function select_record($limit , $offset, $whereAt = null) {
 		if ($whereAt == null) {
-			$queryStr = "SELECT * FROM `$this->tbl` ORDER BY post_date DESC LIMIT :limit OFFSET :offset";
+			$queryStr = "SELECT $this->tbl.*, stores.store_name 
+						FROM `$this->tbl` 
+						LEFT JOIN stores ON $this->tbl.store_id = stores.id 
+						ORDER BY post_date DESC LIMIT 
+						:limit OFFSET :offset";
 		} else {
-			$queryStr = "(SELECT * FROM products WHERE id = $whereAt ORDER BY post_date DESC LIMIT :limit OFFSET :offset)
-				UNION ALL (SELECT * FROM products WHERE id < $whereAt ORDER BY post_date DESC LIMIT :limit OFFSET :offset)";
+			$queryStr = "(SELECT $this->tbl.*, stores.store_name 
+						FROM `$this->tbl` WHERE id = $whereAt 
+						LEFT JOIN stores ON products.store_id = stores.id 
+						ORDER BY post_date DESC LIMIT :limit OFFSET :offset) 
+						UNION ALL (SELECT * FROM `$this->tbl` WHERE id < $whereAt 
+						ORDER BY post_date DESC LIMIT :limit OFFSET :offset)";
 		}
+		// $queryStr = "SELECT products.*, stores.store_name
+		// 			FROM products 
+		// 			LEFT JOIN stores ON products.store_id = stores.id";
 		$this->db->query($queryStr);
 		$this->db->bind(":limit",$limit);
 		$this->db->bind(":offset",$offset);
@@ -83,13 +96,17 @@ class product_c extends general_c{
 	
 	public function update_product($dt_arr) {
 		$colQr_k = ['p_name'=>'name','p_price'=>'price','p_sale'=>'sale','ava'=>'avatar_img',
-					'ntr'=>'nutrition_img','p_type'=>'type','p_display'=>'display','f_dscrp'=>'description'];
-		if(is_null($dt_arr['ava'])) unset($colQr_k['ava']);
-		if(is_null($dt_arr['ntr'])) unset($colQr_k['ntr']);
+					'ntr'=>'nutrition_img','p_type'=>'type','p_display'=>'display','f_dscrp'=>'description','p_store'=>'store_id'];
+		if(@is_null($dt_arr['ava'])) unset($colQr_k['ava']);
+		if(@is_null($dt_arr['ntr'])) unset($colQr_k['ntr']);
 		$colQr_v = []; 
 		$c = 0;
 		foreach ($colQr_k as $key => $value) {
-			$colQr_v[$c] = $value."='".$dt_arr[$key]."'";
+			if (@is_null($dt_arr[$key])) {
+				$colQr_v[$c] = $value." = NULL";
+			} else {
+				$colQr_v[$c] = $value." ='".$dt_arr[$key]."'";
+			}
 			$c++;
 		}
 		$queryStr = "UPDATE `$this->tbl`

@@ -1,11 +1,11 @@
-var newPrd_form = window.upload_newProduct;
-var p_n_f = newPrd_form.p_name;
-var p_dp_f = newPrd_form.p_display;
-var p_sale = newPrd_form.p_sale;
-var p_price = newPrd_form.p_price;
-var p_type = newPrd_form.p_type;
-var p_dscr = newPrd_form.f_dscrp;
-var previous_pData = newPrd_form.previous_pData;
+var F = window.upload_newProduct;
+var p_n_f = F.p_name;
+var p_dp_f = F.p_display;
+var p_sale = F.p_sale;
+var p_price = F.p_price;
+var p_type = F.p_type;
+var p_dscr = F.f_dscrp;
+var previous_pData = F.previous_pData;
 var tbl_sDt = new set_preset();
 p_price.onkeypress = function(e) {
 	return event.charCode >= 48 && event.charCode <= 57;
@@ -51,15 +51,15 @@ var ctx_avat = cvs_avat.getContext('2d');
 $("#f_upl_ava").click(function(){
 	cvs = cvs_avat;
 	ctx = ctx_avat;
-	newPrd_form.p_avatar.click();
+	F.p_avatar.click();
 });
 $("#f_upl_nutri").click(function(){
 	cvs = cvs_nutr;	
 	ctx = ctx_nutr;
-	newPrd_form.p_nutrition.click();
+	F.p_nutrition.click();
 });
-newPrd_form.p_avatar.onchange = handleImage;
-newPrd_form.p_nutrition.onchange = handleImage;
+F.p_avatar.onchange = handleImage;
+F.p_nutrition.onchange = handleImage;
 
 // set radio: click label enable check
 $("label[for='p_type']").click(function(){
@@ -91,12 +91,11 @@ $("#add_prf").click(function(){
 	$(".boundingLayer").css({
 		"display":"block"
 	});
-	var f_action_val = document.getElementsByClassName("boundingLayer")[0].firstElementChild;
-	f_action_val = f_action_val.getElementsByTagName("form")[0].setAttribute("action",tbl_sDt.base_url + "/add_product");
+	$("#addPr_f").action = tbl_sDt.base_url + "/add_product";
 });
 function reset_form() {
 	// reset form
-	newPrd_form.reset();
+	F.reset();
 	p_dp_f.value = "0";
 	p_display = true;
 	$("#dplbtn_c").click();
@@ -149,9 +148,17 @@ tbl_wpScrll.onscroll = function(e) {
 		}
 	}
 }
+entire_dt_zk();
+function entire_dt_zk() {
+	var tbl_Cd = $("#dp_prdTble")[0].children[0].getElementsByTagName("tr");
+	for (var i = 1; i < tbl_Cd.length; i++) {
+		var x = tbl_Cd[i].getElementsByTagName("td")[5];
+		x.innerHTML = x.textContent == "" ? window.location.hostname : x.textContent;
+	}
+}
 function update_prdTable(dtdc) {
 	var tbb = dp_prdTble.firstElementChild;
-	var vfn = ['id','name','price','sale','purchase_count','display','type'];
+	var vfn = ['id','name','price','sale','store_name','purchase_count','display','type'];
 
 	for (var i = 0; i < dtdc[1].length; i++) { // tr
 		var tr_ptbl = document.createElement("tr");
@@ -166,7 +173,7 @@ function update_prdTable(dtdc) {
 		tr_ptbl.appendChild(chkbx);
 		for (var j = 0; j < vfn.length; j++) {
 			if (vfn[j] == 'display') {
-				var dplbx = tbb.lastElementChild.getElementsByTagName("td")[6].cloneNode(true);
+				var dplbx = tbb.lastElementChild.getElementsByTagName("td")[7].cloneNode(true);
 				dplbx.firstElementChild.className = "fa fa-circle" + dtdc[1][i][vfn[j]];
 				tr_ptbl.appendChild(dplbx);
 			} else {
@@ -177,7 +184,8 @@ function update_prdTable(dtdc) {
 					}
 					preview_product.className = "slt_hker";
 				}
-				td_ptbl.innerHTML = dtdc[1][i][vfn[j]];
+				var fdt =  dtdc[1][i][vfn[j]];
+				td_ptbl.innerHTML = fdt;
 				tr_ptbl.appendChild(td_ptbl);
 			}
 		}
@@ -188,6 +196,7 @@ function update_prdTable(dtdc) {
 		tr_ptbl.appendChild(edtbx)
 		tbb.appendChild(tr_ptbl);
 	}
+	entire_dt_zk();
 }
 // display or hide items
 var ajax_processor_url; // reuse variable
@@ -244,7 +253,10 @@ allTr[1].className = "selected_product";
 $(".slt_hker").click(function(){
 	preview_product(this);
 });
+var crr_slc_prd = $(".slt_hker")[0];
+var new_slc_prd;
 function preview_product(d) {
+	crr_slc_prd = d;
 	for (var i = 0; i < allTr.length; i++) {
 		allTr[i].classList.remove("selected_product");
 	}
@@ -285,7 +297,6 @@ document.getElementById("rm_item").onclick = function() {
 	// send data to server using ajax
 	ajax_processor_url = tbl_sDt.base_url + '/del_prdRcrd';
 	$.post(ajax_processor_url,id_arC,function(data,status){
-		console.log(data);
 		if (data && parseInt(data) == 1) {
 			for (var i = 0; i < tr_ctner.length; i++) {
 				tr_ctner[0].parentNode.remove(tr_ctner[0]);
@@ -300,6 +311,7 @@ document.getElementById("rm_item").onclick = function() {
 // update button
 var prnt_dt;
 $(".edit_prdOl").click(function(){
+	new_slc_prd = this.parentNode.parentNode.getElementsByClassName("slt_hker")[0];
 	editPrd_f(this);
 });
 function editPrd_f(elm) {
@@ -322,7 +334,8 @@ function editPrd_f(elm) {
 		ntr: prnt_dt.prd_nutrition_img.value,
 		type: prnt_dt.prd_type.value,
 		dpl: prnt_dt.prd_display.value,
-		dscr: prnt_dt.prd_description.value
+		dscr: prnt_dt.prd_description.value,
+		seller: prnt_dt.prd_store_id.value
 	}
 	// fill present value in edit data in form
 	p_n_f.value = prnt_dt.name;
@@ -332,6 +345,7 @@ function editPrd_f(elm) {
 	p_price.value = prnt_dt.price;
 	p_type.value = prnt_dt.type;
 	p_dscr.value = prnt_dt.dscr;
+	F.p_store.value = prnt_dt.seller == "" ? 0 : prnt_dt.seller;
 	// draw present images
 	cvs = cvs_avat;
 	ctx = ctx_avat;
@@ -349,11 +363,9 @@ var prg_tracker = {
 	status: document.getElementById("upload_status"),
 	status_d: ["Upload in process...","Upload successful"]
 }
-$("#sbmitBt_kl").click(function(e){
+$("#addPr_f").submit(function(e){
+	e.preventDefault();
 	if (f_trg == 1) {
-		e.preventDefault();
-		ajax_processor_url = tbl_sDt.base_url + '/upd_prdc';
-		
 		var img_processor = {
 			ava:null,ntr:null
 		};
@@ -362,63 +374,80 @@ $("#sbmitBt_kl").click(function(e){
 				img_processor[prop] = prnt_dt[prop];
 			}
 		}
-		//check if image is available & set previous link of img for deletion
-		p_avaImg.value !== "" ? img_processor.ava = prnt_dt.ava : 0;
-		p_nutriImg.value !== "" ? img_processor.ntr = prnt_dt.ntr : 0;
-		if (parseInt(p_sale.value) > 99) {
-			p_sale.value = 0;
-		}
+
+		 img_processor.ava = prnt_dt.ava;
+		 img_processor.ntr = prnt_dt.ntr;
+		if (parseInt(p_sale.value) > 99) p_sale.value = 0;
 		if (parseInt(p_sale.value) > 0 && parseInt(p_sale.value) < 100) {
 			p_sale.value = (Math.round(p_sale.value * 100)/100)/100;
 		}
 		img_processor = JSON.stringify(img_processor);
-		// send data to server using ajax
 		previous_pData.value = img_processor;
 		// display upload progress tracker
 		prg_tracker.layer.style.display = "block";
-		$.ajax({
-			url: ajax_processor_url,  //Server script to process data
-			type: 'POST',
-			xhr: function() {  // Custom XMLHttpRequest
-			    var myXhr = $.ajaxSettings.xhr();
-			    if(myXhr.upload){ // Check if upload property exists
-			        myXhr.upload.addEventListener('progress',progressHandlingFunction, false);
-			    }
-			    return myXhr;
-			},
-			beforeSend: null,
-			success: function(data){
-				data = JSON.parse(data);
-				var data0 = data[1][0];
-				data = data[0];
-				var updPrd_Inf = document.querySelectorAll("[prd_id='" + data.id + "']")[0];
-				var tr_updp = updPrd_Inf.parentNode.parentNode;
-				
-				// update data in hidden form
-				updPrd_Inf.prd_name = data.p_name;updPrd_Inf.prd_type = data.p_type;
-				updPrd_Inf.prd_price = data.p_price;updPrd_Inf.prd_display = data.p_display;
-				updPrd_Inf.prd_sale = data.p_sale;updPrd_Inf.prd_description = data.f_dscrp;
-				updPrd_Inf.prd_avatar_img = data.ava;updPrd_Inf.prd_last_update = data.last_upd;
-				updPrd_Inf.prd_nutrition_img = data.ntr;
-				// update data in product rows
-				tr_updp.children[2].innerHTML = updPrd_Inf.prd_name.value;
-				tr_updp.children[3].innerHTML = updPrd_Inf.prd_price.value;
-				tr_updp.children[4].innerHTML = data0.sale;
-				tr_updp.children[6].children[0].className = "fa fa-circle" + data0.display;
-				tr_updp.children[7].innerHTML = data0.type;
-			},
-			error: function(){
-				alert("Unknown error occur!")
-			},
-			data: new FormData($("#addPr_f")[0]),
-			cache: false,
-			contentType: false,
-			processData: false
-		});
-		return false;
+		ajax_post(tbl_sDt.base_url + '/upd_prdc',upd_succ);
+	} else {
+		ajax_post(this.action,add_succ);
 	}
+	return false;
+	
 });
+function ajax_post(url,cbf) {
+	$.ajax({
+		url: url,  //Server script to process data
+		type: 'POST',
+		xhr: function() {  // Custom XMLHttpRequest
+		    var myXhr = $.ajaxSettings.xhr();
+		    if(myXhr.upload){ // Check if upload property exists
+		        myXhr.upload.addEventListener('progress',progressHandlingFunction, false);
+		    }
+		    return myXhr;
+		},
+		beforeSend: null,
+		success: function(data){
+			cbf(data);
+		},
+		error: function(){
+			alert("Unknown error occur!");
+		},
+		data: new FormData(F),
+		cache: false,
+		contentType: false,
+		processData: false
+	});
+}
+function add_succ(d) {
+	alert(d);
+}
 
+function upd_succ(data) {
+	data = JSON.parse(data);
+	var data0 = data[1][0];
+	data = data[0];
+	updPrd_Inf = document.querySelectorAll("[prd_id='" + data.id + "']")[0];
+	var tr_updp = updPrd_Inf.parentNode.parentNode;
+	// update data in hidden form
+	updPrd_Inf.prd_name.value = data.p_name;
+	updPrd_Inf.prd_type.value = data.p_type;
+	updPrd_Inf.prd_price.value = data.p_price;
+	updPrd_Inf.prd_display.value = data.p_display;
+	updPrd_Inf.prd_sale.value = data.p_sale;
+	updPrd_Inf.prd_description.value = data.f_dscrp;
+	updPrd_Inf.prd_avatar_img.value = data.ava;
+	updPrd_Inf.prd_last_update.value = data.last_upd;
+	updPrd_Inf.prd_nutrition_img.value = data.ntr;
+	updPrd_Inf.prd_store_id.value  = data.p_store == null ? 0 : data.p_store;
+
+	// update data in product rows
+	tr_updp.children[2].innerHTML = updPrd_Inf.prd_name.value;
+	tr_updp.children[3].innerHTML = updPrd_Inf.prd_price.value;
+	tr_updp.children[4].innerHTML = data0.sale;
+	tr_updp.children[5].innerHTML = data0.store_name;
+	tr_updp.children[7].children[0].className = "fa fa-circle" + data0.display;
+	tr_updp.children[8].innerHTML = data0.type;
+	preview_product(new_slc_prd);
+	entire_dt_zk();
+}
 function progressHandlingFunction(e){
     if(e.lengthComputable){
         $('#upl_progBar').attr({value:e.loaded,max:e.total});

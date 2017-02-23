@@ -23,21 +23,25 @@
 					<img class="discount_perc" src="img/admin/discount.svg">
 				</span>
 			</th>
-			<!-- 6 Purchase count -->
+			<!-- 6 Store owner -->
+			<th>
+				<span class="fixed_widthTd">Seller</span>
+			</th>
+			<!-- 7 Purchase count -->
 			<th>
 				<span class="fixed_widthTd">P_C</span>
 			</th>
-			<!-- 7 Display -->
+			<!-- 8 Display -->
 			<th>
 				<span class="fixed_widthTd">
 					<i class="fa fa-eye" aria-hidden="true"></i>
 				</span>
 			</th>
-			<!-- 8 Type -->
+			<!-- 9 Type -->
 			<th>
 				<span class="fixed_widthTd">Type</span>
 			</th>
-			<!-- 9 Edit button -->
+			<!-- 10 Edit button -->
 			<th>
 				<span class="fixed_widthTd"></span>
 			</th>
@@ -56,6 +60,7 @@
 			<td class="slt_hker"><?=$data["products_tray"][$i]['name']?></td>
 			<td><?=$data["products_tray"][$i]['price']?></td>
 			<td><?=$data["products_tray"][$i]['sale']?></td>
+			<td><?=$data["products_tray"][$i]['store_name']?></td>
 			<td><?=$data["products_tray"][$i]['purchase_count']?></td>
 			<td>
 				<i class="fa fa-circle<?=$data["products_tray"][$i]['display']?>" aria-hidden="true"></i>
@@ -175,12 +180,28 @@
 				</span>
 				<span class="r_ipcAp ripcd_lc">
 					<input gr='1' type="radio" name="p_type" value="2">
-					<label gr='1' for="p_type">Sale off</label>
+					<label gr='1' for="p_type">
+						<i class="fa fa-tag" aria-hidden="true"></i>
+					</label>
 					<input gr='2' type="radio" name="p_type" value="1">
-					<label gr='2' for="p_type">Special</label>
+					<label gr='2' for="p_type">
+						<i class="fa fa-star" aria-hidden="true"></i>
+					</label>
 					<input gr='3' type="radio" name="p_type" value="0" checked='true'>
-					<label gr='3' for="p_type">None</label>
+					<label gr='3' for="p_type">
+						<i class="fa fa-ban" aria-hidden="true"></i>
+					</label>
 				</span>
+				<select name="p_store" class="sll_opt">
+					<option value="0">Select store:</option>
+					<?php if (count($data["seller"]) > 0) : ?>
+						<?php for ($i = 0; $i < count($data["seller"]); $i++) { ?>
+						<option value="<?=$data['seller'][$i]['id'];?>">
+							<?=$data['seller'][$i]['store_name']?>
+						</option>
+						<?php }; ?>
+					<?php endif; ?> -->
+				</select>
 				<div class="last_ripcp">
 					<div class="prv_avatarCtner">
 						<button id="f_upl_ava" class="fileUpl_btn">
@@ -211,10 +232,6 @@
 </div>
 
 <script type="text/javascript">
-	// alert notification if having
-	<?php if (@isset($data["ntf"])) { ?>
-	alert("<?=$data["ntf"];?>");
-	<?php };?>
 	// preset tbl select data
 	function set_preset() {
 		this.base_url = '<?=$data["base_url"]?>';

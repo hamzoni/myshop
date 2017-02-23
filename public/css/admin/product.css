@@ -62,31 +62,35 @@ a:hover {
 }
 .prtbl_wrp table tr:first-child th:nth-child(6)
 .fixed_widthTd {
+	width: 120px;
+}
+.prtbl_wrp table tr:first-child th:nth-child(7)
+.fixed_widthTd {
 	width: 60px;
 }
-.prtbl_wrp table tr td:nth-child(7) {
+.prtbl_wrp table tr td:nth-child(8) {
 	text-align: center;
 	padding: 4px 0px 0px 0px;
 }
-.prtbl_wrp table tr:first-child th:nth-child(7)
+.prtbl_wrp table tr:first-child th:nth-child(8)
 .fixed_widthTd {
 	width: 30px;
 	text-align: center;
 }
-.prtbl_wrp table tr:first-child th:nth-child(7) {
+.prtbl_wrp table tr:first-child th:nth-child(8) {
 	padding: 0px;
 	padding-top: 4px;
 }
-.prtbl_wrp table tr:first-child th:nth-child(8)
+.prtbl_wrp table tr:first-child th:nth-child(9)
 .fixed_widthTd {
 	width: 80px;
 }
-.prtbl_wrp table tr:first-child th:nth-child(9)
+.prtbl_wrp table tr:first-child th:nth-child(10)
 .fixed_widthTd {
 	width: 25px;
 }
 .discount_perc {
-	-webkit-filter: invert(100%); /* Chrome, Safari, Opera */
+	-webkit-filter: invert(100%);
     filter: invert(100%);
 	width: 25px;
 	height: 25px;
@@ -203,8 +207,8 @@ a:hover {
 	height: 180px;
 }
 .fd_nutri_info {
-	filter: invert(100%);
-	border: 1px solid #000;
+	/*filter: invert(100%);
+*/	border: 1px solid #000;
 	float: right;
 	height: 100%;
 }
@@ -383,7 +387,6 @@ a:hover {
 	display: block;
 	float: left;
 	margin-left: 10px;
-	filter: invert(100%);
 	border: 1px solid #000;
 }
 .r_ipcAp {
@@ -440,6 +443,7 @@ label.swd_lbt {
 .ripcd_lc {
 	border: 1px solid;
 	border-radius: 5px;
+	width: 240px;
 }
 .ripcd_lc input[type='radio'] {
 	margin: 0 5px;
@@ -542,7 +546,6 @@ label.swd_lbt {
 	opacity: 1;
 }
 #f_upl_nutri {
-	filter: invert(100%);
 	border: none;
 	background-color: #292929;
 }
@@ -572,4 +575,15 @@ label.swd_lbt {
 #upl_progBar {
 	display: block;
 	margin: 15px auto;
+}
+.sll_opt {
+	display: block;
+    float: right;
+    width: calc(100% - 240px - 10px);
+    height: 30px;
+    color: #000;
+}
+.df_txi {
+	display: none;
+	color: #000;
 }

@@ -9,7 +9,7 @@
 	<header class="header_bar">
 		
 		<figure class="logo_ctner">
-			<a href="<?=BASE_URL?>">
+			<a target="_blank" href="<?=BASE_URL?>">
 				<img id="company_logo" src="img/hybrid/02566db7174810fa6abccd6fb9a6d42f">
 			</a>
 		</figure>

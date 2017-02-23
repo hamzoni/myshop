@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>FUD - FPT University Dining</title>	
+	<title>
+		<?=$data["contact"]["wHpgtt"]?>
+	</title>	
 	<?php include_once "_header.php"; ?>
 </head>
 <body>
@@ -295,21 +297,21 @@
 	 			<div id="myCarousel3" class="carousel slide" data-ride="carousel" data-interval="8000">
 					<div class="carousel-inner" role="listbox">
 						<div class="item active">
-							<?php for ($i = 1; $i < count($data["items"]["suggest"][0]); $i++) { ?>
+							<?php for ($i = 0; $i < count($data["items"]["suggest"][0]); $i++) { ?>
 							<div class="food_itemCtner">
-								<img food-info-id="<?=$data["items"]["suggest"][0]['id']?>" src="<?=$data["items"]["suggest"][0]['avatar_img']?>" alt="<?=$data["items"]["suggest"][0]['name']?>">
+								<img food-info-id="<?=$data["items"]["suggest"][0][$i]['id']?>" src="<?=$data["items"]["suggest"][0][$i]['avatar_img']?>" alt="<?=$data["items"]["suggest"][0][$i]['name']?>">
 								<div class="minor_dscr_fic" add-to-cart>
-									<span class="dsck_n"><?=$data["items"]["suggest"][0]['name']?></span>
-									<span class="dsck_p"><?=$data["items"]["suggest"][0]['price']?></span>
+									<span class="dsck_n"><?=$data["items"]["suggest"][0][$i]['name']?></span>
+									<span class="dsck_p"><?=$data["items"]["suggest"][0][$i]['price']?></span>
 								</div>
 								<form class="food_data_cluster">
-									<input type="hidden" name="f_id" value="<?=$data["items"]["suggest"][0]['id']?>">
-									<input type="hidden" name="f_price" value="<?=$data["items"]["suggest"][0]['price']?>">
-									<input type="hidden" name="f_name" value="<?=$data["items"]["suggest"][0]['name']?>">
-									<input type="hidden" name="f_dscr" value="<?=$data["items"]["suggest"][0]['description']?>">
-									<input type="hidden" name="f_nutri" value="<?=$data["items"]["suggest"][0]['nutrition_img']?>">
-									<input type="hidden" name="f_ava" value="<?=$data["items"]["suggest"][0]['avatar_img']?>">
-									<input type="hidden" name="f_sale" value="<?=$data["items"]["suggest"][0]['sale']?>">
+									<input type="hidden" name="f_id" value="<?=$data["items"]["suggest"][0][$i]['id']?>">
+									<input type="hidden" name="f_price" value="<?=$data["items"]["suggest"][0][$i]['price']?>">
+									<input type="hidden" name="f_name" value="<?=$data["items"]["suggest"][0][$i]['name']?>">
+									<input type="hidden" name="f_dscr" value="<?=$data["items"]["suggest"][0][$i]['description']?>">
+									<input type="hidden" name="f_nutri" value="<?=$data["items"]["suggest"][0][$i]['nutrition_img']?>">
+									<input type="hidden" name="f_ava" value="<?=$data["items"]["suggest"][0][$i]['avatar_img']?>">
+									<input type="hidden" name="f_sale" value="<?=$data["items"]["suggest"][0][$i]['sale']?>">
 								</form>
 							</div>
 							<?php }; ?>
@@ -319,19 +321,19 @@
 						<div class="item">
 							<?php for ($i = 0; $i < count($this->page_data["items"]["suggest"][$j]); $i++) { ?>
 							<div class="food_itemCtner">
-								<img food-info-id="<?=$this->page_data["items"]["suggest"][$j]['id']?>" src="<?=$this->page_data["items"]["suggest"][$j]['avatar_img']?>" alt="<?=$this->page_data["items"]["suggest"][$j]['name']?>">
+								<img food-info-id="<?=$this->page_data["items"]["suggest"][$j]['id']?>" src="<?=$this->page_data["items"]["suggest"][$j][$i]['avatar_img']?>" alt="<?=$this->page_data["items"]["suggest"][$j][$i]['name']?>">
 								<div class="minor_dscr_fic" add-to-cart>
-									<span class="dsck_n"><?=$this->page_data["items"]["suggest"][$j]['name']?></span>
-									<span class="dsck_p"><?=$this->page_data["items"]["suggest"][$j]['price']?></span>
+									<span class="dsck_n"><?=$this->page_data["items"]["suggest"][$j][$i]['name']?></span>
+									<span class="dsck_p"><?=$this->page_data["items"]["suggest"][$j][$i]['price']?></span>
 								</div>
 								<form class="food_data_cluster">
-									<input type="hidden" name="f_id" value="<?=$data["items"]["suggest"][$j]['id']?>">
-									<input type="hidden" name="f_price" value="<?=$data["items"]["suggest"][$j]['price']?>">
-									<input type="hidden" name="f_name" value="<?=$data["items"]["suggest"][$j]['name']?>">
-									<input type="hidden" name="f_dscr" value="<?=$data["items"]["suggest"][$j]['description']?>">
-									<input type="hidden" name="f_nutri" value="<?=$data["items"]["suggest"][$j]['nutrition_img']?>">
-									<input type="hidden" name="f_ava" value="<?=$data["items"]["suggest"][$j]['avatar_img']?>">
-									<input type="hidden" name="f_sale" value="<?=$data["items"]["suggest"][$j]['sale']?>">
+									<input type="hidden" name="f_id" value="<?=$data["items"]["suggest"][$j][$i]['id']?>">
+									<input type="hidden" name="f_price" value="<?=$data["items"]["suggest"][$j][$i]['price']?>">
+									<input type="hidden" name="f_name" value="<?=$data["items"]["suggest"][$j][$i]['name']?>">
+									<input type="hidden" name="f_dscr" value="<?=$data["items"]["suggest"][$j][$i]['description']?>">
+									<input type="hidden" name="f_nutri" value="<?=$data["items"]["suggest"][$j][$i]['nutrition_img']?>">
+									<input type="hidden" name="f_ava" value="<?=$data["items"]["suggest"][$j][$i]['avatar_img']?>">
+									<input type="hidden" name="f_sale" value="<?=$data["items"]["suggest"][$j][$i]['sale']?>">
 								</form>
 							</div>
 							<?php }; ?>
@@ -350,25 +352,14 @@
 	 		</div>
 	 		<?php }; ?>
 	 		<div class="logo_ctner">
-	 			<img src="img/sample_logo.png">
-	 			<div class="company_info">
-	 				<a href="#" class="contacts">
-	 					<i class="fa fa-globe" aria-hidden="true"></i>
-	 					www.FUDining.com
+	 			<img id="page_brdLg" src="<?=$data["contact"]["wBLogo"]?>">
+	 			<nav class="ctc_ct">
+	 				<a class="nvCtD" id="phone_prompt"><i class="fa fa-phone" aria-hidden="true"></i></a>
+	 				<a class="nvCtD" href="<?=$data['contact']['wFBacc'][0]['data']?>">
+	 					<i class="fa fa-facebook" aria-hidden="true"></i>
 	 				</a>
-	 				<a href="#" class="contacts">
-	 					<i class="fa fa-phone-square" aria-hidden="true"></i>
-	 					012.345.6969
-	 				</a>
-	 				<a href="#" class="contacts">
-	 					<i class="fa fa-envelope" aria-hidden="true"></i>
-	 					FUDining@gmail.com
-	 				</a>
-	 				<a href="#" class="contacts">
-	 					<i class="fa fa-facebook-official" aria-hidden="true"></i>
-	 					fb.com/subway
-	 				</a>
-	 			</div>
+	 				<a class="nvCtD" phone_val="<?=$data['contact']['wPhone'][0]['data']?>" id="contact_info_b"><i class="fa fa-info" aria-hidden="true"></i></a>
+	 			</nav>
 	 		</div>
 	 	</nav>
 	 </header>
@@ -635,8 +626,84 @@
 		</div>
 	</div>
 </div>
-
 <!-- end of client order history -->
+<!-- start of page details -->
+<div class="pg_detail" id="pgDetail_prmt" hide>
+	<section class="m_pgDtp">
+		<img class="lg_ctNDp" src="<?=$data["contact"]["wBLogo"]?>">
+		<div class="dcrtp_cpg">
+			<span class="hder_clsP dragger_ttl">
+				<p class="pg_nameB"></p>
+				<button id="cls_dtsk">
+					<i class="fa fa-times" aria-hidden="true"></i>
+				</button>
+			</span>
+			<article class="pg_Dcrpt_ctt">
+			<?=$data["contact"]["wDscrp"]?>
+			</article>
+		</div>
+	</section>
+	<section class="sb_dtaC">
+		<div class="col_sbDtc">
+			<p class="ttL_d">
+				<i class="fa fa-mobile" aria-hidden="true"></i>
+				Phone
+			</p>
+			<div class="phone_list">
+				<?php for ($i = 0; $i < count($data["contact"]["wPhone"]); $i++) { ?>
+				<p class="pN_dta" toggle_data="<?=$data["contact"]["wPhone"][$i]["data"]?>">
+					<span class="lbl_pdDt">
+					<?=$data["contact"]["wPhone"][$i]["label"]?>:
+					</span>
+					<span class="dtt_pdDt">
+					<?=$data["contact"]["wPhone"][$i]["data"]?>
+					</span>
+				</p>
+				<?php }; ?>
+			</div>
+		</div>
+		<div class="col_sbDtc">
+			<p class="ttL_d">
+				<i class="fa fa-envelope-o" aria-hidden="true"></i>
+				Email
+			</p>
+			<?php for ($i = 0; $i < count($data["contact"]["wEmail"]); $i++) { ?>
+			<p class="pN_dta">
+				<span class="lbl_pdDt">
+				<?=$data["contact"]["wEmail"][$i]["label"]?>:
+				</span>
+				<span class="dtt_pdDt">
+				<?=$data["contact"]["wEmail"][$i]["data"]?>
+				</span>
+			</p>
+			<?php }; ?>
+		</div>
+		<div class="col_sbDtc">
+			<p class="ttL_d">
+				<i class="fa fa-users" aria-hidden="true"></i>
+				Social Network
+			</p>
+			<?php for ($i = 0; $i < count($data["contact"]["wFBacc"]); $i++) { ?>
+			<a href="<?=$data["contact"]["wFBacc"][$i]["data"]?>" class="nav_sclNw">
+				<figure class="icnTc_w">
+					<i class="fa fa-facebook-official" aria-hidden="true"></i>
+				</figure>
+				<p class="ctLbl">
+				<?=$data["contact"]["wFBacc"][$i]["label"]?>
+				</p>
+			</a>
+			<?php }; ?>
+		</div>
+	</section>
+</div>
+<!-- end of page details -->
+<div id="ctn_dpl" hide>
+	<div class="ptner_d"></div>
+	<div class="i_pctn_dp">
+		<span class="lbl_dp"><?=$data["contact"]["wPhone"][0]["label"]?>:</span>
+		<span class="phv_dp"><?=$data["contact"]["wPhone"][0]["data"]?></span>
+	</div>
+</div>
 <!-- start of ctner_ppuntf -->
 <div id="ppu_ntf" class="clrD_whiteB">
 	<span id="fd_ntf">sample product name</span>
