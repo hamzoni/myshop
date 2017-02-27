@@ -1081,34 +1081,53 @@ ul.pagBtn_ctner {
 
 #page_brdLg {
 	width: 100%;
-	height: 100px;
+	height: 100%;
 	display: block;
 	float: left;
-	top: 50%;
-	transform: translateY(-50%);
+	padding-top: 10px;
+}
+.user_barTab {
+	width: 100%;
+	height: 35px;
+	float: left;
+	overflow: hidden;
+	border-bottom: 1px solid #5C5C5C;
+	border-top: 1px solid #5C5C5C;
+	background-color: #242424;
+	margin-top: 10px;
+}
+.btn  {
+	border-radius: 0px;
+	font-size: 14px;
+	font-family: sans-serif;
+	font-weight: bold;
 }
 .ctc_ct {
 	width: 100%;
-	height: 30px;
+	height: 100%;
 	display: block;
-	position: absolute;
-	top: 0;
-	right: 0;
 	float: right;
+}
+.fb_login_wr {
+	float: right;
+	overflow: hidden;
+	width: auto;
 }
 .nvCtD {
 	display: block;
-	float: left;
 	color: #fff;
-	font-size: 20px;
+	font-size: 15px;
 	line-height: 30px;
 	border: 1px solid #fff;
 	height: 100%;
-	width: 30px;
 	float: right;
 	text-align: center;
 	cursor: pointer;
-	opacity: 0.6;
+	opacity: 0.3;
+	border-radius: 50%;
+	width: 30px;
+	height: 30px;
+	margin-right: 5px;
 }
 .nvCtD:nth-child(3) {
 	left: 2px;
@@ -1282,7 +1301,6 @@ ul.pagBtn_ctner {
 }
 #ctn_dpl {
 	display: block;
-	overflow: hidden;
 	position: absolute;
 	z-index: 10;
 	height: 30px;
@@ -1293,14 +1311,16 @@ ul.pagBtn_ctner {
 .i_pctn_dp {
 	width: 150px;
 	height: 30px;
-	border: 1px solid #fff;
 	float: left;
-	background-color: #fff;
+	background-color: lightslategrey;
 	font-size: 14px;
 	line-height: 30px;
 	font-size: 15px;
 	padding-left: 5px;
 	font-variant: small-caps;
+	text-shadow: 0px 1px 1px #fff;
+	box-shadow: -1px 5px 5px 1px #000;
+	font-weight: bold;
 }
 .ptner_d {
 	display: block;
@@ -1312,12 +1332,12 @@ ul.pagBtn_ctner {
 .ptner_d:after {
 	content: "";
 	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
 	display: block;
-	width: 0; 
-	height: 0; 
-	border-top: 5px solid transparent;
-	border-bottom: 5px solid transparent; 
-	border-right:10px solid #fff; 
+	width: 0;
+	height: 0;
+	border-bottom: 10px solid lightslategrey;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	top: -10px;
+	left: 20px;
 }

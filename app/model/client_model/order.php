@@ -38,8 +38,18 @@ class order_c extends general_c {
 		return $this->db->resultset();
 	}
 	public function edit_display($dpl_v,$ord_id) {
-		$ord_id = filter_var($ord_id);
-		$queryStr = "UPDATE `$this->tbl` SET display = '$dpl_v' WHERE id = $ord_id";
+		if (is_array($ord_id)) {
+			for ($i = 0; $i < count($i); $i++) $ord_id[$i] = filter_var($ord_id[$i]);
+		} else {
+			$ord_id = filter_var($ord_id);
+		}
+		
+		$queryStr = "UPDATE `$this->tbl` SET display = '$dpl_v' WHERE id ";
+		if (is_array($ord_id)) {
+			$queryStr .= "IN (".join(",",$ord_id).")";
+		} else {
+			$queryStr .= "=".$ord_id;
+		}
 		$this->db->query($queryStr);
 		try {
 			$this->db->execute();

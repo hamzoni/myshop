@@ -5,6 +5,7 @@
 		<?=$data["contact"]["wHpgtt"]?>
 	</title>	
 	<?php include_once "_header.php"; ?>
+	<script type="text/javascript" src="js/client/fb_auth.js"></script>
 </head>
 <body>
 <section class="wrapper">
@@ -291,6 +292,26 @@
 			<!-- start of carousel slide 3 -->
 	 	</nav>
 	 	
+	 	<header class="user_barTab">
+	 		<nav class="ctc_ct">
+	 			
+	 			<div class="fb_login_wr">
+	 			<a class="btn btn-block btn-social btn-facebook" href="<?=@$data["fb_url"]["href"]?>">
+	 				 <span class="fa fa-facebook"></span>
+	 				<?=@$data["fb_url"]["label"]?>
+	 			</a>
+				<!-- 	<div class="fb-login-button" data-max-rows="1" data-size="large" data-show-faces="false" data-auto-logout-link="true" scope="public_profile,email" onlogin="checkLoginState();">	
+ 					</div> -->
+				</div>
+
+ 				<a class="nvCtD VAAlign" id="phone_prompt"><i class="fa fa-phone" aria-hidden="true"></i></a>
+ 				<a class="nvCtD VAAlign" target="_blank" href="<?=$data['contact']['wFBacc'][0]['data']?>">
+ 					<i class="fa fa-facebook" aria-hidden="true"></i>
+ 				</a>
+ 				<a class="nvCtD VAAlign" phone_val="<?=$data['contact']['wPhone'][0]['data']?>" id="contact_info_b"><i class="fa fa-info" aria-hidden="true"></i></a>
+ 			</nav>
+	 	</header>
+
 	 	<nav class="brand_part">
 	 		<?php if (count($this->page_data["items"]["suggest"]) > 1) { ?>
 	 		<div class="banner_ctner">
@@ -353,13 +374,6 @@
 	 		<?php }; ?>
 	 		<div class="logo_ctner">
 	 			<img id="page_brdLg" src="<?=$data["contact"]["wBLogo"]?>">
-	 			<nav class="ctc_ct">
-	 				<a class="nvCtD" id="phone_prompt"><i class="fa fa-phone" aria-hidden="true"></i></a>
-	 				<a class="nvCtD" href="<?=$data['contact']['wFBacc'][0]['data']?>">
-	 					<i class="fa fa-facebook" aria-hidden="true"></i>
-	 				</a>
-	 				<a class="nvCtD" phone_val="<?=$data['contact']['wPhone'][0]['data']?>" id="contact_info_b"><i class="fa fa-info" aria-hidden="true"></i></a>
-	 			</nav>
 	 		</div>
 	 	</nav>
 	 </header>
@@ -409,6 +423,7 @@
 	 </nav>
 </section>
 <!-- end of wrapper -->
+<?php if (@$_SESSION["fb_user_data"]) : ?>
 <nav class="free_nav_bar">
 	<button class="_myCart" id="orderInfo" title="Order info">
 		<i class="fa fa-list" aria-hidden="true"></i>
@@ -423,7 +438,8 @@
  		0
  	</div>
  </nav>
-<!-- start of pop-up cluster -->
+
+ <!-- start of pop-up cluster -->
 <div class="general_popUp cart_detail clr_dark shd_white" hide>
 	<div class="dragger_ttl">
 		<h2 class="hd_ttl VAAlign">cart</h2>
@@ -492,47 +508,6 @@
 		</div>
 	</div>
 </div>
-<div class="general_popUp food_detail clr_dark shd_white" hide>
-	<div class="dragger_ttl">
-		<h2 class="hd_ttl VAAlign">
-			<span id="og_nm">PEPPERONI PIZZA</span>
-			<span id="og_sl">(-35%)</span>
-		</h2>
-		<button class="close_btn">
-			<i class="fa fa-times" aria-hidden="true"></i>
-		</button>
-	</div>
-	<div class="main_cartCtner clr_dark2">
-		<div class="col1_mcct">
-			<img id="og_ava" class="fd_inf_ava" src="img/1.jpg">
-			<div class="short_dscp">
-				<span class="dscrpt_tt">Description:</span>
-				<span id="og_dsc">
-					re veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem
-				</span>
-			</div>
-		</div>
-		<div class="col2_mcc1">
-			<img id="og_ntr" class="fd_nutri_info" src="img/sample_nutrition.jpg">
-		</div>
-	</div>
-	<div class="cart_footer">
-		<div class="left_cfter">
-			<div class="holder_mop">
-				<p class="prc_ctner_mop">Price: 
-					<span id="og_prc">90.000</span>
-				</p>
-				<label class="qty_lb_vFi">SL</label>
-				<input id="qty_ifcIf" type="text" class="qty_ctn_vFi"/>
-			</div>
-		</div>
-		<div class="right_cfter">
-			<a id="aCfd_IF" class="normal_sbm_skbc VAAlign">
-				add to cart
-			</a>
-		</div>
-	</div>
-</div>
 <div class="general_popUp ship_info clr_dark shd_white" hide>
 	<form id="cltdlvIf" class="shipIF_stl">
 	<div class="dragger_ttl">
@@ -568,7 +543,6 @@
 	</div>
 	</form>
 </div>
-<!-- end of pop-up cluster -->
 <!-- start of client order history -->
 <div class="ord_history" id="user_dplH" hide>
 	<h1 class="tt_ordh">
@@ -627,6 +601,50 @@
 	</div>
 </div>
 <!-- end of client order history -->
+<!-- end of pop-up cluster -->
+<?php ENDIF; ?>
+<div class="general_popUp food_detail clr_dark shd_white" hide>
+	<div class="dragger_ttl">
+		<h2 class="hd_ttl VAAlign">
+			<span id="og_nm">PEPPERONI PIZZA</span>
+			<span id="og_sl">(-35%)</span>
+		</h2>
+		<button class="close_btn">
+			<i class="fa fa-times" aria-hidden="true"></i>
+		</button>
+	</div>
+	<div class="main_cartCtner clr_dark2">
+		<div class="col1_mcct">
+			<img id="og_ava" class="fd_inf_ava" src="img/1.jpg">
+			<div class="short_dscp">
+				<span class="dscrpt_tt">Description:</span>
+				<span id="og_dsc"></span>
+			</div>
+		</div>
+		<div class="col2_mcc1">
+			<img id="og_ntr" class="fd_nutri_info" src="img/sample_nutrition.jpg">
+		</div>
+	</div>
+	<div class="cart_footer">
+		<div class="left_cfter">
+			<div class="holder_mop">
+				<p class="prc_ctner_mop">Price: 
+					<span id="og_prc"></span>
+				</p>
+				<label class="qty_lb_vFi">SL</label>
+				<input id="qty_ifcIf" type="text" class="qty_ctn_vFi"/>
+			</div>
+		</div>
+		<div class="right_cfter">
+			<?php if (@$_SESSION["fb_user_data"]) : ?>
+			<a id="aCfd_IF" class="normal_sbm_skbc VAAlign">
+				add to cart
+			</a>
+			<?php ENDIF; ?>
+		</div>
+	</div>
+</div>
+
 <!-- start of page details -->
 <div class="pg_detail" id="pgDetail_prmt" hide>
 	<section class="m_pgDtp">
@@ -710,13 +728,9 @@
 </div>
 <!-- end of ctner_ppuntf -->
 <script type="text/javascript">
-	// alert notification if having
-	<?php if (@isset($data["ntf"])) { ?>
-	alert("<?=$data["ntf"];?>");
-	<?php };?>
-	// preset tbl select data
 	function preset_data() {
 		this.b_url = '<?=$data["base_url"]?>';
+		this.fb_login = 1 == <?php echo (@!empty($_SESSION["fb_user_data"])) ? 1 : 0 ?>;
 		this.mxDp = 12; // NUMBER OF ITEMS DISPLAYED PER PAGINATION
 		this.lmt = <?=$data["slc_lm"]?>; // NUMBER OF RECORD TO BE PULLED
 		this.ofs = <?=$data["crr_offset"]?>; // POSITION OF STARTED RECORD

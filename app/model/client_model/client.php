@@ -55,7 +55,7 @@ class client_c extends general_c {
 		$queryStr = "UPDATE `$this->tbl` SET $setStr WHERE `tokenKey` = :ctkey";
 		$this->db->query($queryStr);
 		foreach ($cData as $k => $v) {
-			$this->db->bind($bindStr[$k],$v);
+			if (array_key_exists($k, $bindStr)) $this->db->bind($bindStr[$k],$v);
 		}
 		$this->db->execute();
 		return $this->db->rowCount();

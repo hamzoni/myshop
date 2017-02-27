@@ -8,6 +8,8 @@ class home extends controller {
 	private $mdl_gnr_c; // general model of tbl: clients
 	public $profile_ad;
 	public $profile_fn;
+	public $fb_auth;
+	private $mdl_fb;
 	public function __construct() {
 		$this->mdl_gnr_p = $this->model("general","products");
 		$this->mdl_gnr_c = $this->model("general","clients");
@@ -15,14 +17,25 @@ class home extends controller {
 		$this->mdl_clt = $this->model("client_model/client","clients");
 		$this->mdl_ord = $this->model("client_model/order","orders");
 		$this->mdl_pkg = $this->model("client_model/package","packages");
+		$this->mdl_fb = $this->model("client_model/fb_auth","users");
 
 		$this->profile_ad = getcwd()."/data/";
 		$this->profile_fn = "profile.txt";
 	}
 	public function index() {
+		$this->page_data["fb_url"]['href'] = "#";
+		$this->page_data["fb_url"]['label'] = "Error";
+
+		$this->fb_auth = new init($this->mdl_fb);
+        $this->page_data["fb_url"] = $this->fb_auth->set_url;
+		// try {
+  //           $this->fb_auth = new init($this->mdl_fb);
+  //           $this->page_data["fb_url"] = $this->fb_auth->set_url;
+  //       } catch (FacebookApiException $e) {
+  //           error_log($e);
+  //       } 
 		$args = func_get_args();
 		$crr_url = $args[count($args) - 1];
-		
 		if (@isset($_SESSION["ntf"])) {
 			$this->page_data["ntf"] = $_SESSION["ntf"];
 			unset($_SESSION["ntf"]);
@@ -255,8 +268,10 @@ class home extends controller {
 	    }
 	    return $output;
 	}
-	public function shipInfo() {
-		$shipIfd = json_decode($_GET["clt_spI"]);
+	public function push_shipInfo() {
+		$this->shipInfo(json_decode($_GET["r"]));
+	}
+	public function shipInfo($shipIfd) {
 		$shipIfd->tokenKey = $_SESSION["user_ip"];
 		$shipIfd->last_update = date('Y-m-d H:i:s',time());;
 		$exd_ck = time() + 86400 * 30;
@@ -273,6 +288,7 @@ class home extends controller {
 			if ($shipIfd->saveData == 1) {
 				setcookie($_SESSION["user_ip"],time(),$exd_ck, '/');
 				$this->mdl_clt->insert_clientInfo($shipIfd);
+				$this->add_accounts();
 			} else {
 				$this->unset_cookie($_SESSION["user_ip"]);
 			}
@@ -288,6 +304,7 @@ class home extends controller {
 	}
 	public function send_cart() {
 		$cartIfd = json_decode($_GET["clt_spI"]);
+		$this->shipInfo($cartIfd->client);
 		if (count($cartIfd->cart->items_list) <= 0) return;
 		$ord_id = $this->mdl_ord->insert_order($cartIfd->client->name,
 												$cartIfd->client->phone,
@@ -355,17 +372,29 @@ class home extends controller {
 	}
 	public function change_display_orders() {
 		$r = $_GET["r"];
-		$r = $this->mdl_ord->edit_display('0',$r);
+		$r = json_decode($r);
 		print_r($r);
+		$r = $this->mdl_ord->edit_display('0',$r);
+		
 	}
 	public function count_orders_wcd() {
 		$r = json_decode($_GET["r"],true);
-		$k = [];
-		if (@$r['tk']) $k[0] = ["tokenKey",$r['tk']];
-		if (@$r['dp']) $k[1] = ["display",$r['dp']];
-		$d = $this->mdl_ord->count_orders_wCnds($k);
-		$d = reset($d);
+		$d[0] = $this->mdl_ord->count_orders_wCnds([["tokenKey",$r['tk']]]);
+		$d[1] = $this->mdl_ord->count_orders_wCnds([["tokenKey",$r['tk']],
+													["display",$r['dp']]]);
+		$d[0] = reset($d[0]);
+		$d[1] = reset($d[1]);
+		$d = json_encode($d);
 		print_r($d);
+	}
+	public function fb_login() {
+		header("Location:".BASE_URL);
+	}
+	public function fb_logout() {
+		$this->fb_auth = new init($this->mdl_fb);
+		unset($_SESSION["fb_user_data"]);
+		$this->fb_auth->facebook->destroySession();
+		header("Location:".BASE_URL);
 	}
 }
 

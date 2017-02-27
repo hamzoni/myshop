@@ -95,9 +95,12 @@ function cvT_timestampSQL(ms) {
 		date:date.getDate(),
 		month:date.getMonth() + 1,
 		year:date.getFullYear(),
-		hour:date.getHours() + 1,
+		hour:date.getHours(),
 		minute: date.getMinutes(),
 		seconds: date.getSeconds()
+	}
+	for (var p in d_obj) {
+		d_obj[p] = prefix_zero(d_obj[p]);
 	}
 	var timeStr = d_obj.year + "-" + d_obj.month + "-" + d_obj.date + " " + d_obj.hour + ":" + d_obj.minute + ":" + d_obj.seconds;
 	return timeStr;
