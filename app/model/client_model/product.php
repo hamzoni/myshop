@@ -49,10 +49,11 @@ class product_c extends general_c {
 		$this->db->query($queryStr);
 		return $this->db->single();
 	}
-	public function add_purchase_count($prd_id) {
+	public function add_purchase_count($prd_id, $prd_qty) {
 		$prd_id = filter_var($prd_id);
+		$prd_qty = filter_var($prd_qty);
 		$queryStr = "UPDATE `$this->tbl` 
-					SET purchase_count = purchase_count + 1 
+					SET purchase_count = purchase_count + $prd_qty 
 					WHERE id = :prd_id";
 		$this->db->query($queryStr);
 		$this->db->bind(":prd_id", $prd_id);

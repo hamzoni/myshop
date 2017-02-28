@@ -1,5 +1,6 @@
 <?php
 /* require libaries */
+require_once 'library/auth_facebook/run.php';
 require_once 'controller/hybrid/general.php';
 require_once 'model/general.php';
 /* require constants */

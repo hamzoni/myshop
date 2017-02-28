@@ -4,13 +4,14 @@ class order_c extends general_c {
 		$this->db = new Database();
 		$this->tbl = $tbl;
 	}
-	public function insert_order($name, $phone, $address,$tokenKey, $totalBill) {
-		$queryStr = "INSERT INTO `$this->tbl`(name,phone,address,tokenKey,totalValue) VALUES(:cname, :cphone, :caddress, :ctokenKey, :totalBill)";
+	public function insert_order($name, $phone, $address,$tokenKey,$client_id,$totalBill) {
+		$queryStr = "INSERT INTO `$this->tbl`(name,phone,address,tokenKey,client_id,totalValue) VALUES(:cname, :cphone, :caddress, :ctokenKey, :cclient_id, :totalBill)";
 		$this->db->query($queryStr);
 		$this->db->bind(":cname",$name);
 		$this->db->bind(":cphone",$phone);
 		$this->db->bind(":caddress",$address);
 		$this->db->bind(":ctokenKey",$tokenKey);
+		$this->db->bind(":cclient_id",$client_id);
 		$this->db->bind(":totalBill",$totalBill);
 		try {
 		    $this->db->execute();
@@ -32,6 +33,7 @@ class order_c extends general_c {
 		}
 		$queryStr = "SELECT ".$cols_str." FROM `$this->tbl` WHERE ".$qd["cnd1"][0]." = '".$qd["cnd1"][1]."'";
 		if ($qd["cnd2"]) $queryStr .= " AND ".$qd["cnd2"][0]." = '".$qd["cnd2"][1]."'";
+		if ($qd["cnd3"]) $queryStr .= " AND ".$qd["cnd3"][0]." = '".$qd["cnd3"][1]."'";
 		if ($qd["sort"]) $queryStr .= " ORDER BY ".$qd["sort"][0]." ".$qd["sort"][1];
 		if ($qd["mere"]) $queryStr .= " LIMIT ".$qd["mere"][0]." OFFSET ".$qd["mere"][1];
 		$this->db->query($queryStr);
@@ -64,8 +66,16 @@ class order_c extends general_c {
 			$c[$i][1] = filter_var($c[$i][1]);
 		}
 		$queryStr = "SELECT COUNT(*) FROM `$this->tbl` WHERE ".$c[0][0]." = '".$c[0][1]."'";
-		if (@$c[1]) $queryStr .= " AND ".$c[1][0]." = '".$c[1][1]."'";
+		for ($i = 1; $i < count($c); $i++) {
+			if (@$c[1]) $queryStr .= " AND ".$c[$i][0]." = '".$c[$i][1]."'";
+		}
 		$this->db->query($queryStr);
 		return $this->db->single();
+	}
+	public function getlast_ord_ID() {
+		$queryStr = "SELECT id FROM `orders` ORDER BY id DESC LIMIT 1 OFFSET 0";
+		$this->db->query($queryStr);
+		$rsl = $this->db->single();
+		return reset($rsl);
 	}
 }

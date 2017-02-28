@@ -54,7 +54,7 @@ class general {
 			echo 'Caught exception: ',  $e->getMessage(), "\n";
 		}
 	}
-	public function set_pageData() {
+	public function initiate_pageData() {
 		clearstatcache();
 		if (@filesize(PAGE_STATS) == 0 || !file_exists(PAGE_STATS)) {
 			$fp = fopen(PAGE_STATS, "w+");
@@ -66,6 +66,7 @@ class general {
 			$dt[PG_D]["ACCOUNTS"] = array();
 			$dt[PG_D]["INCOMES"] = array();
 
+			
 			$dt[PG_S]["S_VIEWS"] = 0;
 			$dt[PG_S]["S_TRANSACTIONS"] = 0;
 			$dt[PG_S]["S_ACCOUNTS"] = 0;
@@ -84,7 +85,7 @@ class general {
 	}
 	public function put_pageData($dt) {
 		$dt = json_encode($dt);
-		$fp = fopen(PAGE_STATS, "w");
+		$fp = fopen(PAGE_STATS, "w+");
 		fwrite($fp, $dt);
 		fclose($fp);
 	}

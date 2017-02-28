@@ -8,6 +8,9 @@
 	<script type="text/javascript" src="js/client/fb_auth.js"></script>
 </head>
 <body>
+<?php
+
+?>
 <section class="wrapper">
 	 <header class="_header">
 	 	<div class="_typeWrapper">

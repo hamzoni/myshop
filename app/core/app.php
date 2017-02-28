@@ -29,7 +29,7 @@ class app { // MAIN FUNCTION: ROUTING
 		}
 		$this->base_url .= $this->component;
 		$this->base_url .= "/".$this->controller;
-		if ($this->component == 'client') require_once '../app/library/auth_facebook/run.php';
+
 		require_once '../app/controller/'.$this->component.'/'.$this->controller.'.php';
 		$this->controller = new $this->controller;
 		

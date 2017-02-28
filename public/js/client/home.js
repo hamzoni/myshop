@@ -12,6 +12,7 @@ if (tbl_sDt.fb_login) {
 	}
 	// pre-set clone
 	var cart_dataTbl = document.getElementById("cart_dataTbl");
+	var last_ordHID;
 	cart_dataTbl = cart_dataTbl.childNodes[2];
 	var clone_trDtbl = $("#cart_dataTbl").children("tbody").find("tr").clone(true,true);
 	$("#cart_dataTbl").children("tbody").find("tr").remove()
@@ -203,8 +204,8 @@ if (tbl_sDt.fb_login) {
 					add_orderHistory();
 					clear_allItem(cart);
 					ntf_str = "Submit giỏ hàng thành công";
-					redcart(0);
 					dp_ppuNtf(ntf_str);
+					redcart(0);
 				});
 			} else {
 				alert("Giỏ hàng trống.")
@@ -216,7 +217,7 @@ if (tbl_sDt.fb_login) {
 		var d = {
 			ord: {
 				address: client_info.address,
-				id: parseInt(ord_w.querySelectorAll("[ord]")[0].getAttribute('ord')) + 1,
+				id: ++last_ordHID,
 				ship_status: "0",
 				time_order: cvT_timestampSQL(new Date().valueOf())
 			},
@@ -251,8 +252,8 @@ if (tbl_sDt.fb_login) {
 	function increment_sum() {
 		max_orders = parseInt(max_orders) + 1;
 		ttl_orders = parseInt(ttl_orders) + 1;
-		$("#cdmxzk").text(ttl_orders)
-		$("#cdMdoc").text(max_orders)
+		$("#cdmxzk").text(parseInt($("#cdmxzk").text()) + 1)
+		$("#cdMdoc").text(parseInt($("#cdMdoc").text()) + 1)
 	}
 	$("#userProfile").click(function(){
 		var currentScroll = window.scrollY;
@@ -283,10 +284,14 @@ if (tbl_sDt.fb_login) {
 				sfl.cname.value = client_info.name;
 				sfl.storeInfo.value = client_info.saveData;
 				sfl.storeInfo.checked = sfl.storeInfo.value == 1 ? true : false;
-
 				// load client order history
 				load_ord_history();
 			}
+		});
+	}
+	function get_last_orderID() {
+		ajax_request(tbl_sDt.b_url + "/last_ord_ID",null,function(d){
+			last_ordHID = parseInt(d);
 		});
 	}
 
@@ -296,7 +301,15 @@ if (tbl_sDt.fb_login) {
 			d.value = "1";
 			return;
 		}
-		d.value = "0";
+		var q = "Are you sure? \n"
+			q += "Uncheck this all records and account data will be removed."
+		var	r = confirm(q);
+		if (r) {
+			d.value = 0;
+		} else {
+			d.value = 1;
+			sfl.storeInfo.checked = true;
+		}
 	}
 	function send_shippingInfo(e) {
 		e.preventDefault();
@@ -329,6 +342,10 @@ if (tbl_sDt.fb_login) {
 		ajax_request(tbl_sDt.b_url + "/push_shipInfo",
 					"r=" + JSON.stringify(client_info),null);
 	}
+	sfl.cname.value = "asdasd";
+	sfl.cphone.value = "123123";
+	sfl.cadd.value = "123";
+	sfl.storeInfo.value = "1";
 	// client order history 
 	var c_ord = document.getElementById("orderInfo");
 	var ord_M = document.getElementById("user_dplH");
@@ -336,10 +353,10 @@ if (tbl_sDt.fb_login) {
 	var ord_m = document.getElementById("ord_DK");
 	var ord_k = document.getElementById("ord_DC");
 	var _loading_dt = document.getElementsByClassName("_loading_dt")[0];
+	var _load_blank = $("._load_blank")[0];
 	var pause_vPkg = false;
 	var pause_lPkg = false;
 	var max_orders = 0;
-	var max_orders_dpl = 0;
 	var ttl_orders = 0;
 	var rq_resetOH = false;
 	var pull_dt_reg = {
@@ -377,17 +394,17 @@ if (tbl_sDt.fb_login) {
 		rq_resetOH = reset;
 		var rdt = "r=" + JSON.stringify({
 			"tk":  client_info.tokenKey,
+			"c_id": client_info.id,
 			"dp": "1"
 		});
 		// count order
 		ajax_request(tbl_sDt.b_url + "/count_orders_wcd",rdt,function(d){
 			d = JSON.parse(d);
 			ttl_orders = d[0];
-			max_orders_dpl = d[1];
 			max_orders = d[1];
 			document.getElementById("cdMdoc").innerHTML = max_orders;
 			document.getElementById("cdmxzk").innerHTML = ttl_orders;
-			if (d == 0) {
+			if (d[1] == 0) {
 				popup_blk_fm("._load_blank");
 				return;
 			}
@@ -397,9 +414,10 @@ if (tbl_sDt.fb_login) {
 		});
 	}
 	function get_ord_history(cb_fx) {
-		if (pull_dt_reg.offset > max_orders) return;
+		if (pull_dt_reg.offset > max_orders || max_orders == 0) return;
 		if (!rq_resetOH) _loading_dt.removeAttribute("hide");
 		pull_dt_reg.tk = client_info.tokenKey;
+		pull_dt_reg.c_id = client_info.id;
 		var r = "r=" + JSON.stringify(pull_dt_reg);
 		var url = tbl_sDt.b_url + "/get_ord_antiquity";
 		// get order 
@@ -417,13 +435,13 @@ if (tbl_sDt.fb_login) {
 		var z = ord_m.offsetHeight;
 		if (x + y >= z - 30) {
 			pause_lPkg = true;
-			var a = pull_dt_reg.offset > max_orders;
-			var b = max_orders == 0;
-			if (!(a || b)) get_ord_history(append_HOrder);
+			get_ord_history(append_HOrder);
 		}
 	}
 	// append order history document element
 	function append_HOrder(d) {
+		_loading_dt.setAttribute("hide","");
+		if (d.length != 0) _load_blank.setAttribute("hide","");
 		for (var i = 0; i < d.length; i++) {
 			ord_cc = cn_dh.ord_c.cloneNode(true);
 			ord_cc.setAttribute("ord",d[i]['ord']['id']);
@@ -475,7 +493,6 @@ if (tbl_sDt.fb_login) {
 				$(pkg_cc).insertAfter(ord_m.firstElementChild);
 			}
 		}
-
 		pull_dt_reg.offset += pull_dt_reg.limit;
 		pause_lPkg = false;
 		rearrange_stt();
@@ -491,15 +508,18 @@ if (tbl_sDt.fb_login) {
 	}
 	function remove_order(e) {
 		e.preventDefault();
-		if (ist_rm) return;
 		var crr_d = get_parent_cn(this, "ord_dcrp");
 		var ord_id = crr_d.getAttribute("ord");
 		ordID_rmv[rmv_c++] = ord_id;
 		var crr_p = ord_m.querySelector("[prd='" + ord_id + "']");
 		crr_p.parentNode.removeChild(crr_p);
 		crr_d.parentNode.removeChild(crr_d);
-		document.getElementById("cdMdoc").innerHTML = --max_orders_dpl;
+		max_orders--;
+		$("#cdMdoc").text(parseInt($("#cdMdoc").text()) - 1);
 		var rmn = ord_m.getElementsByClassName("ord_dcrp").length;
+		if (rmn <= 0) _load_blank.removeAttribute("hide");
+		if (ist_rm) return;
+		
 		if (rmn <= 10) {
 			ist_rm = true;
 			get_ord_history(append_HOrder);
@@ -511,9 +531,7 @@ if (tbl_sDt.fb_login) {
 		if (ordID_rmv.length == 0) return;
 		var url = tbl_sDt.b_url + "/change_display_orders";
 		var r = "r=" + JSON.stringify(ordID_rmv);
-		ajax_request(url,r,function(d){
-			console.log(d);
-		});
+		ajax_request(url,r,null);
 	}
 	function rearrange_stt() {
 		var stt_d = ord_m.getElementsByClassName("stt");
@@ -523,6 +541,7 @@ if (tbl_sDt.fb_login) {
 	}
 	addEvent(window,"load",function(e) {
 		prepare_cData();
+		get_last_orderID();
 	});
 	window.addEventListener("beforeunload", function(e) {
 		remove_stack_order();
@@ -604,7 +623,6 @@ function create_pagBtn() {
 	elm.onclick = function() {
 		var crrPgn = $("[crr-pgn]")[0].getAttribute("crr-pgn");
 		var pgLibt = pgBtCtner.querySelectorAll("[_rqpg]");
-		
 		if (this.getAttribute("_rqpg") == 'prev') {
 			if (crrPgn - 1 >= 1) {
 				pgLibt[crrPgn - 2].click();

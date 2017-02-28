@@ -10,6 +10,7 @@ class fb_auth_c extends general_c {
 				WHERE oauth_provider = '".$userData['oauth_provider']."' 
 				AND oauth_uid = '".$userData['oauth_uid']."'";
 			$this->db->query($queryStr);
+			$this->db->resultset();
 			$r = $this->db->rowCount();
 			return $r != 0;
 		}

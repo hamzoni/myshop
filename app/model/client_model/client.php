@@ -90,12 +90,11 @@ class client_c extends general_c {
 		}
 		return $this->db->rowCount();
 	}
-	public function upd_client_record($token, $totalBill, $crrPC, $crrPV) {
-		$crrPV += intval($totalBill);
-		$crrPC += 1;
+	public function upd_client_record($token, $totalBill, $crrPC, $crrPV){
 		$queryStr = "UPDATE `$this->tbl` 
-					 SET `purchase_count` = :crrPC , `total_purchaseVal` = :crrPV 
-					 WHERE `tokenKey` = :token";
+			SET `purchase_count` = purchase_count + :crrPC , 
+			`total_purchaseVal` = total_purchaseVal +  :crrPV 
+			WHERE `tokenKey` = :token";
 		$this->db->query($queryStr);
 		$this->db->bind(':token',$token);
 		$this->db->bind(':crrPC',$crrPC);

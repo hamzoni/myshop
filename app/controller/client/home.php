@@ -23,31 +23,16 @@ class home extends controller {
 		$this->profile_fn = "profile.txt";
 	}
 	public function index() {
-		$this->page_data["fb_url"]['href'] = "#";
-		$this->page_data["fb_url"]['label'] = "Error";
-
-		$this->fb_auth = new init($this->mdl_fb);
-        $this->page_data["fb_url"] = $this->fb_auth->set_url;
-		// try {
-  //           $this->fb_auth = new init($this->mdl_fb);
-  //           $this->page_data["fb_url"] = $this->fb_auth->set_url;
-  //       } catch (FacebookApiException $e) {
-  //           error_log($e);
-  //       } 
 		$args = func_get_args();
-		$crr_url = $args[count($args) - 1];
-		if (@isset($_SESSION["ntf"])) {
-			$this->page_data["ntf"] = $_SESSION["ntf"];
-			unset($_SESSION["ntf"]);
-		}
-		$this->page_data["header"]["user"] = "client"; 
-		$this->page_data["header"]["css"][0] = "main";
-		$this->page_data["header"]["css"][1] = "home";
-		$this->page_data["header"]["css"][2] = "color";
-		$this->page_data["header"]["js"][0] = "home";
-		$this->page_data["header"]["js"][1] = "auth_admin";
-		$this->page_data["base_url"] = $crr_url;
-
+		$_SESSION['crr_url'] = $args[count($args) - 1];
+		$this->load_facebook_url();
+		$this->load_header_files();
+		$this->load_page_content();
+		$this->initiate_pageData();
+		// call view
+		$this->view('client/home',$this->page_data);
+	}
+	public function load_page_content() {
 		// total records in view products table
 		$_SESSION["total_records"] = $this->mdl_gnr_p->countAll()["COUNT(*)"];
 		$this->page_data["total_records"] = $_SESSION["total_records"];
@@ -96,11 +81,26 @@ class home extends controller {
 		$this->page_data["items"]["menu"] = json_encode($this->page_data["items"]["menu"]);
 		// load page contact data
 		$this->page_data["contact"] = $this->load_contact_data();
+	}
+	public function load_header_files() {
+		$this->page_data["header"]["user"] = "client"; 
+		$this->page_data["header"]["css"][0] = "main";
+		$this->page_data["header"]["css"][1] = "home";
+		$this->page_data["header"]["css"][2] = "color";
+		$this->page_data["header"]["js"][0] = "home";
+		$this->page_data["header"]["js"][1] = "auth_admin";
+		$this->page_data["base_url"] = $_SESSION['crr_url'];
+	}	
+	public function load_facebook_url() {
+		$this->page_data["fb_url"]['href'] = "#";
+		$this->page_data["fb_url"]['label'] = "Error";
 
-		$this->set_pageData();
-		$this->add_page_view();
-		// call view
-		$this->view('client/home',$this->page_data);
+		try {
+            $this->fb_auth = new init($this->mdl_fb);
+            $this->page_data["fb_url"] = $this->fb_auth->set_url;
+        } catch (FacebookApiException $e) {
+            error_log($e);
+        } 
 	}
 	public function load_contact_data() {
 		$r = getcwd()."/data/contact.txt";
@@ -122,34 +122,6 @@ class home extends controller {
 		$dt[PG_S]["S_VIEWS"] += 1;
 
 		$this->put_pageData($dt);
-
-
-		// $dt = $this->open_pageData();
-		// for ($i = 0; $i < 5000; $i++) {
-			
-		// 	$rand = ceil(rand() * 20000);
-		// 	if (@!$dt[PG_D]["VIEWS"][TODAY_DATE - 86400 * ($i + 1)]) $dt[PG_D]["VIEWS"][TODAY_DATE - 86400 * ($i + 1)] = 0;
-		// 	$dt[PG_D]["VIEWS"][TODAY_DATE - 86400 * ($i + 1)] += $rand;
-		// 	$dt[PG_S]["S_VIEWS"] += $rand;
-
-		// 	$rand = ceil(rand() * 1000);
-		// 	if (@!$dt[PG_D]["TRANSACTIONS"][TODAY_DATE - 86400 * ($i + 1)]) $dt[PG_D]["TRANSACTIONS"][TODAY_DATE - 86400 * ($i + 1)] = 0;
-		// 	$dt[PG_D]["TRANSACTIONS"][TODAY_DATE - 86400 * ($i + 1)] += $rand;
-		// 	$dt[PG_S]["S_TRANSACTIONS"] += $rand;
-
-		// 	$rand = ceil(rand() * 300);
-		// 	if (@!$dt[PG_D]["ACCOUNTS"][TODAY_DATE - 86400 * ($i + 1)]) $dt[PG_D]["ACCOUNTS"][TODAY_DATE - 86400 * ($i + 1)] = 0;
-		// 	$dt[PG_D]["ACCOUNTS"][TODAY_DATE - 86400 * ($i + 1)] += $rand;
-		// 	$dt[PG_S]["S_ACCOUNTS"] += $rand;
-
-		// 	$rand = rand(500000,50000000);
-		// 	if (@!$dt[PG_D]["INCOMES"][TODAY_DATE - 86400 * ($i + 1)]) $dt[PG_D]["INCOMES"][TODAY_DATE - 86400 * ($i + 1)] = 0;
-		// 	$dt[PG_D]["INCOMES"][TODAY_DATE - 86400 * ($i + 1)] += $rand;
-		// 	$dt[PG_S]["S_INCOMES"] += $rand;
-
-		// 	$this->put_pageData($dt);
-		// }
-
 	}
 	public function add_transactions() {
 		$dt = $this->open_pageData();
@@ -194,20 +166,21 @@ class home extends controller {
 		print_r(json_encode($chgPgResult));
 	}
 	public function chkckk_ajx() {
-		$_SESSION["user_ip"] = $this->encrypt_decrypt('encrypt', $this->get_client_ip());
-		$inDB = $this->mdl_clt->chkClientData($_SESSION["user_ip"]);
-		$inCK = $this->check_cookie($_SESSION["user_ip"]);
+		$_SESSION["fb_id"] = $this->encrypt_decrypt('encrypt', $_SESSION["fb_user_data"]["oauth_uid"]);
+		for ($i = 0; $i < 10; $i++) $_SESSION["fb_id"] = md5($_SESSION["fb_id"]);
+		$inDB = $this->mdl_clt->chkClientData($_SESSION["fb_id"]);
+		$inCK = $this->check_cookie($_SESSION["fb_id"]);
 
 		if ($inDB && $inCK) {
-			$this->mdl_clt->update_last_activity($_SESSION["user_ip"]);
-			$c_info = $this->mdl_clt->getClientData($_SESSION["user_ip"])[0];
+			$this->mdl_clt->update_last_activity($_SESSION["fb_id"]);
+			$c_info = $this->mdl_clt->getClientData($_SESSION["fb_id"])[0];
 			foreach ($c_info as $k => $v) $_SESSION["client_data"][$k] = $v;
-			$_SESSION["client_data"]['tokenKey'] = $_SESSION["user_ip"];
+			$_SESSION["client_data"]['tokenKey'] = $_SESSION["fb_id"];
 			print_r(json_encode($_SESSION["client_data"]));
 		} else {
 			$_SESSION["client_data"] = null;
-			$this->unset_cookie($_SESSION["user_ip"]);
-			$this->mdl_clt->deleteClientData($_SESSION["user_ip"]);
+			$this->unset_cookie($_SESSION["fb_id"]);
+			$this->mdl_clt->deleteClientData($_SESSION["fb_id"]);
 		}
 	}
 	public function check_cookie($cookie_name) {
@@ -269,28 +242,37 @@ class home extends controller {
 	    return $output;
 	}
 	public function push_shipInfo() {
-		$this->shipInfo(json_decode($_GET["r"]));
+		$this->add_page_view();
+		$r = $this->shipInfo(json_decode($_GET["r"]));
 	}
 	public function shipInfo($shipIfd) {
-		$shipIfd->tokenKey = $_SESSION["user_ip"];
+		$shipIfd->tokenKey = $_SESSION["fb_id"];
 		$shipIfd->last_update = date('Y-m-d H:i:s',time());;
+		$shipIfd_arr = json_decode(json_encode($shipIfd),true);
+		
 		$exd_ck = time() + 86400 * 30;
 		if (@(!is_null($_SESSION["client_data"]) && isset($_SESSION["client_data"]))) {
-			if ($this->checkDiff($_SESSION["client_data"], $shipIfd)) {
+			$clt_dta_arr = json_decode(json_encode($_SESSION["client_data"]),true);
+			if ($this->checkDiff($clt_dta_arr, $shipIfd_arr)) {
 				$this->mdl_clt->updateClientInfo($shipIfd);
 				if ($shipIfd->saveData == 1) {
-					setcookie($_SESSION["user_ip"],time(),$exd_ck, '/');
+					setcookie($_SESSION["fb_id"],time(),$exd_ck, '/');
 				} else {
-					$this->unset_cookie($_SESSION["user_ip"]);
+					unset($_SESSION["client_data"]);
+					$this->unset_cookie($_SESSION["fb_id"]);
+					$this->mdl_clt->deleteClientData($_SESSION["fb_id"]);
 				}
 			}
 		} else {
 			if ($shipIfd->saveData == 1) {
-				setcookie($_SESSION["user_ip"],time(),$exd_ck, '/');
+				$_SESSION["client_data"] = $shipIfd_arr;
+				setcookie($_SESSION["fb_id"], time() ,$exd_ck, '/');
 				$this->mdl_clt->insert_clientInfo($shipIfd);
 				$this->add_accounts();
 			} else {
-				$this->unset_cookie($_SESSION["user_ip"]);
+				unset($_SESSION["client_data"]);
+				$this->unset_cookie($_SESSION["fb_id"]);
+				$this->mdl_clt->deleteClientData($_SESSION["fb_id"]);
 			}
 		}
 	}
@@ -310,19 +292,23 @@ class home extends controller {
 												$cartIfd->client->phone,
 												$cartIfd->client->address,
 												$cartIfd->client->tokenKey,
+												$cartIfd->client->id,
 												$cartIfd->cart->total_bill);
 		$items_list = $cartIfd->cart->items_list;
+		$total_pQty = 0;
 		for ($i = 0; $i < count($items_list); $i++) {
 			$totalPrice = $items_list[$i]->price_s * $items_list[$i]->qty;
+			$total_pQty += $items_list[$i]->qty;
 			$this->mdl_pkg->insert_package($items_list[$i]->id,
 											$ord_id,
 											$items_list[$i]->qty,
 											$totalPrice);
-			$this->mdl_prd->add_purchase_count($items_list[$i]->id);
+			$this->mdl_prd->add_purchase_count($items_list[$i]->id, $items_list[$i]->qty);
 		}
-		$c_PC = intval($this->mdl_clt->getClientData_c($_SESSION["user_ip"],'purchase_count')['purchase_count']);
-		$c_PV = intval($this->mdl_clt->getClientData_c($_SESSION["user_ip"],'total_purchaseVal')['total_purchaseVal']);
-		$this->mdl_clt->upd_client_record($_SESSION["user_ip"], $cartIfd->cart->total_bill, $c_PC, $c_PV);
+
+		$c_PC = $total_pQty;
+		$c_PV = $cartIfd->cart->total_bill;
+		$this->mdl_clt->upd_client_record($_SESSION["fb_id"], $cartIfd->cart->total_bill, $c_PC, $c_PV);
 		$this->add_incomes($cartIfd->cart->total_bill);
 		$this->add_transactions();
 	}
@@ -340,6 +326,7 @@ class home extends controller {
 		$qry_data = [
 			"cnd1" => ["tokenKey",$r["tk"]],
 			"cnd2" => ["display","1"],
+			"cnd3" => ["client_id",$r["c_id"]],
 			"sort" => ["time_order","DESC"],
 			"mere" => [$r["limit"],$r["offset"]]
 		];
@@ -379,8 +366,10 @@ class home extends controller {
 	}
 	public function count_orders_wcd() {
 		$r = json_decode($_GET["r"],true);
-		$d[0] = $this->mdl_ord->count_orders_wCnds([["tokenKey",$r['tk']]]);
+		$d[0] = $this->mdl_ord->count_orders_wCnds([["tokenKey",$r['tk']],
+													["client_id",$r['c_id']]]);
 		$d[1] = $this->mdl_ord->count_orders_wCnds([["tokenKey",$r['tk']],
+													["client_id",$r['c_id']],
 													["display",$r['dp']]]);
 		$d[0] = reset($d[0]);
 		$d[1] = reset($d[1]);
@@ -395,6 +384,9 @@ class home extends controller {
 		unset($_SESSION["fb_user_data"]);
 		$this->fb_auth->facebook->destroySession();
 		header("Location:".BASE_URL);
+	}
+	public function last_ord_ID() {
+		print_r($this->mdl_ord->getlast_ord_ID());
 	}
 }
 
