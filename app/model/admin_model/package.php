@@ -1,8 +1,14 @@
 <?php
-class package_c {
+class package_c extends general_c {
 	public function __construct($tbl) {
 		$this->db = new Database();
 		$this->tbl = $tbl;
+	}
+	public function get_packages($cols = "*") {
+		if (is_array($cols)) $cols = join(",",$cols);
+		$queryStr = "SELECT $cols FROM `$this->tbl`";
+		$this->db->query($queryStr);
+		return $this->db->resultset();
 	}
 	public function select_packageAjax($order_id) {
 		$queryStr = "SELECT * FROM `$this->tbl` WHERE order_id = :d";

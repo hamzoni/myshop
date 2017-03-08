@@ -28,7 +28,7 @@ function check_loginKey() {
 	display_loginPanel();
 }
 var logged_in = new preset_data().lg_s;
-var intv_lgStt = logged_in != 0 ? setInterval(check_login_status, 1 * 1000) : 0;
+var intv_lgStt = logged_in != 0 ? setInterval(check_login_status, 10 * 1000) : 0;
 function display_loginPanel() {
 	if (logged_in != 0) {
 		window.open(logged_in);
@@ -49,6 +49,7 @@ function display_loginPanel() {
 	}
 }
 function check_login_status() {
+	return;
 	try {
 		var url = new preset_data().b_url + "/check_ADlogin_stt"; 
 			ajax_request(url, null, function(d){

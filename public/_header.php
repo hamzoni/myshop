@@ -13,6 +13,18 @@
 <link rel="stylesheet" type="text/css" href="lib/font-awesome/css/font-awesome.min.css">
 <script type="text/javascript" src="lib/jquery-3.1.1.min.js"></script>
 <script type="text/javascript" src="lib/bootstrap/js/bootstrap.min.js"></script>
+<!-- specific library -->
+<?php if (@$data["header"]["lib"]["css"]) { ?>
+<?php for ($i = 0; $i < count($data["header"]["lib"]["css"]); $i++) { ?>
+<link rel="stylesheet" type="text/css" href="lib/<?=$data["header"]["lib"]["css"][$i]?>">
+<?php };?>
+<?php };?>
+
+<?php if (@$data["header"]["lib"]["js"]) { ?>
+<?php for ($i = 0; $i < count($data["header"]["lib"]["js"]); $i++) { ?>
+<script type="text/javascript" src="lib/<?=$data["header"]["lib"]["js"][$i]?>"></script>
+<?php };?>
+<?php };?>
 <!-- assets -->
 <?php if (@isset($data["header"])) { ?>
 <?php for ($i = 0; $i < count($data["header"]["css"]); $i++) { ?>

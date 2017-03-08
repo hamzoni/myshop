@@ -213,7 +213,7 @@ body {
 	transform: translateY(-50%);
 	width: 30px;
 	height: 30px;
-	z-index: 10;
+	z-index: 1;
 	border: none;
 	background: none;
 	font-size: 25px;
@@ -379,13 +379,12 @@ body {
 }
 .general_popUp {
 	position: absolute;
-	z-index: 33;	
-	top: 25%;
+	z-index: 10;	
+	top: 50%;
 	left: 50%;
 	transform: translateY(-50%);
 	border-radius: 10px;
 	color: #fff;
-	overflow: hidden;
 }
 .cart_detail {
 	width: 500px;
@@ -415,7 +414,7 @@ body {
 	margin-bottom: 0px;
 }
 .tbl_main_wrpC {
-	height: calc(100% - 32px);
+	height: calc(100% - 41px);
 	width: 100%;
 	overflow-y: scroll;
 }
@@ -436,9 +435,18 @@ a {
 .cart_footer {
 	width: 100%;
 	height: 70px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 .right_cfter , .left_cfter {
 	height: 100%;
+}
+.right_cfter {
+	padding-top: 5px;
 }
 .left_cfter {
 	width: 70%;
@@ -461,12 +469,15 @@ a:hover {
 	bottom: 0;
 	right: 0;
 	border-top-left-radius: 5px;
+	border-bottom-right-radius: 5px;
 	width: 100%;
 	height: 50%;
 	font-size: 22px;
 	text-align: center;
 	text-transform: uppercase;
 	border: 1px solid #fff;
+	border-right-width: 0px;
+	border-bottom-width: 0px;
 	background: linear-gradient(to right, #EB0000 , #FF1414);
 	transition: 0.3s;
 	cursor: pointer;
@@ -719,10 +730,64 @@ label[for='save_data_cookie'] {
 }
 .qty_cIp {
 	display: block;
-	width: 35px;
-	height: 32px;
-	border: 1px solid #616161;
+	width: 30px;
+	height: 30px;
+	border: none;
+	text-align: -webkit-center;
+	color: #fff;
 	background-color: transparent;
+}
+.asterisk_notation {
+	font-size: 12px;
+	line-height: 15px;
+	width: 100%;
+	float: left;
+	height: 15px;
+	margin-bottom: 5px;
+}
+.prRod_tr td {
+	border-style: dashed;
+	border-color: #969696;
+	border-width: 1px;
+	border-top: 1px dashed #969696 !important;
+}
+.prRod_tr tr:first-child td {
+	border-top-width: none;
+}
+.fr_lnTbl td {
+	border-top: none !important;
+}
+.qty_cIp:focus {
+	background-color: #fff;
+	color: #000;
+}
+.fr_lnTbl {
+	background-color: #1C1C1C;
+}
+.fr_lnTbl th {
+	border-top: none !important;
+	padding: none !important;
+}
+.remove_itemCart,
+.add_notes {
+	cursor: pointer;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.remove_itemCart,
+.add_notes 
+{
+	cursor: pointer;
+	opacity: 0.6;
+}
+.remove_itemCart:hover,
+.add_notes:hover
+{
+	opacity: 1;
 }
 td[qty] {
 	padding: 0px !important;
@@ -1260,20 +1325,43 @@ ul.pagBtn_ctner {
 	margin-bottom: 5px;
 	font-size: 14px;
 }
-.phone_list::-webkit-scrollbar {
-    width: 12px;
+.tbl_main_wrpC::-webkit-scrollbar {
+    width: 10px;
 }
- 
+.tbl_main_wrpC::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 1px rgba(255,255,255,1); 
+}
+.tbl_main_wrpC::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,1); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+    cursor: pointer;
+}
+#note_content::-webkit-scrollbar {
+    width: 5px;
+}
+#note_content::-webkit-scrollbar-track {
+	background-color: #eee;
+}
+#note_content::-webkit-scrollbar-thumb {
+    background-color: #242424;
+    -webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.3);
+    cursor: pointer;
+}
+.phone_list::-webkit-scrollbar {
+	width: 12px;
+}
 /* Track */
 .phone_list::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.3); 
+	-webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.3); 
 }
- 
+
 /* Handle */
 .phone_list::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,1); 
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+	background: rgba(255,255,255,1); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+    cursor: pointer;
 }
+
 .phone_list::-webkit-scrollbar-thumb:window-inactive {
 /*	background: rgba(255,0,0,0.4); */
 }
@@ -1318,7 +1406,8 @@ ul.pagBtn_ctner {
 	font-size: 15px;
 	padding-left: 5px;
 	font-variant: small-caps;
-	text-shadow: 0px 1px 1px #fff;
+	text-shadow: 0px 1px 1px #000;
+	color: #fff;
 	box-shadow: -1px 5px 5px 1px #000;
 	font-weight: bold;
 }
@@ -1340,4 +1429,94 @@ ul.pagBtn_ctner {
 	border-right: 5px solid transparent;
 	top: -10px;
 	left: 20px;
+}
+#add_note_cart {
+	width: 200px;
+	height: 200px;
+	position: fixed;
+	z-index: 10;
+	top: 0;
+	left: 0;
+	overflow: hidden;
+	font-size: 12px;
+	background-color: #080808;
+	background: -webkit-linear-gradient(right, #080808 ,#242424); /* For Safari 5.1 to 6.0 */
+	background: -o-linear-gradient(left, #080808,#242424); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(left, #080808,#242424); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(to left, #080808 ,#242424); /* Standard syntax */
+	border: 1px solid #fff;
+}
+.note_header {
+	width: 100%;
+	height: 15px;
+	line-height: 15px;
+	display: block;
+	float: left;
+	color: #fff;
+	font-size: 10px;
+	padding: 0 2.5px;
+}
+#note_content {
+	width: 100%;
+	height: calc(100% - 40px);
+	background-color: #fff;
+	display: block;
+	float: left;
+	color: #000;
+	padding: 5px 0 0 5px;
+}
+.note_option {
+	height: 25px;
+	width: 100%;
+	color: #fff;
+	float: left;
+	padding: 0 2.5px;
+}
+#done_note,
+#clear_note
+{
+	height: 20px;
+	line-height: 15px;
+	border: 1px solid #fff;
+	background-color: transparent;
+	margin-top: 2.5px;
+	opacity: 0.6;
+	float: right;
+}
+#done_note {
+	width: 50px;
+	font-variant: small-caps;
+}
+#clear_note {
+	width: 20px;
+    text-align: center;
+    padding: 0px;
+    margin-right: 2.5px;
+}
+#done_note:hover,
+#clear_note:hover {
+	opacity: 1;
+}
+._closeNote {
+	display: block;
+	float: right;
+	cursor: pointer;
+}
+*[noted] {
+	color: #fff;
+	opacity: 1;
+}
+#add_orderNote {
+	width: 100%;
+	height: 100%;
+	display: block;
+	line-height: 20px;
+	color: #fff;
+	opacity: 0.6;
+	font-size: 15px;
+	cursor: pointer;
+	font-style: italic;
+}
+#add_orderNote:hover {
+	opacity: 1;
 }

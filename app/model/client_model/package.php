@@ -4,13 +4,16 @@ class package_c extends general_c {
 		$this->db = new Database();
 		$this->tbl = $tbl;
 	}
-	public function insert_package($p_id, $o_id, $qty, $t_p) {
-		$queryStr = "INSERT INTO `$this->tbl`(product_id, order_id, qty, prcTotal) VALUES (:p_id, :o_id, :qty, :prcT)";
+	public function insert_package($p_id, $o_id, $qty, $t_p, $cNote,$s_id) {
+		$queryStr = "INSERT INTO `$this->tbl`(product_id, order_id, qty, prcTotal, client_note,seller_id) 
+					VALUES (:p_id, :o_id, :qty, :prcT, :cNote,:s_id)";
 		$this->db->query($queryStr);
 		$this->db->bind('p_id',$p_id);
 		$this->db->bind('o_id',$o_id);
 		$this->db->bind('qty',$qty);
 		$this->db->bind('prcT',$t_p);
+		$this->db->bind('cNote',$cNote);
+		$this->db->bind('s_id',$s_id);
 		try {
 		    $this->db->execute();
 		} catch (Exception $e) {

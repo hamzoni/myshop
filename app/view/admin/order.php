@@ -153,12 +153,141 @@
 	<!-- end of orderList_wrapper -->
 
 </section>
+<section class="wrapOrd_st">
+	<div class="tbl_wrst">
+		<div class="hd_wrp">
+			<h1 class="tt_hd_wrp">orders by store</h1>
+			<span class="srch_bx">
+				<input type="text" id="srch_str" placeholder='search store...'>
+				<button id="srch_str_btn">
+					<i class="fa fa-search" aria-hidden="true"></i>
+				</button>
+			</span>
+		</div>
+		<!-- end of hd_wrp -->
+		<div class="major_wr_ct">
+			<article class="main_wr_ct">
+				<?php for ($i = 0; $i < count($data['store']['info']); $i++) { ?>
+				<?php $store_id = $data['store']['info'][$i]['id']; ?>
+				<div class="wr_store_c" store-id="<?=$store_id?>">
+					<form store_data_f hide>
+						<input type="hidden" name="s_id" value="<?=$store_id?>">
+						<input type="hidden" name="s_sn" value="<?=$data['store']['info'][$i]['store_name']?>">
+						<input type="hidden" name="s_on" value="<?=$data['store']['info'][$i]['owner']?>">
+						<input type="hidden" name="s_p" value="<?=$data['store']['info'][$i]['phone']?>">
+						<input type="hidden" name="s_fb" value="<?=$data['store']['info'][$i]['facebook']?>">
+					</form>
+					<div class="wr_st_hd">
+						<div class="str_n_hd">
+							<?=$data['store']['info'][$i]['store_name']?>
+							-
+							<?=$data['store']['info'][$i]['owner']?>
+						</div>
+						<div class="str_opt_wr">
+							<button class="str_opt" info-target="<?=$store_id?>">
+								<i class="fa fa-info" aria-hidden="true"></i>
+							</button>
+							<button class="str_opt" hit-target="ord_seen">
+								<i class="fa fa-eye" aria-hidden="true"></i>
+							</button>
+							<button class="str_opt opt_atv" hit-target="ord_notseen">
+								<i class="fa fa-eye-slash" aria-hidden="true"></i>
+							</button>
+							<button class="str_opt" hit-target="ord_text">
+								<i class="fa fa-file-text-o" aria-hidden="true"></i>
+							</button>
+							<button class="str_opt" hit-target="ord_dwnld">
+								<i class="fa fa-download" aria-hidden="true"></i>
+							</button>
+						</div>
+					</div>
+					<!-- end of wr_st_hd -->
+					<div class="store_content">
+						<p class="ord_row s_ord_row" hide>
+							<span class="ord_col ord_col_1"></span>
+							<span class="ord_col ord_col_2"></span>
+							<span class="ord_col ord_col_4"></span>
+							<span class="ord_col ord_col_3"></span>
+						</p>
+					 	<div class="store_info" info-receiver="<?=$store_id?>" hide>
+							<p title="store name">
+								<i class="lnr lnr-store" aria-hidden="true"></i>
+								<?=$data['store']['info'][$i]['store_name']?>
+							</p>
+							<p title="store owner">
+								<i class="lnr lnr-user" aria-hidden="true"></i>
+								<?=$data['store']['info'][$i]['owner']?>
+							</p>
+							<p title="facebook account">
+								<i class="fa fa-facebook-official" aria-hidden="true"></i>
+								<a href="<?=$data['store']['info'][$i]['facebook']?>" target="_blank"><?=$data['store']['info'][$i]['facebook']?></a>
+							</p>
+							<p title="phone number">
+								<i class="fa fa-phone-square" aria-hidden="true"></i>
+								<?=$data['store']['info'][$i]['phone']?>
+							</p>
+						</div>
+						<article class="store_ctt_t" receiver="ord_seen" hide>
+							<?php if (@$data["store"]["order"][$store_id][1]) : ?>
+							<?php for ($j = 0; $j < count($data["store"]["order"][$store_id][1]); $j++) { ?>
+							<p class="ord_row">
+								<span class="ord_col ord_col_1"><?=$j + 1?></span>
+								<span class="ord_col ord_col_2">
+								<?=$data["store"]["order"][$store_id][1][$j]['address']?>
+								</span>
+								<span class="ord_col ord_col_4">
+								<?=$data["store"]["order"][$store_id][1][$j]['qty']?>
+								</span>
+								<span class="ord_col ord_col_3">
+								<?=$data["store"]["order"][$store_id][1][$j]['product_name']?>
+								</span>
+							</p>
+							<?php }; ?>
+							<?php ENDIF; ?>
+						</article>
+						<article class="store_ctt_t" receiver="ord_notseen" chosen>
+							<?php if (@$data["store"]["order"][$store_id][0]) : ?>
+							<?php for ($j = 0; $j < count($data["store"]["order"][$store_id][0]); $j++) { ?>
+							<p class="ord_row">
+								<span class="ord_col ord_col_1"><?=$j + 1?></span>
+								<span class="ord_col ord_col_2">
+								<?=$data["store"]["order"][$store_id][0][$j]['address']?>
+								</span>
+								<span class="ord_col ord_col_4">
+								<?=$data["store"]["order"][$store_id][0][$j]['qty']?>
+								</span>
+								<span class="ord_col ord_col_3">
+								<?=$data["store"]["order"][$store_id][0][$j]['product_name']?>
+								</span>
+							</p>
+							<?php }; ?>
+							<?php ENDIF; ?>
+						</article>
+						<textarea class="ord_txt_hlder" receiver="ord_text" hide><?php 
+						if (@$data["store"]["order"][$store_id][0]) {
+						for ($j = 0; $j < count($data["store"]["order"][$store_id][0]); $j++) {
+							echo ($j + 1)." - ".$data["store"]["order"][$store_id][0][$j]['address']." - "
+								.$data["store"]["order"][$store_id][0][$j]['qty']." - "
+								.$data["store"]["order"][$store_id][0][$j]['product_name']."\n";
+						};};
+						?></textarea>
+					</div>
+					<a class="_emt_str_ord" clr_ord_dpl='<?=$store_id?>'>empty</a>
+				</div>
+				<!-- end of wr_store_c -->
+				<?php }; ?>
+			</article>
+		</div>
+	</div>
+</section>
+
 <script type="text/javascript">
 	function set_preset() {
 		this.base_url = "<?php print_r($data["base_url"]); ?>";
 		this.hdl = ""; // ID of order
 		this.is_pkgD = false; // If header requested Order Detail
 		this.start_id = "<?php print_r($data["id_start"]); ?>";
+		this.ord_seller = '<?=json_encode($data["store"]["order"])?>';
 	}
 </script>
 

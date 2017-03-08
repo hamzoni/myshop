@@ -18,19 +18,22 @@ class home extends controller {
 		$this->mdl_ord = $this->model("client_model/order","orders");
 		$this->mdl_pkg = $this->model("client_model/package","packages");
 		$this->mdl_fb = $this->model("client_model/fb_auth","users");
+		$this->mdl_ban = $this->model("admin_model/user","ban_user");
 
 		$this->profile_ad = getcwd()."/data/";
 		$this->profile_fn = "profile.txt";
 	}
 	public function index() {
-		$args = func_get_args();
-		$_SESSION['crr_url'] = $args[count($args) - 1];
-		$this->load_facebook_url();
-		$this->load_header_files();
-		$this->load_page_content();
-		$this->initiate_pageData();
-		// call view
-		$this->view('client/home',$this->page_data);
+		if (!$this->check_is_ajax()) {
+			$args = func_get_args();
+			$_SESSION['crr_url'] = $args[count($args) - 1];
+			$this->load_facebook_url();
+			$this->load_header_files();
+			$this->load_page_content();
+			$this->initiate_pageData();
+			// call view
+			$this->view('client/home',$this->page_data);
+		}
 	}
 	public function load_page_content() {
 		// total records in view products table
@@ -81,6 +84,17 @@ class home extends controller {
 		$this->page_data["items"]["menu"] = json_encode($this->page_data["items"]["menu"]);
 		// load page contact data
 		$this->page_data["contact"] = $this->load_contact_data();
+		// set privilege 
+		$this->page_data["USER_PRIVILEGE"] = false;
+		if (@$_SESSION['fb_user_data']) {
+			$user_id = $_SESSION['fb_user_data']['oauth_uid'];
+			$user_id = $this->mdl_fb->user_record_id($user_id);
+			$user_id = reset($user_id);
+			$ban_stt = $this->mdl_ban->ban_exist($user_id);
+			$ban_stt = reset($ban_stt);
+			$this->page_data["USER_PRIVILEGE"] = $ban_stt == 0;
+			$this->page_data["BAN_STATUS"] = $ban_stt == 1;
+		}
 	}
 	public function load_header_files() {
 		$this->page_data["header"]["user"] = "client"; 
@@ -288,12 +302,16 @@ class home extends controller {
 		$cartIfd = json_decode($_GET["clt_spI"]);
 		$this->shipInfo($cartIfd->client);
 		if (count($cartIfd->cart->items_list) <= 0) return;
-		$ord_id = $this->mdl_ord->insert_order($cartIfd->client->name,
-												$cartIfd->client->phone,
-												$cartIfd->client->address,
-												$cartIfd->client->tokenKey,
-												$cartIfd->client->id,
-												$cartIfd->cart->total_bill);
+		$insert_content = [
+			"name" => $cartIfd->client->name,
+			"phone" => $cartIfd->client->phone,
+			"address" => $cartIfd->client->address,
+			"tokenKey" => $cartIfd->client->tokenKey,
+			"client_id" => $cartIfd->client->id,
+			"totalValue" => $cartIfd->cart->total_bill,
+			"client_notes" => $cartIfd->cart->order_note
+		];
+		$ord_id = $this->mdl_ord->insert_order($insert_content);
 		$items_list = $cartIfd->cart->items_list;
 		$total_pQty = 0;
 		for ($i = 0; $i < count($items_list); $i++) {
@@ -302,7 +320,9 @@ class home extends controller {
 			$this->mdl_pkg->insert_package($items_list[$i]->id,
 											$ord_id,
 											$items_list[$i]->qty,
-											$totalPrice);
+											$totalPrice,
+											$items_list[$i]->note,
+											$items_list[$i]->store_id);
 			$this->mdl_prd->add_purchase_count($items_list[$i]->id, $items_list[$i]->qty);
 		}
 

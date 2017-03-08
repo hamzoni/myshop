@@ -1,4 +1,4 @@
-(function(){
+// (function(){
 set_evtOlbt();
 var pkg_tblD = document.getElementById("pkg_tblD").children[0];
 var pkg_sum = {};
@@ -57,6 +57,7 @@ var first_load = true;
 window.onload = function() {
 	load_sumRecords();
 	load_orders();
+	pst_s_ord();
 }
 function load_sumRecords(data) {
 	if (data == null) {
@@ -349,4 +350,171 @@ function find_ordId(id) {
 		}
 	}
 }
-})()
+$("[info-target]").click(function(){
+	var x = this.getAttribute('info-target');
+	var y = $("[info-receiver=" + x + "]");
+	if (y[0].hasAttribute('hide')) {
+		y[0].removeAttribute('hide');
+		this.classList.add('opt_atv');
+	} else {
+		y[0].setAttribute('hide','');
+		this.classList.remove('opt_atv');
+	}
+});
+$(".str_opt").click(function(){
+	if (!this.hasAttribute('info-target')) {
+		var b = $(".str_opt");
+		var c = 'opt_atv';
+		var h = this.getAttribute('hit-target');
+		if (h != 'ord_dwnld') {
+			var p = $(this).parents('.wr_store_c')[0];
+			var q = p.querySelector('[receiver=' + h + ']');
+			for (var i = 0; i < b.length; i++) {
+				if (b[i].classList.contains(c)) 
+					b[i].classList.remove(c);
+			}
+			this.classList.add(c);
+			// clear chosen box to empty
+			var g = $('[chosen]');
+			for (var i = 0; i < g.length; i++) 
+				g[i].removeAttribute('chosen');
+			q.setAttribute('chosen','');
+		}
+	}
+});
+var ord_s_bucket;
+var ord_s_clone = $(".s_ord_row")[0];
+var crr_o_data = JSON.parse(preset_data.ord_seller);
+function pst_s_ord() {
+	ord_s_clone.parentNode.removeChild(ord_s_clone);
+	ord_s_clone.removeAttribute('hide');
+	ord_s_clone.classList.remove('s_ord_row');
+	var x = {};
+	var v = crr_o_data;
+	for (var i in v) {
+		x[i] = [];
+		if (v[i].length > 0) {
+			for (var j = 0; j < v[i][0].length; j++) 
+				x[i][j] = v[i][0][j];
+		}
+	}
+	crr_o_data = x;
+}
+$("[hit-target=ord_seen]").click(function(){
+	load_ord_sX(this,1);
+});
+$("[hit-target=ord_notseen]").click(function(){
+	load_ord_sX(this,0);
+});
+$("[hit-target=ord_text]").click(function(){
+	dpl_ord_tbl(this);
+	// fill data
+	var x =  $(this).parents('[store-id]');
+	var c = x.find('[receiver=ord_text]')[0];
+	c.innerHTML = "";
+	var st_id = x[0].getAttribute('store-id');
+	var y = crr_o_data[st_id];
+	var str_v;
+	for (var i = 0; i < y.length; i++) {
+		str_v = "";
+		str_v += (i + 1) + " - ";
+		str_v += y[i].address + " - ";
+		str_v += y[i].qty + " - ";
+		str_v += y[i].product_name + "\n";
+		str_v = document.createTextNode(str_v);
+		c.appendChild(str_v);
+	}
+});
+$("[hit-target=ord_dwnld]").click(function(){
+	var t = $(this).parents(".wr_store_c");
+	var f = t.find('[store_data_f]')[0];
+	var n = new Date();
+	n = n.getHours() + "h" + n.getMinutes() + "m" + n.getSeconds() +
+		"s" + n.getDate() + "_" + (n.getMonth() + 1) + "_" + n.getFullYear();
+	n += f.s_sn.value + "_" + f.s_on.value + ".txt";
+	var v = t.find('[receiver=ord_text]').val();
+	v = v.split('\n').join('\r\n');
+	download(n,v);
+});
+function load_ord_sX(dom,type) {
+	var  x =  $(dom).parents('[store-id]');
+	var st_id = x[0].getAttribute('store-id');
+	ord_s_bucket = dom.getAttribute('hit-target');
+	ord_s_bucket = x.find('[receiver=' + ord_s_bucket + ']');
+	// get data
+	get_upd_seen(st_id,type,push_data_s);
+	// update button interface
+	dpl_ord_tbl(dom);
+}
+function dpl_ord_tbl(d) {
+	var a = d.getAttribute('hit-target');
+	var t = $("[receiver=" + a + "]");
+	var x = $(d).parents('[store-id]');
+	var m = x[0].getAttribute('store-id');
+	for (var i = 0; i < t.length; i++) {
+		var y = $(t[i]).parents('[store-id]')[0];
+		if (y.getAttribute('store-id') == m) t = t[i];
+	}
+	var r = x[0].querySelectorAll('[receiver]');
+	for (var i = 0; i < r.length; i++) {
+		if (!r[i].hasAttribute('hide')) r[i].setAttribute('hide','');
+	}
+	for (var i = 0; i < r.length; i++) {
+		if (r[i].getAttribute('receiver') == a) 
+			r[i].removeAttribute('hide');
+	}
+}
+function get_upd_seen(id,t,cb) {
+	var url = base_url + "/get_vendor_ajax";
+	var r = "r=" + JSON.stringify({
+		store_id: id,
+		get_type: t,
+	});
+	ajax_request(url,r,cb);
+}
+function push_data_s(d) {
+	if (!d) return;
+	d = JSON.parse(d);
+	var x = ord_s_bucket;
+	var y;
+	if (d.length > 0) {
+		x.html('');
+		for (var i = 0; i < d.length; i++) {
+			y = ord_s_clone.cloneNode(true);
+			$(y).children('.ord_col_1').html(i + 1);
+			$(y).children('.ord_col_2').html(d[i].address);
+			$(y).children('.ord_col_3').html(d[i].product_name);
+			$(y).children('.ord_col_4').html(d[i].qty);
+			x[0].appendChild(y);
+		}
+	}
+	// fill data in offset data
+	var x_id = $(x).parents(".wr_store_c")[0].getAttribute('store-id');
+	crr_o_data[x_id] = d;
+}
+$("[clr_ord_dpl]").click(function(){
+	var x = this.getAttribute('clr_ord_dpl');
+	var y = $(this).parents('[store-id]');
+	var z = y.find('[chosen]');
+	var a = z[0].getAttribute('receiver');
+	var b = y[0].getAttribute('store-id');
+
+	var url = base_url + '/set_vendor_view';
+	var r = 'r=',s;
+	switch (a) {
+		case 'ord_seen':
+			s = {'type':'2','store_id':b};
+			break;
+		case 'ord_notseen':
+			s = {'type':'1','store_id':b};
+			break;
+		default:
+			break;
+	}
+	r += JSON.stringify(s);
+	ajax_request(url,r,function(d){
+		console.log(d);
+	});
+});
+
+// })()

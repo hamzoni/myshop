@@ -32,13 +32,18 @@ function attr_slc_d(d,a) {
 	var r = [];
 	var m = d.getElementsByTagName('*');
 	for (var i = 0; i < m.length; i++) {
-		if (a.length < 2) {
+		if (typeof a == 'string') {
 			if (m[i].hasAttribute(a)) r.push(m[i]);
 		} else {
 			if (m[i].getAttribute(a[0]) == a[1]) r.push(m[i]);
 		}
 	}
 	return r;
+}
+function remove_all_attr(x) {
+	a = $('[' + x + ']');
+	if (a.length == 0) return;
+	for (var i = 0; i < a.length; i++) a[i].removeAttribute(x);
 }
 function html_arr(collection) {
 	return Array.prototype.slice.call(collection);
@@ -90,7 +95,8 @@ function get_allCheckedCkb(classname) {
 	return chk_ctner;
 }
 function cvT_timestampSQL(ms) {
-	var date = new Date(ms);
+	var date = new Date();
+	if (typeof ms != 'object') date = new Date(ms);
 	var d_obj = {
 		date:date.getDate(),
 		month:date.getMonth() + 1,
@@ -344,4 +350,134 @@ function getOffsetTop( elem ) {
 		if ( !isNaN( elem.offsetTop )) offsetTop += elem.offsetTop;
 	} while(elem = elem.offsetParent);
 	return offsetTop;
+}
+// select text
+function SelectText(element) {
+    var doc = document
+        , text = $(element)[0]
+        , range, selection
+    ;    
+    if (doc.body.createTextRange) {
+        range = document.body.createTextRange();
+        range.moveToElementText(text);
+        range.select();
+    } else if (window.getSelection) {
+        selection = window.getSelection();        
+        range = document.createRange();
+        range.selectNodeContents(text);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+}
+// check if input text is selected
+function isTextSelected(input) {
+    if (typeof input.selectionStart == "number") {
+        return input.selectionStart == 0 && input.selectionEnd == input.value.length;
+    } else if (typeof document.selection != "undefined") {
+        input.focus();
+        return document.selection.createRange().text == input.value;
+    }
+}
+// split time to array
+function get_date_split(date,prefix = false) {
+	var date = {
+		y: date.getFullYear(),
+		m: date.getMonth(),
+		d: date.getDate(),
+	}
+	if (prefix) {
+		date.m = prefix_zero(date.m + 1);
+		date.d = prefix_zero(date.d);
+	}
+	return date;
+}
+function get_time_split(time,prefix = false) {
+	var time = {
+		h: time.getHours(),
+		m: time.getMinutes(),
+		s: time.getSeconds(),
+	}
+	if (prefix) {
+		for (var p in time) time[p] = prefix_zero(time[p]);
+	}
+	return time;
+}
+function month_convert(dt) {
+	var dM = dt / (30.4375 * 24 * 60 * 60);
+	return Math.round(dM);
+}
+function diff_minute(dt) {
+	var dM = Math.round(dt / 60);
+	return dM;
+}
+function diff_hour(dt) {
+	var dH = Math.round(dt / 3600);
+	return dH;
+}
+function diff_day(dt) {
+	var dD = Math.round(dt / 86400);
+	return dD;
+}
+function diff_month(d1,d2) {
+	var months;
+	months = (d2.getFullYear() - d1.getFullYear()) * 12;
+	months -= d1.getMonth() + 1;
+	months += d2.getMonth();
+	return months <= 0 ? 0 : months;
+}
+function diff_year(d1,d2) {
+	y2 = d2.getFullYear();
+	m2 = d2.getMonth();
+	d2 = d2.getDate();
+	var age = y2 - d1.getFullYear(); 
+	if (m2 < d1.getMonth() - 1) age--;
+	if (d1.getMonth() - 1 == m2 && d2 < d1.getDate()) age--;
+	return age;
+}
+// concatenate object
+function concate_obj() {
+	var ret = {};
+	var len = arguments.length;
+	for (var i=0; i<len; i++) {
+		for (p in arguments[i]) {
+			if (arguments[i].hasOwnProperty(p)) ret[p] = arguments[i][p];
+		}
+	}
+	return ret;
+}
+// check valid date
+function invalid_date(d) {
+	if ( Object.prototype.toString.call(d) === "[object Date]" ) {
+		return isNaN(d.getTime());
+	}
+	return true;
+}
+// toggle display
+function knob_dpl(d,c = null,r = false) {
+	if (d.hasAttribute('hide')) {
+		d.removeAttribute('hide');
+		if (null !== c) {
+			if (r) $("." + c).removeClass(c);
+			d.classList.add(c); 
+		}
+	} else {
+		d.setAttribute('hide','');
+		if (null !== c) d.classList.remove(c);
+	}
+}
+function hasClass(element, cls) {
+    return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
+}
+// download file
+function download(filename, text) {
+	var element = document.createElement('a');
+	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+	element.setAttribute('download', filename);
+
+	element.style.display = 'none';
+	document.body.appendChild(element);
+
+	element.click();
+
+	document.body.removeChild(element);
 }

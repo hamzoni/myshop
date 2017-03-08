@@ -4,6 +4,11 @@ class fb_auth_c extends general_c {
 		$this->db = new Database();
 		$this->tbl = $tbl;
 	}
+	function user_record_id($oauth_id) {
+		$queryStr = "SELECT id FROM `$this->tbl` WHERE oauth_uid = $oauth_id";
+		$this->db->query($queryStr);
+		return $this->db->single();
+	}
 	function check_user_exist($userData = array()) {
 		if (!empty($userData)) {
 			$queryStr =  "SELECT * FROM ".$this->tbl." 

@@ -13,7 +13,9 @@ class user extends controller {
 		$this->page = "user";
 		$this->mdl_gnr = $this->model("general","orders");
 		$this->mdl_ord = $this->model("admin_model/order","clients");
-		$this->mdl_clt = $this->model("admin_model/user","clients"); 
+		$this->mdl_clt = $this->model("admin_model/user","clients");
+		$this->mdl_usr = $this->model("admin_model/user","users"); 
+		$this->mdl_ban = $this->model("admin_model/user","ban_user");
 	}
 	public function index() {
 		$args = func_get_args();
@@ -29,6 +31,9 @@ class user extends controller {
 		$this->page_data["header"]["css"][0] = "main";
 		$this->page_data["header"]["css"][1] = "user";
 		$this->page_data["header"]["js"][0] = "user";
+
+		$this->page_data["header"]["lib"]["css"][0] = "calendar/styles/glDatePicker.default.css";
+		$this->page_data["header"]["lib"]["js"][0] = "calendar/glDatePicker.min.js";
 		$this->view('admin/main',$this->page_data);
 	}
 	public function find_maxIPL() {
@@ -49,8 +54,19 @@ class user extends controller {
 		$rs = $this->mdl_clt->select_orderAjax($rs->lim,$rs->offs, "signup_date","DESC",$rs->start_id);
 		print_r(json_encode($rs));
 	}
+	public function load_userData() {
+		$r = json_decode($_GET['r']);
+		$x = array();
+		$x[0] = $this->mdl_usr->select_orderAjax($r->lim,$r->offs,"created","DESC");
+		$x[1] = $this->mdl_ban->select_orderAjax($r->lim,$r->offs,"start_date","DESC");
+		print_r(json_encode($x));
+	}
 	public function count_client_records() {
 		print_r($this->mdl_clt->countAll()["COUNT(*)"]);
+	}
+	public function count_user_records() {
+		$r = $this->mdl_usr->countAll();
+		print_r(reset($r));
 	}
 	public function ban_client() {
 		$r = json_decode($_GET["c_stt"]);
@@ -76,5 +92,35 @@ class user extends controller {
 	public function delete_client() {
 		$c_id = $_GET["r"];
 		echo $this->mdl_clt->remove_record($c_id);
+	}
+	public function ban_FBUser() {
+		$r = json_decode($_GET["r"]);
+		if (empty(@$r->id)) return;
+
+		$exist = $this->mdl_ban->ban_exist($r->id);
+		$exist = reset($exist);
+		if ($exist == 1) {
+			$x = $this->mdl_ban->update_ban(
+				$r->id,
+				$r->time->start,
+				$r->time->end,
+				$r->extend,
+				$r->permanent
+			);
+			print_r($x);
+		} else {
+			$x = $this->mdl_ban->add_ban(
+				$r->id,
+				$r->time->start,
+				$r->time->end,
+				$r->extend,
+				$r->permanent
+			);
+		}
+	}
+	public function remove_user_ban() {
+		$r = $_GET['r'];
+		$x = $this->mdl_ban->lift_ban($r);
+		print_r($x);
 	}
 }

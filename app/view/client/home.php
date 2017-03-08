@@ -70,6 +70,7 @@
 							<input type="hidden" name="f_nutri" value="<?=$data["items"]["popular"][0]["nutrition_img"]?>">
 							<input type="hidden" name="f_ava" value="<?=$data["items"]["popular"][0]["avatar_img"]?>">
 							<input type="hidden" name="f_sale" value="<?=$data["items"]["popular"][0]["sale"]?>">
+							<input type="hidden" name="f_vendorID" value="<?=$data["items"]["popular"][0]["store_id"]?>">
 						</form>
 					</div>
 					<?php for ($i = 1; $i < count($data["items"]["popular"]); $i++) { ?>
@@ -99,6 +100,7 @@
 							<input type="hidden" name="f_nutri" value="<?=$data["items"]["popular"][$i]["nutrition_img"]?>">
 							<input type="hidden" name="f_ava" value="<?=$data["items"]["popular"][$i]["avatar_img"]?>">
 							<input type="hidden" name="f_sale" value="<?=$data["items"]["popular"][$i]["sale"]?>">
+							<input type="hidden" name="f_vendorID" value="<?=$data["items"]["popular"][$i]["store_id"]?>">
 						</form>
 					</div>
 					<?php }; ?>
@@ -160,6 +162,7 @@
 							<input type="hidden" name="f_nutri" value="<?=$data["items"]["saleOff"][0]["nutrition_img"]?>">
 							<input type="hidden" name="f_ava" value="<?=$data["items"]["saleOff"][0]["avatar_img"]?>">
 							<input type="hidden" name="f_sale" value="<?=$data["items"]["saleOff"][0]["sale"]?>">
+							<input type="hidden" name="f_vendorID" value="<?=$data["items"]["saleOff"][0]["store_id"]?>">
 						</form>
 					</div>
 					<?php for ($i = 1; $i < count($data["items"]["saleOff"]); $i++) { ?>
@@ -197,6 +200,7 @@
 							<input type="hidden" name="f_nutri" value="<?=$data["items"]["saleOff"][$i]["nutrition_img"]?>">
 							<input type="hidden" name="f_ava" value="<?=$data["items"]["saleOff"][$i]["avatar_img"]?>">
 							<input type="hidden" name="f_sale" value="<?=$data["items"]["saleOff"][$i]["sale"]?>">
+							<input type="hidden" name="f_vendorID" value="<?=$data["items"]["saleOff"][$i]["store_id"]?>">
 						</form>
 					</div>
 					<?php }; ?>
@@ -250,6 +254,7 @@
 							<input type="hidden" name="f_nutri" value="<?=$data["items"]["special"][0]["nutrition_img"]?>">
 							<input type="hidden" name="f_ava" value="<?=$data["items"]["special"][0]["avatar_img"]?>">
 							<input type="hidden" name="f_sale" value="<?=$data["items"]["special"][0]["sale"]?>">
+							<input type="hidden" name="f_vendorID" value="<?=$data["items"]["special"][0]["store_id"]?>">
 						</form>
 					</div>
 					<?php for ($i = 1; $i < count($data["items"]["special"]); $i++) { ?>
@@ -278,6 +283,7 @@
 							<input type="hidden" name="f_nutri" value="<?=$data["items"]["special"][$i]["nutrition_img"]?>">
 							<input type="hidden" name="f_ava" value="<?=$data["items"]["special"][$i]["avatar_img"]?>">
 							<input type="hidden" name="f_sale" value="<?=$data["items"]["special"][$i]["sale"]?>">
+							<input type="hidden" name="f_vendorID" value="<?=$data["items"]["special"][$i]["store_id"]?>">
 						</form>
 					</div>
 					<?php }; ?>
@@ -297,16 +303,12 @@
 	 	
 	 	<header class="user_barTab">
 	 		<nav class="ctc_ct">
-	 			
 	 			<div class="fb_login_wr">
-	 			<a class="btn btn-block btn-social btn-facebook" href="<?=@$data["fb_url"]["href"]?>">
-	 				 <span class="fa fa-facebook"></span>
-	 				<?=@$data["fb_url"]["label"]?>
-	 			</a>
-				<!-- 	<div class="fb-login-button" data-max-rows="1" data-size="large" data-show-faces="false" data-auto-logout-link="true" scope="public_profile,email" onlogin="checkLoginState();">	
- 					</div> -->
+		 			<a class="btn btn-block btn-social btn-facebook" href="<?=@$data["fb_url"]["href"]?>">
+		 				 <span class="fa fa-facebook"></span>
+		 				<?=@$data["fb_url"]["label"]?>
+		 			</a>
 				</div>
-
  				<a class="nvCtD VAAlign" id="phone_prompt"><i class="fa fa-phone" aria-hidden="true"></i></a>
  				<a class="nvCtD VAAlign" target="_blank" href="<?=$data['contact']['wFBacc'][0]['data']?>">
  					<i class="fa fa-facebook" aria-hidden="true"></i>
@@ -336,6 +338,7 @@
 									<input type="hidden" name="f_nutri" value="<?=$data["items"]["suggest"][0][$i]['nutrition_img']?>">
 									<input type="hidden" name="f_ava" value="<?=$data["items"]["suggest"][0][$i]['avatar_img']?>">
 									<input type="hidden" name="f_sale" value="<?=$data["items"]["suggest"][0][$i]['sale']?>">
+									<input type="hidden" name="f_vendorID" value="<?=$data["items"]["suggest"][0][$i]["store_id"]?>">
 								</form>
 							</div>
 							<?php }; ?>
@@ -358,6 +361,7 @@
 									<input type="hidden" name="f_nutri" value="<?=$data["items"]["suggest"][$j][$i]['nutrition_img']?>">
 									<input type="hidden" name="f_ava" value="<?=$data["items"]["suggest"][$j][$i]['avatar_img']?>">
 									<input type="hidden" name="f_sale" value="<?=$data["items"]["suggest"][$j][$i]['sale']?>">
+									<input type="hidden" name="f_vendorID" value="<?=$data["items"]["suggest"][$j][$i]["store_id"]?>">
 								</form>
 							</div>
 							<?php }; ?>
@@ -404,6 +408,7 @@
 				<input type="hidden" name="f_nutri" value="">
 				<input type="hidden" name="f_ava" value="">
 				<input type="hidden" name="f_sale" value="">
+				<input type="hidden" name="f_vendorID" value="">
 			</form>
  		</div>
  	</div>
@@ -426,7 +431,7 @@
 	 </nav>
 </section>
 <!-- end of wrapper -->
-<?php if (@$_SESSION["fb_user_data"]) : ?>
+<?php if ($data["USER_PRIVILEGE"]) : ?>
 <nav class="free_nav_bar">
 	<button class="_myCart" id="orderInfo" title="Order info">
 		<i class="fa fa-list" aria-hidden="true"></i>
@@ -451,28 +456,37 @@
 		</button>
 	</div>
 	<div class="main_cartCtner clr_dark2">
+		<p class="asterisk_notation">
+			<i class="fa fa-asterisk" aria-hidden="true"></i>
+			Click vào số lượng để sửa
+		</p>
 		<table class="table table-condensed fixed_col">
 			<col width="30px"/>
-			<col width="260px"/>
-			<col width="35px"/>
-			<col width=""/>
+			<col width="230px"/>
 			<col width="30px"/>
-			<tr>
+			<col width=""/>
+			<col width="30px">
+			<col width="30px"/>
+			<tr class="fr_lnTbl">
 				<th></th>
 				<th>Item name</th>
-				<th>Qty</th>
+				<th class="text-center" title="Quantity">
+					<i class="fa fa-balance-scale" aria-hidden="true"></i>
+				</th>
 				<th>Price</th>
+				<th></th>
 				<th></th>
 			</tr>
 		</table>
-		<div class="tbl_main_wrpC shd_white_inset">
+		<div class="tbl_main_wrpC">
 			<table id="cart_dataTbl" class="table table-condensed main_ctnCol">
 				<col width="30px"/>
-				<col width="260px"/>
-				<col width="35px"/>
-				<col width=""/>
+				<col width="230px"/>
 				<col width="30px"/>
-				<tr>
+				<col width=""/>
+				<col width="30px">
+				<col width="30px"/>
+				<tr class="prRod_tr">
 					<td idx></td>
 					<td fdn>
 						<a food-info-id="1">
@@ -483,8 +497,13 @@
 						<input type="text" maxlength="2" qty_inCart value="1" class="qty_cIp">
 					</td>
 					<td prc>50.000</td>
-					<td>
-						<a class="remove_itemCart">
+					<td class="text-center">
+						<a class="add_notes" title="add note">
+							<i class="fa fa-sticky-note" aria-hidden="true"></i>
+						</a>
+					</td>
+					<td class="text-center">
+						<a class="remove_itemCart" title="remove from cart">
 							<i class="fa fa-times" aria-hidden="true"></i>
 						</a>
 					</td>
@@ -505,12 +524,35 @@
 			</span>
 		</div>
 		<div class="right_cfter">
+			<div class="upper_lcfter">
+				<a id="add_orderNote">
+					Add order note
+				</a>
+			</div>
 			<a class="chkOut_smt" id="prcd_cart">
 				<span class="VAAlign">Proceed</span>
 			</a>
 		</div>
 	</div>
+	<!-- start of #add_note_cart -->
+	<div id="add_note_cart" hide>
+		<span class="note_header">
+			Add note
+			<a class="_closeNote">
+				<i class="fa fa-times" aria-hidden="true"></i>
+			</a>
+		</span>
+		<textarea id="note_content" placeholder="add text here..."></textarea>
+		<span class="note_option">
+			<button id="done_note">done</button>
+			<button id="clear_note">
+				<i class="fa fa-eraser" aria-hidden="true"></i>
+			</button>
+		</span>
+	</div>
+	<!-- end of #add_note_cart -->
 </div>
+
 <div class="general_popUp ship_info clr_dark shd_white" hide>
 	<form id="cltdlvIf" class="shipIF_stl">
 	<div class="dragger_ttl">
@@ -634,12 +676,14 @@
 				<p class="prc_ctner_mop">Price: 
 					<span id="og_prc"></span>
 				</p>
+				<?php if ($data["USER_PRIVILEGE"]) : ?>
 				<label class="qty_lb_vFi">SL</label>
 				<input id="qty_ifcIf" type="text" class="qty_ctn_vFi"/>
+				<?php ENDIF; ?>
 			</div>
 		</div>
 		<div class="right_cfter">
-			<?php if (@$_SESSION["fb_user_data"]) : ?>
+			<?php if ($data["USER_PRIVILEGE"]) : ?>
 			<a id="aCfd_IF" class="normal_sbm_skbc VAAlign">
 				add to cart
 			</a>
@@ -733,7 +777,10 @@
 <script type="text/javascript">
 	function preset_data() {
 		this.b_url = '<?=$data["base_url"]?>';
-		this.fb_login = 1 == <?php echo (@!empty($_SESSION["fb_user_data"])) ? 1 : 0 ?>;
+		this.fb_login = 1 == <?php echo ($data["USER_PRIVILEGE"]) ? 1 : 0 ?>;
+		<?php if (@$data["BAN_STATUS"]) : ?>
+		this.ban_status = 1 == <?php echo $data["BAN_STATUS"] ? 1 : 0;?>;
+		<?php ENDIF; ?>
 		this.mxDp = 12; // NUMBER OF ITEMS DISPLAYED PER PAGINATION
 		this.lmt = <?=$data["slc_lm"]?>; // NUMBER OF RECORD TO BE PULLED
 		this.ofs = <?=$data["crr_offset"]?>; // POSITION OF STARTED RECORD

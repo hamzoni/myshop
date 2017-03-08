@@ -4,15 +4,21 @@ class order_c extends general_c {
 		$this->db = new Database();
 		$this->tbl = $tbl;
 	}
-	public function insert_order($name, $phone, $address,$tokenKey,$client_id,$totalBill) {
-		$queryStr = "INSERT INTO `$this->tbl`(name,phone,address,tokenKey,client_id,totalValue) VALUES(:cname, :cphone, :caddress, :ctokenKey, :cclient_id, :totalBill)";
+	public function insert_order($x) {
+		$c = ["field"=>[],"bindv"=>[],"value"=>[]];
+		$i = 0;
+		foreach ($x as $k => $v) {
+			$c["field"][$i] = $k;
+			$c["value"][$i] = $v;
+			$c["bindv"][$i] = ":".$k;
+			$i++;
+		}
+		$f_s = join(",",$c["field"]);
+		$b_s = join(",",$c["bindv"]);
+		$queryStr = "INSERT INTO `$this->tbl`(".$f_s.") VALUES(".$b_s.")";
 		$this->db->query($queryStr);
-		$this->db->bind(":cname",$name);
-		$this->db->bind(":cphone",$phone);
-		$this->db->bind(":caddress",$address);
-		$this->db->bind(":ctokenKey",$tokenKey);
-		$this->db->bind(":cclient_id",$client_id);
-		$this->db->bind(":totalBill",$totalBill);
+		for ($i = 0; $i < count($c["bindv"]); $i++) 
+			$this->db->bind($c["bindv"][$i],$c["value"][$i]);
 		try {
 		    $this->db->execute();
 		} catch (Exception $e) {

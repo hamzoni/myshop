@@ -47,4 +47,45 @@ class general_c {
 		$this->db->query($queryStr);
 		return $this->db->resultset();
 	}
+	public function get_records($cols = "*",$cnd = null) {
+		if (is_array($cols)) $cols = join(",",$cols);
+		$queryStr = "SELECT $cols FROM `$this->tbl` ";
+		$queryStr .= $this->get_condition($cnd);
+		$this->db->query($queryStr);
+		return $this->db->resultset();
+	}
+	public function update_records($c,$v,$cnd) {
+		$ss = "";
+		if (is_array($c) && is_array($v)) {
+			for ($i = 0; $i < count($c); $i++) 
+				$c[$i] = filter_var($c[$i]);
+				$v[$i] = filter_var($v[$i]);
+				$ss = $c[$i]."=".$v[$i];
+				$ss .= ($i == count($c) - 1 ? "" : ",");
+		} else {
+			$c = filter_var($c);
+			$v = filter_var($v);
+			$ss = $c."=".$v;
+		}
+		$queryStr = "UPDATE `$this->tbl` SET ".$ss." ";
+		$queryStr .= $this->get_condition($cnd);
+		$this->db->query($queryStr);
+		$this->db->execute();
+		return $this->db->rowCount();
+	}
+	public function get_condition($cnd) {
+		$rsl = "";
+		if ($cnd) {
+			if (@!is_array($cnd[0])) {
+				$rsl .= "WHERE ".$cnd[0]."=".$cnd[1];
+			} else {
+				$rsl .= "WHERE ".$cnd[0][0]."=".$cnd[0][1];
+				if (count($cnd) > 1) {
+					for ($i = 1; $i < count($cnd); $i++)
+					$rsl .= " AND ".$cnd[$i][0]."=".$cnd[$i][1];
+				}
+			}
+		}
+		return $rsl;
+	}
 }

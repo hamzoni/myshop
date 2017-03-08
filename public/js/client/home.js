@@ -5,6 +5,7 @@ if (tbl_sDt.fb_login) {
 	window.history.pushState(null, null, "/myshop/public/");
 	var cart = {
 		total_bill: 0,
+		order_note: "",
 		items_list: []
 	}
 	var client_info = {
@@ -26,6 +27,7 @@ if (tbl_sDt.fb_login) {
 			"top" : "calc(25% + " + currentScroll + "px)"
 		});
 		popup_blk_fm(".cart_detail");
+		set_prioritize($(".cart_detail")[0]);
 		redcart(0);
 	}
 
@@ -47,7 +49,9 @@ if (tbl_sDt.fb_login) {
 			price: is_form ? data_form.f_price.value : data_form.f_price,
 			sale: is_form ? data_form.f_sale.value : data_form.f_sale,
 			price_s: 0,
-			qty: parseInt(i_qty == 0 ? 1 : i_qty) // default
+			qty: parseInt(i_qty == 0 ? 1 : i_qty), // default
+			note: "",
+			store_id: is_form ? data_form.f_vendorID.value : data_form.f_vendorID
 		}
 		item_info.price_s = parseInt(item_info.price) * (1 - parseFloat(item_info.sale));
 		// check if data is repeated
@@ -93,6 +97,111 @@ if (tbl_sDt.fb_login) {
 			if (this.value == 0) {
 				rm_foodFC(this);
 			}
+		}
+		elm.getElementsByClassName("add_notes")[0].onclick = function() {
+			add_note(this);
+		}
+	}
+	// add notes to cart items
+	var note_v = undefined;
+	var pkg_n = false;
+	function create_note(type,id = null,dom = null) {
+		this.trigger = dom;
+		this.type = type;
+		this.id = id;
+	}
+	function add_note(htmlc) {
+		pkg_n = true;
+		var p = $(htmlc).parent('td')[0];
+		var pp = $(p).parent('tr')[0];
+		var ix = html_arr(pp.parentNode.children).indexOf(pp);
+		var t = $("#add_note_cart");
+		transfer_note(t[0],ix);
+		
+		note_v = new create_note('product',cart.items_list[ix].id,htmlc);
+		$('#note_content').val(cart.items_list[ix].note);
+		// position note
+		var m = $(p).closest('.general_popUp')[0];
+		var x = getOffsetLeft(p) - 
+				getOffsetLeft(m) +
+				p.offsetWidth + 1;
+		var y = getOffsetTop(p) -
+				getOffsetTop(m);
+		position_elm(t,x,y);
+
+		$('#note_content').focus();
+	}
+	function transfer_note(x,pkg_i = null) {
+		if (note_v != undefined && pkg_i != null) {
+			if (note_v.id == cart.items_list[pkg_i].id) {
+				toggle_elm(x);
+			} else {
+				if (x.hasAttribute("hide"))
+					x.removeAttribute("hide");
+			}
+		} else {
+			if (pkg_n) {
+				if (x.hasAttribute("hide"))
+					x.removeAttribute("hide");
+			} else {
+				toggle_elm(x);
+			}
+		}
+	}
+	function toggle_elm(x) {
+		if (x.hasAttribute("hide")) {
+			x.removeAttribute("hide");
+		} else {
+			x.setAttribute("hide","");
+		}
+	}
+	function position_elm(d,x,y) {
+		d.css({
+			"top": y + "px",
+			"left": x + "px"
+		});
+	}
+	$("._closeNote").click(function(){
+		var t = $("#add_note_cart");
+		t[0].setAttribute("hide","");
+	});
+	$("#add_orderNote").click(function(){
+		var t = $("#add_note_cart")[0];
+		transfer_note(t);
+		pkg_n = false;
+		// set position
+		var m = $(this).closest('.general_popUp')[0];
+		var x = getOffsetLeft(this) - getOffsetLeft(m) + this.offsetWidth + 1;
+		var y = getOffsetTop(this) - getOffsetTop(m);
+		position_elm($(t),x,y);
+		// set target storage variable
+		note_v =  new create_note('order');
+		$('#note_content').val(cart.order_note);
+		$('#note_content').focus();
+	});
+	$("#done_note").click(function(){
+		$("#add_note_cart")[0].setAttribute("hide","");
+		var txt = $('#note_content').val();
+		if (note_v.type == 'product') {
+			cart.items_list[find_listID(note_v.id)].note = txt;
+			if (!note_v.trigger.hasAttribute("noted") && txt != "") {
+				note_v.trigger.setAttribute("noted","");
+			} else {
+				if (note_v.trigger.hasAttribute("noted")) {
+					note_v.trigger.removeAttribute("noted");
+				}
+			}
+		} else {
+			cart.order_note = txt;
+		}
+	});
+	$("#clear_note").click(function(){
+		$('#note_content').val("");
+		$('#note_content').focus();
+	});
+	function find_listID(id) {
+		for (var i = 0; i < cart.items_list.length; i++) {
+			if (cart.items_list[i].id == id) return i;
 		}
 	}
 	// remove food from cart method
@@ -165,6 +274,7 @@ if (tbl_sDt.fb_login) {
 	// food_info pop-up: add item to cart
 	document.getElementById("aCfd_IF").onclick = function() {
 		var crr_qty = document.getElementById("qty_ifcIf").value;
+		$(".food_detail")[0].setAttribute('hide','');
 		insert_itemCart(crr_slcItem,crr_qty);
 	}
 	// food notifcation
@@ -199,6 +309,7 @@ if (tbl_sDt.fb_login) {
 		} else {
 			if (cart.items_list.length != 0) {
 				var cUrl = tbl_sDt.b_url + "/send_cart";
+				if (!client_info.id) client_info.id = null;
 				var dtd = "clt_spI=" + JSON.stringify({client: client_info, cart: cart});
 				ajax_request(cUrl, dtd, function(d) {
 					add_orderHistory();
@@ -257,6 +368,7 @@ if (tbl_sDt.fb_login) {
 	}
 	$("#userProfile").click(function(){
 		var currentScroll = window.scrollY;
+		set_prioritize($(".ship_info")[0]);
 		popup_blk_fm(".ship_info");
 		$(".ship_info").css({
 			"top" : "calc(25% + " + currentScroll + "px)"
@@ -342,10 +454,6 @@ if (tbl_sDt.fb_login) {
 		ajax_request(tbl_sDt.b_url + "/push_shipInfo",
 					"r=" + JSON.stringify(client_info),null);
 	}
-	sfl.cname.value = "asdasd";
-	sfl.cphone.value = "123123";
-	sfl.cadd.value = "123";
-	sfl.storeInfo.value = "1";
 	// client order history 
 	var c_ord = document.getElementById("orderInfo");
 	var ord_M = document.getElementById("user_dplH");
@@ -674,12 +782,17 @@ function set_menu(d) {
 		x.querySelector("input[name=f_nutri]").value = d[i].nutrition_img;
 		x.querySelector("input[name=f_ava]").value = d[i].avatar_img;
 		x.querySelector("input[name=f_sale]").value = d[i].sale;
+		x.querySelector("input[name=f_vendorID]").value = d[i].store_id;
 
-		x.querySelectorAll("[add-to-cart]")[0].onclick = function(){
-			add_toCartF(this);
+		if (tbl_sDt.fb_login) {
+			x.querySelectorAll("[add-to-cart]")[0].onclick = function(){
+				add_toCartF(this);
+			}
 		}
+		
 		x.querySelector("img[food-info-id]").onclick = function() {
 			openFood_detail(this);
+			set_prioritize($(".food_detail")[0]);
 		}
 		// reform sale-tag
 		main_menu.appendChild(x);
@@ -800,6 +913,9 @@ addEvent(window,"load",function(e) {
             drag_activate = false;
         };
     });
+    if (tbl_sDt.ban_status) {
+    	alert("Tài khoản của bạn đã bị khóa");
+    }
 });
 $("#cls_dtsk").click(function(){
 	$("#pgDetail_prmt").attr("hide","");
@@ -837,23 +953,7 @@ $(".dtt_pdDt").click(function(){
 $(".i_pctn_dp").click(function(){
 	SelectText($(".phv_dp")[0]);
 });
-function SelectText(element) {
-    var doc = document
-        , text = $(element)[0]
-        , range, selection
-    ;    
-    if (doc.body.createTextRange) {
-        range = document.body.createTextRange();
-        range.moveToElementText(text);
-        range.select();
-    } else if (window.getSelection) {
-        selection = window.getSelection();        
-        range = document.createRange();
-        range.selectNodeContents(text);
-        selection.removeAllRanges();
-        selection.addRange(range);
-    }
-}
+
 var crr_slcItem = {
 	f_id: null, f_name: null, f_price: null,
 } 
